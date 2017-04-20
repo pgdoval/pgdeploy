@@ -25,4 +25,8 @@
 package com.ongres.pgdeploy.core;
 
 public enum Platform {
+  LINUX,
+  WINDOWS,
+  MACOS,
+  TEST
 }

@@ -26,28 +26,41 @@ package com.ongres.pgdeploy;
 
 import com.ongres.pgdeploy.core.Platform;
 import com.ongres.pgdeploy.core.PostgresInstallationSupplier;
-import com.ongres.pgdeploy.installations.PostgresInstallation;
+import org.junit.Assert;
+import org.junit.Ignore;
+import org.junit.Test;
 
-import java.nio.file.Path;
 import java.util.Optional;
 
-import javax.annotation.Nonnull;
+import static org.junit.Assert.assertTrue;
 
-public class PgDeploy {
+public class PgDeployFindSupplierTest {
 
-  public static Optional<PostgresInstallationSupplier> findSupplier(
-          int major, int minor, int revision, Platform platform, String extraVersion) {
-    return Optional.empty();
+  @Test
+  @Ignore
+  public void checkExistingSupplier()
+  {
+    PostgresInstallationSupplier supplier =
+            PgDeploy.findSupplier(0, 0, 0, Platform.TEST, null)
+                    .orElseGet(() -> {
+                      Assert.fail("Existing supplier not found");
+                      return null;
+                    });
+
+    assertTrue(supplier instanceof MockedPostgresInstallationSupplier);
   }
 
-  public static Optional<PostgresInstallationSupplier> findSupplier(
-          int major, int minor, int revision, Platform platform) {
-    return findSupplier(major, minor, revision, platform, null);
+
+  @Test
+  public void checkNonExistingSupplier()
+  {
+    assertTrue(!PgDeploy.findSupplier(1000, 0, 0, Platform.TEST, null)
+                    .isPresent());
   }
 
 
-  public static PostgresInstallation install(@Nonnull PostgresInstallationSupplier supplier,
-                                      @Nonnull Path destination) {
-    return null;
-  }
+
+
+
+
 }

@@ -24,30 +24,7 @@
  */
 package com.ongres.pgdeploy;
 
-import com.ongres.pgdeploy.core.Platform;
 import com.ongres.pgdeploy.core.PostgresInstallationSupplier;
-import com.ongres.pgdeploy.installations.PostgresInstallation;
 
-import java.nio.file.Path;
-import java.util.Optional;
-
-import javax.annotation.Nonnull;
-
-public class PgDeploy {
-
-  public static Optional<PostgresInstallationSupplier> findSupplier(
-          int major, int minor, int revision, Platform platform, String extraVersion) {
-    return Optional.empty();
-  }
-
-  public static Optional<PostgresInstallationSupplier> findSupplier(
-          int major, int minor, int revision, Platform platform) {
-    return findSupplier(major, minor, revision, platform, null);
-  }
-
-
-  public static PostgresInstallation install(@Nonnull PostgresInstallationSupplier supplier,
-                                      @Nonnull Path destination) {
-    return null;
-  }
+public class MockedPostgresInstallationSupplier implements PostgresInstallationSupplier{
 }
