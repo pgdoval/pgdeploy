@@ -27,27 +27,75 @@ package com.ongres.pgdeploy;
 import com.ongres.pgdeploy.core.Platform;
 import com.ongres.pgdeploy.core.PostgresInstallationSupplier;
 import com.ongres.pgdeploy.installations.PostgresInstallation;
+import net.jcip.annotations.Immutable;
 
 import java.nio.file.Path;
+import java.util.Iterator;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.ServiceLoader;
 
 import javax.annotation.Nonnull;
 
+@Immutable
 public class PgDeploy {
 
-  public static Optional<PostgresInstallationSupplier> findSupplier(
-          int major, int minor, int revision, Platform platform, String extraVersion) {
-    return Optional.empty();
+  private final Iterable<PostgresInstallationSupplier> supplierCandidates;
+
+  public PgDeploy() {
+    this(ServiceLoader.load(PostgresInstallationSupplier.class));
   }
 
-  public static Optional<PostgresInstallationSupplier> findSupplier(
+  protected PgDeploy(Iterable<PostgresInstallationSupplier> supplierCandidates) {
+    this.supplierCandidates = supplierCandidates;
+  }
+
+
+
+  public Optional<PostgresInstallationSupplier> findSupplier(
           int major, int minor, int revision, Platform platform) {
     return findSupplier(major, minor, revision, platform, null);
   }
 
 
-  public static PostgresInstallation install(@Nonnull PostgresInstallationSupplier supplier,
-                                      @Nonnull Path destination) {
+  public Optional<PostgresInstallationSupplier> findSupplier(
+          int major, int minor, int revision, Platform platform, String extraVersion) {
+
+    final Iterator<PostgresInstallationSupplier> iterator = supplierCandidates.iterator();
+
+    PostgresInstallationSupplier supplierCandidate;
+
+    while (iterator.hasNext()) {
+      supplierCandidate = iterator.next();
+      if (isSupplierSuitable(supplierCandidate, major, minor, revision, platform, extraVersion)) {
+        return Optional.of(supplierCandidate);
+      }
+    }
+
+    return Optional.empty();
+
+  }
+
+
+
+  private boolean isSupplierSuitable( PostgresInstallationSupplier supplier,
+          int major, int minor, int revision, Platform platform, String extraVersion) {
+
+    boolean result = supplier.getMajorVersion() == major
+                    && supplier.getMinorVersion() == minor
+                    && supplier.getRevision() == revision
+                    && supplier.getPlatform() == platform;
+
+    if (extraVersion != null) {
+      result &= (Objects.equals(supplier.getExtraVersion(), extraVersion));
+    }
+
+    return result;
+  }
+
+
+  public PostgresInstallation install(@Nonnull PostgresInstallationSupplier supplier,
+                                             @Nonnull Path destination) {
     return null;
   }
 }

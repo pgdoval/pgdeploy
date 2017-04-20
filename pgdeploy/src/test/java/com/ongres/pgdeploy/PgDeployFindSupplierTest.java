@@ -26,35 +26,42 @@ package com.ongres.pgdeploy;
 
 import com.ongres.pgdeploy.core.Platform;
 import com.ongres.pgdeploy.core.PostgresInstallationSupplier;
-import org.junit.Assert;
-import org.junit.Ignore;
+import org.junit.Before;
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.Assert.assertTrue;
 
 public class PgDeployFindSupplierTest {
 
+  private PgDeploy pgDeploy;
+
+  @Before
+  public void setUp() {
+    List<PostgresInstallationSupplier> suppliers = new ArrayList<>();
+    suppliers.add(new MockedPostgresInstallationSupplier(0, 0, 0, Platform.LINUX, null));
+
+    pgDeploy = new PgDeploy(suppliers);
+  }
+
   @Test
-  @Ignore
   public void checkExistingSupplier()
   {
-    PostgresInstallationSupplier supplier =
-            PgDeploy.findSupplier(0, 0, 0, Platform.TEST, null)
-                    .orElseGet(() -> {
-                      Assert.fail("Existing supplier not found");
-                      return null;
-                    });
+    Optional<PostgresInstallationSupplier> supplier =
+            pgDeploy.findSupplier(0, 0, 0, Platform.LINUX, null);
 
-    assertTrue(supplier instanceof MockedPostgresInstallationSupplier);
+    assertTrue("Existing supplier not found", supplier.isPresent());
+    assertTrue("Existing supplier not mocked", supplier.get() instanceof MockedPostgresInstallationSupplier);
   }
 
 
   @Test
   public void checkNonExistingSupplier()
   {
-    assertTrue(!PgDeploy.findSupplier(1000, 0, 0, Platform.TEST, null)
+    assertTrue(!pgDeploy.findSupplier(1000, 0, 0, Platform.LINUX, null)
                     .isPresent());
   }
 

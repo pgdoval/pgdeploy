@@ -24,7 +24,50 @@
  */
 package com.ongres.pgdeploy;
 
+import com.ongres.pgdeploy.core.Platform;
 import com.ongres.pgdeploy.core.PostgresInstallationSupplier;
 
-public class MockedPostgresInstallationSupplier implements PostgresInstallationSupplier{
+
+class MockedPostgresInstallationSupplier implements PostgresInstallationSupplier{
+
+  private final int majorVersion;
+  private final int minorVersion;
+  private final int revision;
+  private final Platform platform;
+  private final String extraVersion;
+
+  public MockedPostgresInstallationSupplier(int majorVersion, int minorVersion, int revision, Platform platform, String extraVersion) {
+    this.majorVersion = majorVersion;
+    this.minorVersion = minorVersion;
+    this.revision = revision;
+    this.platform = platform;
+    this.extraVersion = extraVersion;
+  }
+
+
+
+  @Override
+  public int getMajorVersion() {
+    return majorVersion;
+  }
+
+  @Override
+  public int getMinorVersion() {
+    return minorVersion;
+  }
+
+  @Override
+  public int getRevision() {
+    return revision;
+  }
+
+  @Override
+  public Platform getPlatform() {
+    return platform;
+  }
+
+  @Override
+  public String getExtraVersion() {
+    return extraVersion;
+  }
 }

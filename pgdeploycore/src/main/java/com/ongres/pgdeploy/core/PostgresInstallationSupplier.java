@@ -25,4 +25,15 @@
 package com.ongres.pgdeploy.core;
 
 public interface PostgresInstallationSupplier {
+
+  int getMajorVersion();
+
+  int getMinorVersion();
+
+  int getRevision();
+
+  Platform getPlatform();
+
+  String getExtraVersion();
+
 }
