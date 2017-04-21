@@ -26,15 +26,63 @@ package com.ongres.pgdeploy;
 
 import com.ongres.pgdeploy.core.Platform;
 import com.ongres.pgdeploy.core.PostgresInstallationSupplier;
+import com.ongres.pgdeploy.installations.PostgresInstallation;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.Assert.*;
 
 public class PgDeployInstallTest {
 
+  private PgDeploy pgDeploy;
+  private PostgresInstallationSupplier mockedSupplier;
+  private Path path;
 
+  @Before
+  public void setup() {
+    List<PostgresInstallationSupplier> suppliers = new ArrayList<>();
+    mockedSupplier = new MockedPostgresInstallationSupplier(0, 0, 0, Platform.LINUX, null);
+    suppliers.add(mockedSupplier);
 
+    pgDeploy = new PgDeploy(suppliers);
+  }
+
+  @After
+  public void tearDown() {
+    try {
+      Files.deleteIfExists(path);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+
+  @Test
+  @Ignore
+  public void checkBasicInstallationWorks() {
+
+    //given
+    PgDeploy.InstallOptions options = PgDeploy.InstallOptions.binaries().withInclude().withShare();
+    path = Paths.get("carpeta");
+
+    //when
+    PostgresInstallation installation = pgDeploy.install(mockedSupplier, options, path);
+
+    //then
+    //the installation process must check itself that the destination
+    //path contains the desired folders and fail otherwise
+    assertNotNull(installation);
+
+  }
 
 
 
