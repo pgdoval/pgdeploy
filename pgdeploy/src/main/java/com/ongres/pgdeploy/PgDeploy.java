@@ -25,12 +25,15 @@
 package com.ongres.pgdeploy;
 
 import com.ongres.pgdeploy.core.Platform;
+import com.ongres.pgdeploy.core.PostgresInstallationFolder;
 import com.ongres.pgdeploy.core.PostgresInstallationSupplier;
 import com.ongres.pgdeploy.installations.PostgresInstallation;
 import net.jcip.annotations.Immutable;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.ServiceLoader;
@@ -53,13 +56,13 @@ public class PgDeploy {
 
 
   public Optional<PostgresInstallationSupplier> findSupplier(
-          int major, int minor, int revision, Platform platform) {
+          int major, int minor, int revision, @Nonnull Platform platform) {
     return findSupplier(major, minor, revision, platform, null);
   }
 
 
   public Optional<PostgresInstallationSupplier> findSupplier(
-          int major, int minor, int revision, Platform platform, String extraVersion) {
+          int major, int minor, int revision, @Nonnull Platform platform, String extraVersion) {
 
     final Iterator<PostgresInstallationSupplier> iterator = supplierCandidates.iterator();
 
@@ -95,7 +98,50 @@ public class PgDeploy {
 
 
   public PostgresInstallation install(@Nonnull PostgresInstallationSupplier supplier,
-                                             @Nonnull Path destination) {
+                                      @Nonnull InstallOptions options, @Nonnull Path destination) {
+
+
     return null;
+  }
+
+  public static class InstallOptions {
+
+    private boolean share = false;
+    private boolean include = false;
+
+    private InstallOptions() {
+    }
+
+    public static InstallOptions binaries() {
+      return new InstallOptions();
+    }
+
+    public InstallOptions withShare() {
+      share = true;
+      return this;
+    }
+
+    public InstallOptions withInclude() {
+      include = true;
+      return this;
+    }
+
+    List<PostgresInstallationFolder> toFolderList() {
+      List<PostgresInstallationFolder> result = new ArrayList<>();
+
+      result.add(PostgresInstallationFolder.BIN);
+      result.add(PostgresInstallationFolder.LIB);
+
+      if (share) {
+        result.add(PostgresInstallationFolder.SHARE);
+      }
+
+      if (include) {
+        result.add(PostgresInstallationFolder.INCLUDE);
+      }
+
+      return result;
+    }
+
   }
 }

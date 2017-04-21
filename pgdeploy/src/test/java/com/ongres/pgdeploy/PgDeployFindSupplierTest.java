@@ -26,7 +26,6 @@ package com.ongres.pgdeploy;
 
 import com.ongres.pgdeploy.core.Platform;
 import com.ongres.pgdeploy.core.PostgresInstallationSupplier;
-import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
