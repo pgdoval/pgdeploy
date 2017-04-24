@@ -45,14 +45,14 @@ public class BadInstallationException extends Exception {
             .map(Path::toString)
             .collect(Collectors.joining("\n"));
 
-    String message = "Bad installation exception";
+    String message = "Bad installation exception \n";
 
     if (!notFound.isEmpty()) {
-      message += notFoundMessage;
+      message += notFoundMessage + "\n";
     }
 
     if (!notADirectory.isEmpty()) {
-      message += notADirectoryMessage;
+      message += notADirectoryMessage + "\n";
     }
 
     return new BadInstallationException(message);

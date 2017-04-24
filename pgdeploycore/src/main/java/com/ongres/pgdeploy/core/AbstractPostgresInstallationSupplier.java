@@ -24,11 +24,20 @@
  */
 package com.ongres.pgdeploy.core;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+import java.util.zip.ZipInputStream;
 
 public abstract class AbstractPostgresInstallationSupplier implements PostgresInstallationSupplier {
 
@@ -37,6 +46,9 @@ public abstract class AbstractPostgresInstallationSupplier implements PostgresIn
   protected int revision;
   protected Platform platform;
   protected String extraVersion;
+
+  protected RelativeRoute routeToZippedCode;
+
 
   @Override
   public int getMajorVersion() {
@@ -64,8 +76,58 @@ public abstract class AbstractPostgresInstallationSupplier implements PostgresIn
   }
 
   @Override
+  @edu.umd.cs.findbugs.annotations.SuppressFBWarnings(
+          value = "RV_RETURN_VALUE_IGNORED_BAD_PRACTICE",
+          justification = "The value itself has no interest")
   public void unzipFolders(Path destination, List<PostgresInstallationFolder> folders)
-          throws IOException{
+          throws IOException {
+
+    int buffer = 2048;
+
+    File file = routeToZippedCode.asRelativeFile();
+
+    try (ZipFile zip = new ZipFile(file)) {
+      String newPath = destination.toAbsolutePath().toString();
+
+      if (!new File(newPath).mkdir()) {
+        throw new IOException("Unable to create or open file: " + newPath);
+      }
+
+      Enumeration zipFileEntries = zip.entries();
+
+      // Process each entry
+      while (zipFileEntries.hasMoreElements()) {
+        // grab a zip file entry
+        ZipEntry entry = (ZipEntry) zipFileEntries.nextElement();
+        String currentEntry = entry.getName();
+        File destFile = new File(newPath, currentEntry);
+        File destinationParent = destFile.getParentFile();
+
+        // create the parent directory structure if needed
+        destinationParent.mkdirs();
+
+        if (!entry.isDirectory()) {
+          try (BufferedInputStream is = new BufferedInputStream(zip
+                  .getInputStream(entry))) {
+            int currentByte;
+            // establish buffer for writing file
+            byte[] data = new byte[buffer];
+
+            // write the current file to disk
+
+            FileOutputStream fos = new FileOutputStream(destFile);
+
+            try (BufferedOutputStream dest = new BufferedOutputStream(fos, buffer)) {
+
+              // read and write until last byte is encountered
+              while ((currentByte = is.read(data, 0, buffer)) != -1) {
+                dest.write(data, 0, currentByte);
+              }
+            }
+          }
+        }
+      }
+    }
 
   }
 

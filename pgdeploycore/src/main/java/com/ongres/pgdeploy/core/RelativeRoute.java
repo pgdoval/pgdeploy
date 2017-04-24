@@ -43,7 +43,8 @@ public class RelativeRoute {
   }
 
   public File asRelativeFile() {
-    return relativeRoute.stream().reduce(new File(""), File::new, (f1, f2) -> f2);
+    return relativeRoute.stream().reduce(
+            new File(System.getProperty("user.dir")), File::new, (f1, f2) -> f2);
   }
 
   public Path asPath(Path basePath) {

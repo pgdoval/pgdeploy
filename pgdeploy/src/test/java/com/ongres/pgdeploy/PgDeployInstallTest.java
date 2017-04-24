@@ -67,8 +67,6 @@ public class PgDeployInstallTest {
               .unzipFolders(any(Path.class), anyList());
     } catch (IOException e) {
       e.printStackTrace();
-    } catch (BadInstallationException e) {
-      e.printStackTrace();
     }
 
 
