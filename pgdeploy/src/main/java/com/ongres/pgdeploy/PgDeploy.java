@@ -24,12 +24,14 @@
  */
 package com.ongres.pgdeploy;
 
+import com.ongres.pgdeploy.core.BadInstallationException;
 import com.ongres.pgdeploy.core.Platform;
 import com.ongres.pgdeploy.core.PostgresInstallationFolder;
 import com.ongres.pgdeploy.core.PostgresInstallationSupplier;
 import com.ongres.pgdeploy.installations.PostgresInstallation;
 import net.jcip.annotations.Immutable;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -98,10 +100,14 @@ public class PgDeploy {
 
 
   public PostgresInstallation install(@Nonnull PostgresInstallationSupplier supplier,
-                                      @Nonnull InstallOptions options, @Nonnull Path destination) {
+                                      @Nonnull InstallOptions options, @Nonnull Path destination)
+          throws BadInstallationException, IOException {
 
+    List<PostgresInstallationFolder> folders = options.toFolderList();
+    supplier.unzipFolders(destination, folders);
+    supplier.checkInstallation(destination, folders);
 
-    return null;
+    return new PostgresInstallation(supplier, destination);
   }
 
   public static class InstallOptions {

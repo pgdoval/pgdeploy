@@ -22,21 +22,35 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.ongres.pgdeploy;
+package com.ongres.pgdeploy.core;
 
-import com.ongres.pgdeploy.core.AbstractPostgresInstallationSupplier;
-import com.ongres.pgdeploy.core.Platform;
+import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
+import java.util.stream.Stream;
 
-class MockedPostgresInstallationSupplier extends AbstractPostgresInstallationSupplier {
+public class RelativeRoute {
 
-  public MockedPostgresInstallationSupplier(int majorVersion, int minorVersion, int revision, Platform platform, String extraVersion) {
-    this.majorVersion = majorVersion;
-    this.minorVersion = minorVersion;
-    this.revision = revision;
-    this.platform = platform;
-    this.extraVersion = extraVersion;
+  private List<String> relativeRoute;
+
+  public RelativeRoute(List<String> relativeRoute) {
+    this.relativeRoute = relativeRoute;
   }
 
+  public File asFile(File basePath) {
+    return relativeRoute.stream().reduce(basePath, File::new, (f1, f2) -> f2);
+  }
 
+  public File asRelativeFile() {
+    return relativeRoute.stream().reduce(new File(""), File::new, (f1, f2) -> f2);
+  }
 
+  public Path asPath(Path basePath) {
+    return relativeRoute.stream().reduce(basePath, Path::resolve, (f1, f2) -> f2);
+  }
+
+  public Path asRelativePath() {
+    return relativeRoute.stream().reduce(Paths.get(""), Path::resolve, (f1, f2) -> f2);
+  }
 }

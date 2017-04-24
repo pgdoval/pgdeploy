@@ -22,20 +22,42 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.ongres.pgdeploy;
+package com.ongres.pgdeploy.core;
 
-import com.ongres.pgdeploy.core.AbstractPostgresInstallationSupplier;
-import com.ongres.pgdeploy.core.Platform;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.stream.Collectors;
 
-class MockedPostgresInstallationSupplier extends AbstractPostgresInstallationSupplier {
+public class BadInstallationException extends Exception {
 
-  public MockedPostgresInstallationSupplier(int majorVersion, int minorVersion, int revision, Platform platform, String extraVersion) {
-    this.majorVersion = majorVersion;
-    this.minorVersion = minorVersion;
-    this.revision = revision;
-    this.platform = platform;
-    this.extraVersion = extraVersion;
+  BadInstallationException(String message) {
+    super(message);
   }
+
+  public static BadInstallationException fromNotFoundAndNotADirectory(
+          List<Path> notFound, List<Path> notADirectory) {
+
+    String notFoundMessage = notFound.stream()
+            .map(Path::toString)
+            .collect(Collectors.joining("\n"));
+
+    String notADirectoryMessage = notADirectory.stream()
+            .map(Path::toString)
+            .collect(Collectors.joining("\n"));
+
+    String message = "Bad installation exception";
+
+    if (!notFound.isEmpty()) {
+      message += notFoundMessage;
+    }
+
+    if (!notADirectory.isEmpty()) {
+      message += notADirectoryMessage;
+    }
+
+    return new BadInstallationException(message);
+  }
+
 
 
 

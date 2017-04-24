@@ -24,5 +24,27 @@
  */
 package com.ongres.pgdeploy.installations;
 
+import com.ongres.pgdeploy.core.router.Router;
+import net.jcip.annotations.Immutable;
+
+import java.nio.file.Path;
+
+@Immutable
 public class PostgresInstallation {
+
+  private final Router router;
+  private final Path path;
+
+  public PostgresInstallation(Router router, Path path) {
+    this.router = router;
+    this.path = path;
+  }
+
+  public Router getRouter() {
+    return router;
+  }
+
+  public Path getPath() {
+    return path;
+  }
 }

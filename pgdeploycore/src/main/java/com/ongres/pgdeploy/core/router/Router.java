@@ -22,21 +22,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.ongres.pgdeploy;
+package com.ongres.pgdeploy.core.router;
 
-import com.ongres.pgdeploy.core.AbstractPostgresInstallationSupplier;
-import com.ongres.pgdeploy.core.Platform;
-
-class MockedPostgresInstallationSupplier extends AbstractPostgresInstallationSupplier {
-
-  public MockedPostgresInstallationSupplier(int majorVersion, int minorVersion, int revision, Platform platform, String extraVersion) {
-    this.majorVersion = majorVersion;
-    this.minorVersion = minorVersion;
-    this.revision = revision;
-    this.platform = platform;
-    this.extraVersion = extraVersion;
-  }
-
-
-
+public interface Router {
 }

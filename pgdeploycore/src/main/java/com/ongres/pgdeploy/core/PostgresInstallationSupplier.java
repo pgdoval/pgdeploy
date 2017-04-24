@@ -24,7 +24,13 @@
  */
 package com.ongres.pgdeploy.core;
 
-public interface PostgresInstallationSupplier {
+import com.ongres.pgdeploy.core.router.Router;
+
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.List;
+
+public interface PostgresInstallationSupplier extends Router {
 
   int getMajorVersion();
 
@@ -35,5 +41,11 @@ public interface PostgresInstallationSupplier {
   Platform getPlatform();
 
   String getExtraVersion();
+
+  void unzipFolders(Path destination, List<PostgresInstallationFolder> folders)
+          throws IOException;
+
+  void checkInstallation(Path destination, List<PostgresInstallationFolder> folders)
+          throws BadInstallationException;
 
 }

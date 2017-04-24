@@ -31,7 +31,14 @@ public enum PostgresInstallationFolder {
   SHARE("share"),
   INCLUDE("include");
 
-  PostgresInstallationFolder(String bin) {
+
+  private final String stringId;
+
+  PostgresInstallationFolder(String s) {
+    this.stringId = s;
   }
 
+  public String getStringId() {
+    return stringId;
+  }
 }
