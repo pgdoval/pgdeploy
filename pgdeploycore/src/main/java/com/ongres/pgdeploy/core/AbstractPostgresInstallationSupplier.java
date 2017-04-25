@@ -25,6 +25,7 @@
 package com.ongres.pgdeploy.core;
 
 import com.ongres.pgdeploy.core.exceptions.BadInstallationException;
+import com.ongres.pgdeploy.core.exceptions.ExtraFoldersFoundException;
 import com.ongres.pgdeploy.core.exceptions.NonWritableDestinationException;
 import com.ongres.pgdeploy.core.exceptions.UnreachableBinariesException;
 
@@ -39,6 +40,8 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -80,10 +83,10 @@ public abstract class AbstractPostgresInstallationSupplier implements PostgresIn
 
   @Override
   @edu.umd.cs.findbugs.annotations.SuppressFBWarnings(
-          value = "RV_RETURN_VALUE_IGNORED_BAD_PRACTICE",
-          justification = "The value itself has no interest")
+      value = "RV_RETURN_VALUE_IGNORED_BAD_PRACTICE",
+      justification = "The value itself has no interest")
   public void unzipFolders(Path destination, List<PostgresInstallationFolder> folders)
-          throws IOException {
+      throws IOException {
 
     int buffer = 2048;
 
@@ -103,6 +106,12 @@ public abstract class AbstractPostgresInstallationSupplier implements PostgresIn
         // grab a zip file entry
         ZipEntry entry = (ZipEntry) zipFileEntries.nextElement();
         String currentEntry = entry.getName();
+
+        if (!folders.stream().anyMatch(
+            folder -> currentEntry.startsWith(folder.getStringId() + "/"))) {
+          continue;
+        }
+
         File destFile = new File(newPath, currentEntry);
         File destinationParent = destFile.getParentFile();
 
@@ -111,7 +120,7 @@ public abstract class AbstractPostgresInstallationSupplier implements PostgresIn
 
         if (!entry.isDirectory()) {
           try (BufferedInputStream is = new BufferedInputStream(zip
-                  .getInputStream(entry))) {
+              .getInputStream(entry))) {
             int currentByte;
             // establish buffer for writing file
             byte[] data = new byte[buffer];
@@ -138,28 +147,44 @@ public abstract class AbstractPostgresInstallationSupplier implements PostgresIn
 
   @Override
   public void checkInstallation(Path destination, List<PostgresInstallationFolder> folders)
-          throws BadInstallationException {
+      throws BadInstallationException, ExtraFoldersFoundException {
 
     List<Path> notFound = new ArrayList<>();
+    List<String> extraFound = new ArrayList<>();
     List<Path> notADirectory = new ArrayList<>();
 
     folders.stream()
-            .map(folder -> destination.resolve(folder.getStringId()))
-            .forEach(path -> {
-              if (!Files.exists(path)) {
-                notFound.add(path);
-              }
-
-              if (!Files.isDirectory(path)) {
-                notADirectory.add(path);
-              }
-
-            });
+        .map(folder -> destination.resolve(folder.getStringId()))
+        .forEach(path -> {
+          if (!Files.exists(path)) {
+            notFound.add(path);
+          } else {
+            if (!Files.isDirectory(path)) {
+              notADirectory.add(path);
+            }
+          }
+        });
 
 
     if (!notFound.isEmpty() || !notADirectory.isEmpty()) {
       throw BadInstallationException.fromNotFoundAndNotADirectory(notFound, notADirectory);
     }
 
+    Stream.of(PostgresInstallationFolder.values())
+        .filter(folder -> !folders.contains(folder))
+        .map(folder -> destination.resolve(folder.getStringId()))
+        .forEach(path -> {
+          if (Files.exists(path)) {
+            extraFound.add(path.getFileName().toString());
+          }
+        });
+
+    if (!extraFound.isEmpty()) {
+      List<String> requested = folders.stream()
+          .map(PostgresInstallationFolder::getStringId)
+          .collect(Collectors.toList());
+
+      throw ExtraFoldersFoundException.fromExpectedAndFound(requested,extraFound);
+    }
   }
 }

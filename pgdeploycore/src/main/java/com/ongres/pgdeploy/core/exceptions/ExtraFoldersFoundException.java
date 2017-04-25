@@ -24,41 +24,33 @@
  */
 package com.ongres.pgdeploy.core.exceptions;
 
-import java.nio.file.Path;
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class BadInstallationException extends Exception {
+/**
+ * Created by pablo on 25/04/17.
+ */
+public class ExtraFoldersFoundException extends IOException {
 
-  BadInstallationException(String message) {
-    super(message);
+  public ExtraFoldersFoundException(String s) {
+    super(s);
   }
 
-  public static BadInstallationException fromNotFoundAndNotADirectory(
-          List<Path> notFound, List<Path> notADirectory) {
+  public static ExtraFoldersFoundException fromExpectedAndFound(
+      List<String> expected, List<String> extra) {
+    StringBuilder sb = new StringBuilder();
 
-    String notFoundMessage = "Directories not found:\n" + notFound.stream()
-            .map(Path::toString)
-            .collect(Collectors.joining("\n"));
+    sb.append("Only expected folders ");
 
-    String notADirectoryMessage = "Files found but not directories:\n" +  notADirectory.stream()
-            .map(Path::toString)
-            .collect(Collectors.joining("\n"));
+    sb.append(expected.stream()
+        .collect(Collectors.joining(", ")));
 
-    String message = "Bad installation exception \n";
+    sb.append(" but also found these folders: ");
 
-    if (!notFound.isEmpty()) {
-      message += notFoundMessage + "\n";
-    }
+    sb.append(extra.stream()
+        .collect(Collectors.joining(", ")));
 
-    if (!notADirectory.isEmpty()) {
-      message += notADirectoryMessage + "\n";
-    }
-
-    return new BadInstallationException(message);
+    return new ExtraFoldersFoundException(sb.toString());
   }
-
-
-
-
 }

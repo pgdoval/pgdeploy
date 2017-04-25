@@ -25,6 +25,7 @@
 package com.ongres.pgdeploy.core;
 
 import com.ongres.pgdeploy.core.exceptions.BadInstallationException;
+import com.ongres.pgdeploy.core.exceptions.ExtraFoldersFoundException;
 import com.ongres.pgdeploy.core.router.Router;
 
 import java.io.IOException;
@@ -47,6 +48,6 @@ public interface PostgresInstallationSupplier extends Router {
           throws IOException;
 
   void checkInstallation(Path destination, List<PostgresInstallationFolder> folders)
-          throws BadInstallationException;
+      throws BadInstallationException, ExtraFoldersFoundException;
 
 }
