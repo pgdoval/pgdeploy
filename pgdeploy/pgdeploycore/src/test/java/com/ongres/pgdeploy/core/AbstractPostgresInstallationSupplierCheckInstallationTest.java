@@ -24,8 +24,8 @@
  */
 package com.ongres.pgdeploy.core;
 
-import com.ongres.pgdeploy.core.exceptions.NonWritableDestinationException;
-import com.ongres.pgdeploy.core.exceptions.UnreachableBinariesException;
+import com.ongres.pgdeploy.core.exceptions.BadInstallationException;
+import com.ongres.pgdeploy.core.exceptions.ExtraFoldersFoundException;
 import org.junit.After;
 import org.junit.Test;
 
@@ -37,24 +37,12 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.fail;
 
-public class AbstractPostgresInstallationSupplierUnzipFoldersTest {
+public class AbstractPostgresInstallationSupplierCheckInstallationTest {
 
   private PostgresInstallationSupplier supplier;
-  private Path path;
-
-
-  private Path writablePath = Paths.get("installation");
-
-  private Path nonWritablePath = Paths.get("nonWritable");
-
-
-  private List<String> existingZip =
-          Arrays.asList("src","test","resources","binaries", "bin.zip");
-
-  private List<String> nonExistingZip =
-          Arrays.asList("qwerqwer", "bin.zip");
+  private Path path = Paths.get("installation");
 
 
   private List<PostgresInstallationFolder> allFolders =
@@ -70,13 +58,29 @@ public class AbstractPostgresInstallationSupplierUnzipFoldersTest {
 
 
 
-  private PostgresInstallationSupplier setup(List<String> folders) {
-
+  private PostgresInstallationSupplier createSupplier() {
+    List<String> folders =
+        Arrays.asList("src", "test", "resources", "binaries", "bin.zip");
     RelativeRoute route = new RelativeRoute(folders);
 
     return new MockedPostgresInstallationSupplier(
             0, 0, 0, Platform.LINUX, null, route);
+  }
 
+  private void prepareFolders(List<PostgresInstallationFolder> folders)
+  {
+    try {
+      Files.createDirectory(path);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    folders.forEach(folder -> {
+      try {
+        Files.createDirectory(path.resolve(folder.getStringId()));
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+    });
   }
 
   @After
@@ -103,52 +107,37 @@ public class AbstractPostgresInstallationSupplierUnzipFoldersTest {
   }
 
   @Test
-  public void unzipFoldersEverythingOk() throws Exception {
-    supplier = setup(existingZip);
+  public void checkInstallationAllInstalledAllRequested() throws Exception {
+    supplier = createSupplier();
 
-    path = writablePath;
-
-    supplier.unzipFolders(path, allFolders);
+    prepareFolders(allFolders);
     supplier.checkInstallation(path, allFolders);
-
   }
 
-  @Test(expected = UnreachableBinariesException.class)
-  public void unzipFoldersNonExistingZip() throws Exception {
-    supplier = setup(nonExistingZip);
+  @Test(expected = ExtraFoldersFoundException.class)
+  public void checkInstallationAllInstalledSomeRequested() throws Exception {
+    supplier = createSupplier();
 
-    path = writablePath;
-
-    supplier.unzipFolders(path, allFolders);
-
+    prepareFolders(allFolders);
+    supplier.checkInstallation(path, someFolders);
   }
 
-  @Test(expected = NonWritableDestinationException.class)
-  public void unzipFoldersNonWritableDestination() throws Exception {
-    supplier = setup(existingZip);
+  @Test(expected = BadInstallationException.class)
+  public void checkInstallationSomeInstalledAllRequested() throws Exception {
+    supplier = createSupplier();
 
-    path = nonWritablePath;
-
-    File nwf = nonWritablePath.toFile();
-
-    nwf.setWritable(false);
-
-    nwf.createNewFile();
-
-    supplier.unzipFolders(path, allFolders);
-
+    prepareFolders(someFolders);
+    supplier.checkInstallation(path, allFolders);
   }
 
   @Test
-  public void unzipFoldersNotAllOptions() throws Exception {
-    supplier = setup(existingZip);
+  public void checkInstallationSomeInstalledSomeRequested() throws Exception {
+    supplier = createSupplier();
 
-    path = writablePath;
-
-    supplier.unzipFolders(path, someFolders);
+    prepareFolders(someFolders);
     supplier.checkInstallation(path, someFolders);
-
   }
+
   private class MockedPostgresInstallationSupplier extends AbstractPostgresInstallationSupplier {
 
     private MockedPostgresInstallationSupplier(
