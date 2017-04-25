@@ -24,6 +24,8 @@
  */
 package com.ongres.pgdeploy.core;
 
+import com.ongres.pgdeploy.core.exceptions.NonWritableDestinationException;
+import com.ongres.pgdeploy.core.exceptions.UnreachableBinariesException;
 import org.junit.After;
 import org.junit.Test;
 
@@ -45,7 +47,7 @@ public class AbstractPostgresInstallationSupplierTest {
 
   private Path writablePath = Paths.get("installation");
 
-  private Path nonWritablePath = Paths.get("/");
+  private Path nonWritablePath = Paths.get("nonWritable");
 
 
   private List<String> existingZip =
@@ -111,6 +113,42 @@ public class AbstractPostgresInstallationSupplierTest {
 
   }
 
+  @Test(expected = UnreachableBinariesException.class)
+  public void unzipFoldersNonExistingZip() throws Exception {
+    supplier = setup(nonExistingZip);
+
+    path = writablePath;
+
+    supplier.unzipFolders(path, allFolders);
+
+  }
+
+  @Test(expected = NonWritableDestinationException.class)
+  public void unzipFoldersNonWritableDestination() throws Exception {
+    supplier = setup(existingZip);
+
+    path = nonWritablePath;
+
+    File nwf = nonWritablePath.toFile();
+
+    nwf.setWritable(false);
+
+    nwf.createNewFile();
+
+    supplier.unzipFolders(path, allFolders);
+
+  }
+
+  @Test
+  public void unzipFoldersNotAllOptions() throws Exception {
+    supplier = setup(existingZip);
+
+    path = writablePath;
+
+    supplier.unzipFolders(path, someFolders);
+    supplier.checkInstallation(path, someFolders);
+
+  }
   private class MockedPostgresInstallationSupplier extends AbstractPostgresInstallationSupplier {
 
     private MockedPostgresInstallationSupplier(

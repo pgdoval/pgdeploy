@@ -25,17 +25,12 @@
 package com.ongres.pgdeploy;
 
 import com.ongres.pgdeploy.core.AbstractPostgresInstallationSupplier;
-import com.ongres.pgdeploy.core.BadInstallationException;
-import com.ongres.pgdeploy.core.Platform;
-import com.ongres.pgdeploy.core.PostgresInstallationFolder;
+import com.ongres.pgdeploy.core.exceptions.BadInstallationException;
 import com.ongres.pgdeploy.core.PostgresInstallationSupplier;
 import com.ongres.pgdeploy.installations.PostgresInstallation;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 
 import java.io.IOException;
 import java.nio.file.Files;

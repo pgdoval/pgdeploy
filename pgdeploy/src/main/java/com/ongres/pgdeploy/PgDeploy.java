@@ -24,10 +24,10 @@
  */
 package com.ongres.pgdeploy;
 
-import com.ongres.pgdeploy.core.BadInstallationException;
 import com.ongres.pgdeploy.core.Platform;
 import com.ongres.pgdeploy.core.PostgresInstallationFolder;
 import com.ongres.pgdeploy.core.PostgresInstallationSupplier;
+import com.ongres.pgdeploy.core.exceptions.BadInstallationException;
 import com.ongres.pgdeploy.installations.PostgresInstallation;
 import net.jcip.annotations.Immutable;
 
@@ -58,13 +58,13 @@ public class PgDeploy {
 
 
   public Optional<PostgresInstallationSupplier> findSupplier(
-          int major, int minor, int revision, @Nonnull Platform platform) {
+      int major, int minor, int revision, @Nonnull Platform platform) {
     return findSupplier(major, minor, revision, platform, null);
   }
 
 
   public Optional<PostgresInstallationSupplier> findSupplier(
-          int major, int minor, int revision, @Nonnull Platform platform, String extraVersion) {
+      int major, int minor, int revision, @Nonnull Platform platform, String extraVersion) {
 
     final Iterator<PostgresInstallationSupplier> iterator = supplierCandidates.iterator();
 
@@ -83,13 +83,14 @@ public class PgDeploy {
 
 
 
-  private boolean isSupplierSuitable( PostgresInstallationSupplier supplier,
-          int major, int minor, int revision, Platform platform, String extraVersion) {
+  private boolean isSupplierSuitable(
+      PostgresInstallationSupplier supplier, int major, int minor,
+      int revision, Platform platform, String extraVersion) {
 
     boolean result = supplier.getMajorVersion() == major
-                    && supplier.getMinorVersion() == minor
-                    && supplier.getRevision() == revision
-                    && supplier.getPlatform() == platform;
+        && supplier.getMinorVersion() == minor
+        && supplier.getRevision() == revision
+        && supplier.getPlatform() == platform;
 
     if (extraVersion != null) {
       result &= (Objects.equals(supplier.getExtraVersion(), extraVersion));
@@ -100,8 +101,8 @@ public class PgDeploy {
 
 
   public PostgresInstallation install(@Nonnull PostgresInstallationSupplier supplier,
-                                      @Nonnull InstallOptions options, @Nonnull Path destination)
-          throws BadInstallationException, IOException {
+      @Nonnull InstallOptions options, @Nonnull Path destination)
+      throws BadInstallationException, IOException {
 
     List<PostgresInstallationFolder> folders = options.toFolderList();
     supplier.unzipFolders(destination, folders);

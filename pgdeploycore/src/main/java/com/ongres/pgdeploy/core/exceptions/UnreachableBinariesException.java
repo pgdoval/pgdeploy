@@ -22,31 +22,16 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.ongres.pgdeploy.core;
-
-import com.ongres.pgdeploy.core.exceptions.BadInstallationException;
-import com.ongres.pgdeploy.core.router.Router;
+package com.ongres.pgdeploy.core.exceptions;
 
 import java.io.IOException;
-import java.nio.file.Path;
-import java.util.List;
 
-public interface PostgresInstallationSupplier extends Router {
+/**
+ * Created by pablo on 25/04/17.
+ */
+public class UnreachableBinariesException extends IOException {
 
-  int getMajorVersion();
-
-  int getMinorVersion();
-
-  int getRevision();
-
-  Platform getPlatform();
-
-  String getExtraVersion();
-
-  void unzipFolders(Path destination, List<PostgresInstallationFolder> folders)
-          throws IOException;
-
-  void checkInstallation(Path destination, List<PostgresInstallationFolder> folders)
-          throws BadInstallationException;
-
+  public UnreachableBinariesException(String s) {
+    super(s);
+  }
 }

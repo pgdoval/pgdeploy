@@ -24,10 +24,14 @@
  */
 package com.ongres.pgdeploy.core;
 
+import com.ongres.pgdeploy.core.exceptions.BadInstallationException;
+import com.ongres.pgdeploy.core.exceptions.NonWritableDestinationException;
+import com.ongres.pgdeploy.core.exceptions.UnreachableBinariesException;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -37,7 +41,6 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-import java.util.zip.ZipInputStream;
 
 public abstract class AbstractPostgresInstallationSupplier implements PostgresInstallationSupplier {
 
@@ -90,7 +93,7 @@ public abstract class AbstractPostgresInstallationSupplier implements PostgresIn
       String newPath = destination.toAbsolutePath().toString();
 
       if (!new File(newPath).mkdir()) {
-        throw new IOException("Unable to create or open file: " + newPath);
+        throw new NonWritableDestinationException("Unable to create or open file: " + newPath);
       }
 
       Enumeration zipFileEntries = zip.entries();
@@ -127,6 +130,8 @@ public abstract class AbstractPostgresInstallationSupplier implements PostgresIn
           }
         }
       }
+    } catch (FileNotFoundException e) {
+      throw new UnreachableBinariesException(e.getMessage());
     }
 
   }
