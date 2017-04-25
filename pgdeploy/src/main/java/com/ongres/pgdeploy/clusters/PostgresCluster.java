@@ -27,5 +27,5 @@ package com.ongres.pgdeploy.clusters;
 /**
  * Created by pablo on 25/04/17.
  */
-public class PostgresCluster {
+public abstract class PostgresCluster {
 }

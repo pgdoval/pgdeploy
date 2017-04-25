@@ -29,6 +29,7 @@ import com.ongres.pgdeploy.core.PostgresInstallationFolder;
 import com.ongres.pgdeploy.core.PostgresInstallationSupplier;
 import com.ongres.pgdeploy.core.exceptions.BadInstallationException;
 import com.ongres.pgdeploy.core.exceptions.ExtraFoldersFoundException;
+import com.ongres.pgdeploy.installations.ConcretePostgresInstallation;
 import com.ongres.pgdeploy.installations.PostgresInstallation;
 import net.jcip.annotations.Immutable;
 
@@ -153,7 +154,7 @@ public class PgDeploy {
     supplier.unzipFolders(destination, folders);
     supplier.checkInstallation(destination, folders);
 
-    return new PostgresInstallation(supplier, destination);
+    return new ConcretePostgresInstallation(supplier, destination);
   }
 
   public static class InstallOptions {

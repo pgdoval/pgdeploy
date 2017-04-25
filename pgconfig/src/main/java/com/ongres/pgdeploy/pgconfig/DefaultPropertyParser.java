@@ -22,23 +22,10 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.ongres.pgdeploy.installations;
+package com.ongres.pgdeploy.pgconfig;
 
-import com.ongres.pgdeploy.clusters.PostgresCluster;
-import com.ongres.pgdeploy.core.router.Router;
-import net.jcip.annotations.Immutable;
-
-import java.nio.file.Path;
-
-import javax.annotation.Nonnull;
-
-@Immutable
-public abstract class PostgresInstallation {
-
-  public abstract Router getRouter();
-
-  public abstract Path getPath();
-
-  public abstract PostgresCluster createCluster(@Nonnull Path destination);
-
+/**
+ * Created by pablo on 25/04/17.
+ */
+public class DefaultPropertyParser implements PropertyParser {
 }

@@ -36,7 +36,6 @@ import org.junit.Test;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Arrays;
 
 import static org.junit.Assert.*;
@@ -54,7 +53,7 @@ public class PostgresInstallationTest {
   public void setup() {
     PostgresInstallationSupplier supplier = mock(AbstractPostgresInstallationSupplier.class);
 
-    installation = new PostgresInstallation(supplier,
+    installation = new ConcretePostgresInstallation(supplier,
         new RelativeRoute(Arrays.asList("src", "test", "resources", "installation")).asRelativePath());
 
     path = new RelativeRoute(Arrays.asList("clusters")).asRelativePath();
@@ -83,7 +82,6 @@ public class PostgresInstallationTest {
     folder.delete();
   }
 
-  @Ignore
   @Test
   public void createCluster() throws Exception {
     PostgresCluster cluster = installation.createCluster(path);

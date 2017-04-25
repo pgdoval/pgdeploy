@@ -24,21 +24,45 @@
  */
 package com.ongres.pgdeploy.installations;
 
+import com.ongres.pgdeploy.clusters.ConcretePostgresCluster;
 import com.ongres.pgdeploy.clusters.PostgresCluster;
+import com.ongres.pgdeploy.core.PostgresInstallationSupplier;
 import com.ongres.pgdeploy.core.router.Router;
-import net.jcip.annotations.Immutable;
+import com.ongres.pgdeploy.pgconfig.DefaultPropertyParser;
+import com.ongres.pgdeploy.pgconfig.PropertyParser;
 
 import java.nio.file.Path;
 
 import javax.annotation.Nonnull;
 
-@Immutable
-public abstract class PostgresInstallation {
+/**
+ * Created by pablo on 25/04/17.
+ */
+public class ConcretePostgresInstallation extends PostgresInstallation {
 
-  public abstract Router getRouter();
+  private final Router router;
+  private final Path path;
 
-  public abstract Path getPath();
+  public ConcretePostgresInstallation(Router router, Path path) {
+    this.router = router;
+    this.path = path;
+  }
 
-  public abstract PostgresCluster createCluster(@Nonnull Path destination);
+  public Router getRouter() {
+    return router;
+  }
+
+  public Path getPath() {
+    return path;
+  }
+
+  public PostgresCluster createCluster(@Nonnull Path destination) {
+
+    PropertyParser parser = (router instanceof PostgresInstallationSupplier)
+        ? (PostgresInstallationSupplier) router : new DefaultPropertyParser();
+
+    return new ConcretePostgresCluster(destination,this, parser);
+
+  }
 
 }

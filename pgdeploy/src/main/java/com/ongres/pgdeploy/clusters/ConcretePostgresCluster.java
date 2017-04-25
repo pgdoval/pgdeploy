@@ -22,23 +22,30 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.ongres.pgdeploy.installations;
+package com.ongres.pgdeploy.clusters;
 
-import com.ongres.pgdeploy.clusters.PostgresCluster;
-import com.ongres.pgdeploy.core.router.Router;
-import net.jcip.annotations.Immutable;
+import com.ongres.pgdeploy.installations.PostgresInstallation;
+import com.ongres.pgdeploy.pgconfig.PropertyParser;
 
 import java.nio.file.Path;
 
-import javax.annotation.Nonnull;
+/**
+ * Created by pablo on 25/04/17.
+ */
 
-@Immutable
-public abstract class PostgresInstallation {
+@edu.umd.cs.findbugs.annotations.SuppressFBWarnings(
+    value = "URF_UNREAD_FIELD",
+    justification = "They will be used, but not yet")
+public class ConcretePostgresCluster extends PostgresCluster {
 
-  public abstract Router getRouter();
+  private final Path directory;
+  private final PostgresInstallation installation;
+  private final PropertyParser supplier;
 
-  public abstract Path getPath();
-
-  public abstract PostgresCluster createCluster(@Nonnull Path destination);
-
+  public ConcretePostgresCluster(
+      Path directory, PostgresInstallation installation, PropertyParser supplier) {
+    this.directory = directory;
+    this.installation = installation;
+    this.supplier = supplier;
+  }
 }
