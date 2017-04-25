@@ -44,9 +44,24 @@ public interface PostgresInstallationSupplier extends Router {
 
   String getExtraVersion();
 
+  /** Unzips in the desired <tt>destination</tt> the zipped installation
+   * binaries contained in the supplier.
+   * @param destination The path where to unzip the zipped binaries
+   * @param folders The folders within the zipped binaries to be unzipped
+   * @throws IOException In case the zipped binaries are unreachable, or the
+   * destination folder is not writable.
+   */
   void unzipFolders(Path destination, List<PostgresInstallationFolder> folders)
           throws IOException;
 
+  /** Checks that the installation has been performed correctly
+   * @param destination The path where the installation is
+   * @param folders The significant folders expected to be there
+   * @throws BadInstallationException When not all the desired folders are there
+   * @throws ExtraFoldersFoundException When there are significant folders in the
+   *     <tt>destination</tt> folder other than the ones desired. This may be a desirable behaviour
+   *     in case there was a previous installation, so it is kept as a different exception.
+   */
   void checkInstallation(Path destination, List<PostgresInstallationFolder> folders)
       throws BadInstallationException, ExtraFoldersFoundException;
 
