@@ -28,6 +28,7 @@ import com.ongres.pgdeploy.core.Platform;
 import com.ongres.pgdeploy.core.PostgresInstallationFolder;
 import com.ongres.pgdeploy.core.PostgresInstallationSupplier;
 import com.ongres.pgdeploy.core.exceptions.BadInstallationException;
+import com.ongres.pgdeploy.core.exceptions.ExtraFoldersFoundException;
 import com.ongres.pgdeploy.installations.PostgresInstallation;
 import net.jcip.annotations.Immutable;
 
@@ -42,6 +43,11 @@ import java.util.ServiceLoader;
 
 import javax.annotation.Nonnull;
 
+/**
+ * This class represents the entry point to the system. It allows for searching
+ * for a specific Postgres version so, if its binaries are registered on the system,
+ * the user will be able to install it.
+ * */
 @Immutable
 public class PgDeploy {
 
@@ -57,12 +63,32 @@ public class PgDeploy {
 
 
 
+  /** Searches the classpath seeking for an implementation of <tt>PostgresInstallationSupplier</tt>
+  * that complies to the requirements specified by the parameters
+   * @param major Postgres major version (9 for 9.3.2)
+   * @param minor Postgres minor version (3 for 9.3.2)
+   * @param revision Postgres revision (2 for 9.3.2)
+   * @param platform The OS platform, represented by the enum {@link Platform Platform}
+   * @return An optional value containing the supplier found, or <tt>Optional.empty()</tt> if
+   *     no complying supplier has been found.
+   */
   public Optional<PostgresInstallationSupplier> findSupplier(
       int major, int minor, int revision, @Nonnull Platform platform) {
     return findSupplier(major, minor, revision, platform, null);
   }
 
 
+  /** Searches the classpath seeking for an implementation of <tt>PostgresInstallationSupplier</tt>
+   * that complies to the requirements specified by the parameters
+   * @param major Postgres major version (9 for 9.3.2)
+   * @param minor Postgres minor version (3 for 9.3.2)
+   * @param revision Postgres revision (2 for 9.3.2)
+   * @param platform The OS platform, represented by the enum {@link Platform Platform}
+   * @param extraVersion This field provides a way for the user to tag his versions and find
+   *                     them with the specific tag.
+   * @return An optional value containing the supplier found, or <tt>Optional.empty()</tt> if
+   *     no complying supplier has been found.
+   */
   public Optional<PostgresInstallationSupplier> findSupplier(
       int major, int minor, int revision, @Nonnull Platform platform, String extraVersion) {
 
@@ -100,9 +126,28 @@ public class PgDeploy {
   }
 
 
-  public PostgresInstallation install(@Nonnull PostgresInstallationSupplier supplier,
-      @Nonnull InstallOptions options, @Nonnull Path destination)
-      throws BadInstallationException, IOException {
+  /** Installs a specific postgres version in a folder
+   * @param supplier the <tt>PostgresInstallationSupplier</tt>, typically obtained via
+   *                 {@link PgDeploy#findSupplier(int, int, int, Platform) findSupplier}.
+   * @param options Instance of the <tt>InstallOptions</tt> inner class specifying which
+   *                folders in the postgres folder will be copied to the installation folder. Both
+   *                <tt>bin</tt> and <tt>lib</tt> folders are mandatory, while <tt>share</tt> and
+    *               <tt>include</tt> are optional.
+   * @param destination The path where postgres binaries will be copied
+   * @return An instance of {@link PostgresInstallation} that is pointed to the
+   *     <tt>destination</tt> folder
+   * @throws BadInstallationException When not all the desired folders have been copied
+   * @throws ExtraFoldersFoundException When there are significant folders in the
+   *     <tt>destination</tt> folder other than the ones desired. This may be a desirable behaviour
+   *     in case there was a previous installation, so it is kept as a different exception.
+   * @throws IOException In case other I/O errors occur: the source folder in the supplier
+   *     doesn't exist, or the destination folder is not writable
+   */
+  public PostgresInstallation install(
+      @Nonnull PostgresInstallationSupplier supplier,
+      @Nonnull InstallOptions options,
+      @Nonnull Path destination)
+      throws BadInstallationException, ExtraFoldersFoundException, IOException {
 
     List<PostgresInstallationFolder> folders = options.toFolderList();
     supplier.unzipFolders(destination, folders);
@@ -119,15 +164,25 @@ public class PgDeploy {
     private InstallOptions() {
     }
 
+    /**
+     * @return A basic InstallOptions instance representing mandatory
+     *     folders <tt>bin</tt> and <tt>lib</tt>
+     */
     public static InstallOptions binaries() {
       return new InstallOptions();
     }
 
+    /** Add the <tt>share</tt> folder and return itself
+     * @return Itself
+     */
     public InstallOptions withShare() {
       share = true;
       return this;
     }
 
+    /** Add the <tt>include</tt> folder and return itself
+     * @return Itself
+     */
     public InstallOptions withInclude() {
       include = true;
       return this;

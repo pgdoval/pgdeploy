@@ -24,14 +24,13 @@
  */
 package com.ongres.pgdeploy.core.exceptions;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
 /**
  * Created by pablo on 25/04/17.
  */
-public class ExtraFoldersFoundException extends IOException {
+public class ExtraFoldersFoundException extends Exception {
 
   public ExtraFoldersFoundException(String s) {
     super(s);
