@@ -22,14 +22,28 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.ongres.pgdeploy.core.router;
+package com.ongres.pgdeploy.installations;
+
 
 import java.nio.file.Path;
 
-public interface Router {
+/**
+ * Created by pablo on 25/04/17.
+ */
+public class BadClusterCreationException extends Exception {
 
-  Path routeToPostgresqlConf(Path basePath);
+  public BadClusterCreationException(String s) {
+    super(s);
+  }
 
-  Path routeToPgHbaConf(Path basePath);
+  public static BadClusterCreationException fromPath(Path path) {
 
+    StringBuilder sb = new StringBuilder();
+
+    sb.append("File ");
+    sb.append(path.toString());
+    sb.append(" should have been created, but it hasn't");
+
+    return new BadClusterCreationException(sb.toString());
+  }
 }

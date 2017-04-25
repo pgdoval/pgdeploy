@@ -82,6 +82,7 @@ public class PostgresInstallationTest {
     folder.delete();
   }
 
+  @Ignore
   @Test
   public void createCluster() throws Exception {
     PostgresCluster cluster = installation.createCluster(path);

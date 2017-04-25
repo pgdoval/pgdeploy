@@ -31,6 +31,7 @@ import com.ongres.pgdeploy.core.router.Router;
 import com.ongres.pgdeploy.pgconfig.DefaultPropertyParser;
 import com.ongres.pgdeploy.pgconfig.PropertyParser;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 import javax.annotation.Nonnull;
@@ -56,13 +57,27 @@ public class ConcretePostgresInstallation extends PostgresInstallation {
     return path;
   }
 
-  public PostgresCluster createCluster(@Nonnull Path destination) {
+  public PostgresCluster createCluster(@Nonnull Path destination)
+      throws BadClusterCreationException {
+
+    checkCluster(destination);
 
     PropertyParser parser = (router instanceof PostgresInstallationSupplier)
         ? (PostgresInstallationSupplier) router : new DefaultPropertyParser();
 
     return new ConcretePostgresCluster(destination,this, parser);
 
+  }
+
+  protected void checkCluster(@Nonnull Path destination) throws BadClusterCreationException {
+    throwIfNotExists(router.routeToPgHbaConf(destination));
+    throwIfNotExists(router.routeToPostgresqlConf(destination));
+  }
+
+  protected void throwIfNotExists(@Nonnull Path toCheck) throws BadClusterCreationException {
+    if (!Files.exists(toCheck)) {
+      throw BadClusterCreationException.fromPath(toCheck);
+    }
   }
 
 }

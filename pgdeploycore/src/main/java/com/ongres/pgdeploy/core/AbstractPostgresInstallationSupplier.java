@@ -28,6 +28,7 @@ import com.ongres.pgdeploy.core.exceptions.BadInstallationException;
 import com.ongres.pgdeploy.core.exceptions.ExtraFoldersFoundException;
 import com.ongres.pgdeploy.core.exceptions.NonWritableDestinationException;
 import com.ongres.pgdeploy.core.exceptions.UnreachableBinariesException;
+import com.ongres.pgdeploy.core.router.DefaultRouter;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -187,4 +188,16 @@ public abstract class AbstractPostgresInstallationSupplier implements PostgresIn
       throw ExtraFoldersFoundException.fromExpectedAndFound(requested,extraFound);
     }
   }
+
+  @Override
+  public Path routeToPostgresqlConf(Path basePath) {
+    return DefaultRouter.getInstance().routeToPostgresqlConf(basePath);
+  }
+
+  @Override
+  public Path routeToPgHbaConf(Path basePath) {
+    return DefaultRouter.getInstance().routeToPgHbaConf(basePath);
+  }
+
+
 }

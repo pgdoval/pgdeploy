@@ -39,6 +39,7 @@ public abstract class PostgresInstallation {
 
   public abstract Path getPath();
 
-  public abstract PostgresCluster createCluster(@Nonnull Path destination);
+  public abstract PostgresCluster createCluster(@Nonnull Path destination)
+      throws BadClusterCreationException;
 
 }

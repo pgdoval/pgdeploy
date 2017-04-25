@@ -24,12 +24,40 @@
  */
 package com.ongres.pgdeploy.core.router;
 
+import com.ongres.pgdeploy.core.RelativeRoute;
+
 import java.nio.file.Path;
+import java.util.Arrays;
 
-public interface Router {
+/**
+ * Created by pablo on 25/04/17.
+ */
+public class DefaultRouter implements Router {
 
-  Path routeToPostgresqlConf(Path basePath);
+  protected RelativeRoute postgresqlConfRoute =
+      new RelativeRoute(Arrays.asList("postgresql.conf"));
+  protected RelativeRoute pgHbaConfRoute = new RelativeRoute(Arrays.asList("pg_hba.conf"));
 
-  Path routeToPgHbaConf(Path basePath);
+  private DefaultRouter() {
+  }
 
+  public static DefaultRouter getInstance() {
+    return SingletonHolder.INSTANCE;
+  }
+
+
+  @Override
+  public Path routeToPostgresqlConf(Path basePath) {
+    return postgresqlConfRoute.asPath(basePath);
+  }
+
+  @Override
+  public Path routeToPgHbaConf(Path basePath) {
+    return pgHbaConfRoute.asPath(basePath);
+  }
+
+
+  private static class SingletonHolder {
+    private static final DefaultRouter INSTANCE = new DefaultRouter();
+  }
 }
