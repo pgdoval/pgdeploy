@@ -24,10 +24,13 @@
  */
 package com.ongres.pgdeploy.installations;
 
+import com.ongres.pgdeploy.clusters.PostgresCluster;
 import com.ongres.pgdeploy.core.router.Router;
 import net.jcip.annotations.Immutable;
 
 import java.nio.file.Path;
+
+import javax.annotation.Nonnull;
 
 @Immutable
 public class PostgresInstallation {
@@ -46,5 +49,9 @@ public class PostgresInstallation {
 
   public Path getPath() {
     return path;
+  }
+
+  public PostgresCluster createCluster(@Nonnull Path destination) {
+    return null;
   }
 }

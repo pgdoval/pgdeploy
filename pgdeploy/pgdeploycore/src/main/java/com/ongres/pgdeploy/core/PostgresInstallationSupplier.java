@@ -49,7 +49,7 @@ public interface PostgresInstallationSupplier extends Router {
    * @param destination The path where to unzip the zipped binaries
    * @param folders The folders within the zipped binaries to be unzipped
    * @throws IOException In case the zipped binaries are unreachable, or the
-   * destination folder is not writable.
+   *     destination folder is not writable.
    */
   void unzipFolders(Path destination, List<PostgresInstallationFolder> folders)
           throws IOException;

@@ -27,6 +27,7 @@ package com.ongres.pgdeploy;
 import com.ongres.pgdeploy.core.AbstractPostgresInstallationSupplier;
 import com.ongres.pgdeploy.core.exceptions.BadInstallationException;
 import com.ongres.pgdeploy.core.PostgresInstallationSupplier;
+import com.ongres.pgdeploy.core.exceptions.ExtraFoldersFoundException;
 import com.ongres.pgdeploy.installations.PostgresInstallation;
 import org.junit.After;
 import org.junit.Before;
@@ -94,6 +95,8 @@ public class PgDeployInstallTest {
       e.printStackTrace();
     } catch (IOException e) {
       e.printStackTrace();
+    } catch (ExtraFoldersFoundException e) {
+      e.printStackTrace();
     }
 
     //then
@@ -109,6 +112,8 @@ public class PgDeployInstallTest {
     } catch (IOException e) {
       e.printStackTrace();
     } catch (BadInstallationException e) {
+      e.printStackTrace();
+    } catch (ExtraFoldersFoundException e) {
       e.printStackTrace();
     }
 
