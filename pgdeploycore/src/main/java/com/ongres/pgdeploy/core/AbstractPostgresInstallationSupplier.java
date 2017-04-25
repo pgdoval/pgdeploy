@@ -101,9 +101,8 @@ public abstract class AbstractPostgresInstallationSupplier implements PostgresIn
 
       Enumeration zipFileEntries = zip.entries();
 
-      // Process each entry
       while (zipFileEntries.hasMoreElements()) {
-        // grab a zip file entry
+
         ZipEntry entry = (ZipEntry) zipFileEntries.nextElement();
         String currentEntry = entry.getName();
 
@@ -119,8 +118,9 @@ public abstract class AbstractPostgresInstallationSupplier implements PostgresIn
         destinationParent.mkdirs();
 
         if (!entry.isDirectory()) {
-          try (BufferedInputStream is = new BufferedInputStream(zip
-              .getInputStream(entry))) {
+          try (BufferedInputStream is = new BufferedInputStream(
+              zip.getInputStream(entry))) {
+
             int currentByte;
             // establish buffer for writing file
             byte[] data = new byte[buffer];
