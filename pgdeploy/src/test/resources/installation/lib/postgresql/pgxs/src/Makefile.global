@@ -59,8 +59,8 @@ endif
 endif
 else # not PGXS
 vpath_build = no
-abs_top_builddir = /home/pablo/pg_binaries/postgresql-9.6.2
-abs_top_srcdir = /home/pablo/pg_binaries/postgresql-9.6.2
+abs_top_builddir = /home/pablo/pg-install/postgresql-9.6.2
+abs_top_srcdir = /home/pablo/pg-install/postgresql-9.6.2
 
 ifneq ($(vpath_build),yes)
 top_srcdir = $(top_builddir)
