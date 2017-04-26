@@ -39,23 +39,23 @@
 package com.ongres.pgdeploy.installations;
 
 import com.ongres.pgdeploy.clusters.PostgresCluster;
-import com.ongres.pgdeploy.core.AbstractPostgresInstallationSupplier;
-import com.ongres.pgdeploy.core.PostgresInstallationSupplier;
 import com.ongres.pgdeploy.core.RelativeRoute;
 import com.ongres.pgdeploy.core.router.DefaultRouter;
 import com.ongres.pgdeploy.core.router.Router;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.attribute.FileAttribute;
+import java.nio.file.attribute.PosixFilePermission;
+import java.nio.file.attribute.PosixFilePermissions;
 import java.util.Arrays;
+import java.util.Set;
 
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.mock;
 
 /**
  * Created by pablo on 25/04/17.
@@ -64,6 +64,8 @@ public class PostgresInstallationTest {
 
   private PostgresInstallation installation;
   private Path path;
+
+  private Path twoLevelPath = new RelativeRoute(Arrays.asList("clusters", "cl1")).asRelativePath();
 
   @Before
   public void setup() {
@@ -100,8 +102,45 @@ public class PostgresInstallationTest {
 
 
   @Test
-  public void createCluster() throws Exception {
+  public void createClusterInNonExistentFolder() throws Exception {
     PostgresCluster cluster = installation.createCluster(path);
+    assertNotNull(cluster);
+  }
+
+  @Test
+  public void createClusterInEmptyFolder() throws Exception {
+    Files.createDirectory(path);
+
+    PostgresCluster cluster = installation.createCluster(path);
+    assertNotNull(cluster);
+  }
+
+  @Test
+  public void createClusterInNonWritableFolder() throws Exception {
+
+    Set<PosixFilePermission> perms =
+        PosixFilePermissions.fromString("rw-------");
+    FileAttribute<Set<PosixFilePermission>> attr =
+        PosixFilePermissions.asFileAttribute(perms);
+    Files.createDirectory(path, attr);
+
+    PostgresCluster cluster = installation.createCluster(path);
+    assertNotNull(cluster);
+  }
+
+  @Test(expected = ClusterDirectoryNotEmptyException.class)
+  public void createClusterInNonEmptyFolder() throws Exception {
+
+    Files.createDirectory(path);
+    Files.createFile(path.resolve("a.txt"));
+
+    PostgresCluster cluster = installation.createCluster(path);
+    assertNotNull(cluster);
+  }
+
+  @Test
+  public void createClusterInNonExistingTwoLevelFolder() throws Exception {
+    PostgresCluster cluster = installation.createCluster(twoLevelPath);
     assertNotNull(cluster);
   }
 

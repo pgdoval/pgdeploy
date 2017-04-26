@@ -38,46 +38,25 @@
  */
 package com.ongres.pgdeploy.installations;
 
-import com.ongres.pgdeploy.core.RelativeRoute;
-import com.ongres.pgdeploy.core.router.DefaultRouter;
-import com.ongres.pgdeploy.core.router.Router;
-import org.junit.Before;
-import org.junit.Test;
-
 import java.nio.file.Path;
-import java.util.Arrays;
-
-import static org.mockito.Mockito.mock;
 
 /**
- * Created by pablo on 26/04/17.
+ * Created by pablo on 25/04/17.
  */
-public class ConcretePostgresInstallationCheckClusterTest {
+public class ClusterDirectoryNotEmptyException extends Exception {
 
-  private ConcretePostgresInstallation installation;
-
-  private Path realClusterPath= new RelativeRoute(Arrays.asList("src", "test", "resources", "cluster")).asRelativePath();
-  private Path nonClusterPath= new RelativeRoute(Arrays.asList("src", "test", "resources", "installation")).asRelativePath();
-
-  @Before
-  public void setup() {
-    Router router = DefaultRouter.getInstance();
-
-    installation = new ConcretePostgresInstallation(router,
-        new RelativeRoute(Arrays.asList("src", "test", "resources", "installation")).asRelativePath());
-
-
+  public ClusterDirectoryNotEmptyException(String s) {
+    super(s);
   }
 
-  @Test
-  public void checkRealCluster() throws Exception {
-    installation.checkClusterIsFull(realClusterPath);
+  public static ClusterDirectoryNotEmptyException fromPath(Path path) {
+
+    StringBuilder sb = new StringBuilder();
+
+    sb.append("Cluster directory ");
+    sb.append(path.toString());
+    sb.append(" should be empty or not exist");
+
+    return new ClusterDirectoryNotEmptyException(sb.toString());
   }
-
-
-  @Test(expected = BadClusterCreationException.class)
-  public void checkNonCluster() throws Exception {
-    installation.checkClusterIsFull(nonClusterPath);
-  }
-
 }

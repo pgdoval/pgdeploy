@@ -33,8 +33,12 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.attribute.FileAttribute;
+import java.nio.file.attribute.PosixFilePermission;
+import java.nio.file.attribute.PosixFilePermissions;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 public class AbstractPostgresInstallationSupplierUnzipFoldersTest {
 
@@ -48,21 +52,21 @@ public class AbstractPostgresInstallationSupplierUnzipFoldersTest {
 
 
   private List<String> existingZip =
-          Arrays.asList("src", "test", "resources", "binaries", "bin.zip");
+      Arrays.asList("src", "test", "resources", "binaries", "bin.zip");
 
   private List<String> nonExistingZip =
-          Arrays.asList("qwerqwer", "bin.zip");
+      Arrays.asList("qwerqwer", "bin.zip");
 
 
   private List<PostgresInstallationFolder> allFolders =
-          Arrays.asList(PostgresInstallationFolder.BIN,
-                  PostgresInstallationFolder.INCLUDE,
-                  PostgresInstallationFolder.LIB,
-                  PostgresInstallationFolder.SHARE);
+      Arrays.asList(PostgresInstallationFolder.BIN,
+          PostgresInstallationFolder.INCLUDE,
+          PostgresInstallationFolder.LIB,
+          PostgresInstallationFolder.SHARE);
 
   private List<PostgresInstallationFolder> someFolders =
-          Arrays.asList(PostgresInstallationFolder.BIN,
-                  PostgresInstallationFolder.LIB);
+      Arrays.asList(PostgresInstallationFolder.BIN,
+          PostgresInstallationFolder.LIB);
 
 
 
@@ -72,7 +76,7 @@ public class AbstractPostgresInstallationSupplierUnzipFoldersTest {
     RelativeRoute route = new RelativeRoute(folders);
 
     return new MockedPostgresInstallationSupplier(
-            0, 0, 0, Platform.LINUX, null, route);
+        0, 0, 0, Platform.LINUX, null, route);
 
   }
 
@@ -126,11 +130,12 @@ public class AbstractPostgresInstallationSupplierUnzipFoldersTest {
 
     path = nonWritablePath;
 
-    File nwf = nonWritablePath.toFile();
 
-    nwf.setWritable(false);
-
-    nwf.createNewFile();
+    Set<PosixFilePermission> perms =
+        PosixFilePermissions.fromString("rw-rw-rw-");
+    FileAttribute<Set<PosixFilePermission>> attr =
+        PosixFilePermissions.asFileAttribute(perms);
+    Files.createDirectory(path, attr);
 
     supplier.unzipFolders(path, allFolders);
 
@@ -149,8 +154,8 @@ public class AbstractPostgresInstallationSupplierUnzipFoldersTest {
   private class MockedPostgresInstallationSupplier extends AbstractPostgresInstallationSupplier {
 
     private MockedPostgresInstallationSupplier(
-            int majorVersion, int minorVersion, int revision,
-            Platform platform, String extraVersion, RelativeRoute relativeRoute) {
+        int majorVersion, int minorVersion, int revision,
+        Platform platform, String extraVersion, RelativeRoute relativeRoute) {
       this.majorVersion = majorVersion;
       this.minorVersion = minorVersion;
       this.revision = revision;
