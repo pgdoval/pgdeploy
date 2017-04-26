@@ -22,50 +22,14 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-/*
- * This copy of Woodstox XML processor is licensed under the
- * Apache (Software) License, version 2.0 ("the License").
- * See the License for details about distribution rights, and the
- * specific rights regarding derivate works.
- *
- * You may obtain a copy of the License at:
- *
- * http://www.apache.org/licenses/
- *
- * A copy is also included in the downloadable source code package
- * containing Woodstox, in file "ASL2.0", under the same directory
- * as this file.
- */
-package com.ongres.pgdeploy.clusters;
-
-import com.ongres.pgdeploy.pgconfig.PostgresConfig;
-
-import java.io.File;
+package com.ongres.pgdeploy.pgconfig;
 
 /**
- * Created by pablo on 25/04/17.
+ * Created by pablo on 26/04/17.
  */
-public abstract class PostgresCluster {
+public class PostgresConfig {
 
-  public abstract void start();
+  public static class Builder {
 
-  public abstract void stop();
-
-  public abstract Status status();
-
-  public abstract void config(PostgresConfig config);
-
-  public abstract PostgresConfig.Builder createConfigBuilder();
-
-  public abstract void setPgHbaConf(String content);
-
-  public abstract void setPgHbaConf(File originalFile);
-
-
-  public enum Status {
-    START,
-    STOP,
-    RESTART
   }
-
 }

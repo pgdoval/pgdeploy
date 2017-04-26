@@ -39,8 +39,10 @@
 package com.ongres.pgdeploy.clusters;
 
 import com.ongres.pgdeploy.installations.PostgresInstallation;
+import com.ongres.pgdeploy.pgconfig.PostgresConfig;
 import com.ongres.pgdeploy.pgconfig.PropertyParser;
 
+import java.io.File;
 import java.nio.file.Path;
 
 /**
@@ -61,5 +63,40 @@ public class ConcretePostgresCluster extends PostgresCluster {
     this.directory = directory;
     this.installation = installation;
     this.supplier = supplier;
+  }
+
+  @Override
+  public void start() {
+
+  }
+
+  @Override
+  public void stop() {
+
+  }
+
+  @Override
+  public Status status() {
+    return null;
+  }
+
+  @Override
+  public void config(PostgresConfig config) {
+
+  }
+
+  @Override
+  public PostgresConfig.Builder createConfigBuilder() {
+    return null;
+  }
+
+  @Override
+  public void setPgHbaConf(String content) {
+
+  }
+
+  @Override
+  public void setPgHbaConf(File originalFile) {
+
   }
 }
