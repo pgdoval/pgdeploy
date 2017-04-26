@@ -200,4 +200,10 @@ public abstract class AbstractPostgresInstallationSupplier implements PostgresIn
   }
 
 
+  @Override
+  public Path routeToInitDb(Path basePath) {
+    return DefaultRouter.getInstance().routeToInitDb(basePath);
+  }
+
+
 }

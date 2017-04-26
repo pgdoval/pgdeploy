@@ -11,6 +11,7 @@
         <module>pgdeploy</module>
         <module>pgconfig</module>
         <module>pgdeploycore</module>
+        <module>wrappers</module>
     </modules>
     <packaging>pom</packaging>
 

@@ -22,16 +22,32 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.ongres.pgdeploy.core.router;
+package com.ongres.pgdeploy.wrappers;
 
+import java.io.IOException;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 
-public interface Router {
+/**
+ * Created by pablo on 26/04/17.
+ */
+public class InitDbWrapper {
 
-  Path routeToPostgresqlConf(Path basePath);
+  public static void run(Path initDbPath, Path clusterPath)
+      throws IOException, InterruptedException {
 
-  Path routeToPgHbaConf(Path basePath);
+    final String message = "initDB file "
+        + initDbPath.toAbsolutePath().toString()
+        + " not found";
 
-  Path routeToInitDb(Path basePath);
+    List<String> args = new ArrayList<>(4);
 
+    args.add("-D");
+    args.add(clusterPath.toString());
+    args.add("-E");
+    args.add("UTF-8");
+
+    ProcessBuilderWrapper.runProcess(initDbPath, message, args, 40);
+  }
 }

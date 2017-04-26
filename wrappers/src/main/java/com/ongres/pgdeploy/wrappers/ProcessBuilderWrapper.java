@@ -22,16 +22,40 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.ongres.pgdeploy.core.router;
+package com.ongres.pgdeploy.wrappers;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
-public interface Router {
+/**
+ * Created by pablo on 26/04/17.
+ */
+public class ProcessBuilderWrapper {
 
-  Path routeToPostgresqlConf(Path basePath);
+  static boolean runProcess(
+      Path pathToCommand, String exceptionMessage, List<String> arguments, int secondsToWait)
+      throws IOException, InterruptedException {
 
-  Path routeToPgHbaConf(Path basePath);
+    if (!Files.exists(pathToCommand)) {
+      throw new IOException(exceptionMessage);
+    }
 
-  Path routeToInitDb(Path basePath);
+    List<String> args = new ArrayList<>();
+    args.add(pathToCommand.toAbsolutePath().toString());
+    args.addAll(arguments);
+
+    ProcessBuilder processBuilder = new ProcessBuilder().command(args);
+
+    Process process = processBuilder.start();
+
+    process.waitFor(secondsToWait, TimeUnit.SECONDS);
+
+    return (process.exitValue() == 0);
+  }
 
 }
