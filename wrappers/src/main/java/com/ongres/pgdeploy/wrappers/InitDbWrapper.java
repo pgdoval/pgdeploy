@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by pablo on 26/04/17.
@@ -48,6 +49,9 @@ public class InitDbWrapper {
     args.add("-E");
     args.add("UTF-8");
 
-    ProcessBuilderWrapper.runProcess(initDbPath, message, args, 40);
+    Process process = ProcessBuilderWrapper.runProcess(initDbPath, message, args);
+
+    process.waitFor(40, TimeUnit.SECONDS);
+
   }
 }

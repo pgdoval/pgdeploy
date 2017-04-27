@@ -24,8 +24,13 @@
  */
 package com.ongres.pgdeploy.wrappers;
 
+import com.ongres.pgdeploy.wrappers.exceptions.BadProcessExecutionException;
+
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -35,10 +40,10 @@ import java.util.concurrent.TimeUnit;
 /**
  * Created by pablo on 26/04/17.
  */
-public class ProcessBuilderWrapper {
+class ProcessBuilderWrapper {
 
-  static boolean runProcess(
-      Path pathToCommand, String exceptionMessage, List<String> arguments, int secondsToWait)
+  static Process runProcess(
+      Path pathToCommand, String exceptionMessage, List<String> arguments)
       throws IOException, InterruptedException {
 
     if (!Files.exists(pathToCommand)) {
@@ -51,11 +56,66 @@ public class ProcessBuilderWrapper {
 
     ProcessBuilder processBuilder = new ProcessBuilder().command(args);
 
-    Process process = processBuilder.start();
-
-    process.waitFor(secondsToWait, TimeUnit.SECONDS);
-
-    return (process.exitValue() == 0);
+    return processBuilder.start();
   }
 
+
+  static String getOutputFromProcess(Process process) throws IOException {
+    return fromStream(process.getInputStream());
+  }
+
+  static String getErrorOutputFromProcess(Process process) throws IOException {
+    return fromStream(process.getErrorStream());
+  }
+
+  static void throwIfOutputContainsErrors(String output, String badWord, String processDescription)
+      throws BadProcessExecutionException {
+
+    if (!output.contains(badWord)) {
+      return;
+    }
+
+    StringBuilder sb = new StringBuilder();
+
+    sb.append("The process ");
+    sb.append(processDescription);
+    sb.append(" failed, this is the output");
+    sb.append(output);
+
+    throw new BadProcessExecutionException(sb.toString());
+  }
+
+  static void throwIfErrorOutputContainsErrors(String output, String processDescription)
+      throws BadProcessExecutionException {
+
+    if (output.isEmpty()) {
+      return;
+    }
+
+    StringBuilder sb = new StringBuilder();
+
+    sb.append("The process ");
+    sb.append(processDescription);
+    sb.append(" failed, this is the output:\n");
+    sb.append(output);
+
+    throw new BadProcessExecutionException(sb.toString());
+  }
+
+
+  private static String fromStream(InputStream is) throws IOException {
+    BufferedReader reader =
+        new BufferedReader(new InputStreamReader(is, "UTF-8"));
+
+
+    StringBuilder builder = new StringBuilder();
+    String line;
+
+    while ( (line = reader.readLine()) != null) {
+      builder.append(line);
+      builder.append(System.getProperty("line.separator"));
+    }
+
+    return builder.toString();
+  }
 }

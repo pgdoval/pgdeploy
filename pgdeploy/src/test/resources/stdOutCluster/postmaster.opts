@@ -1,0 +1,1 @@
+/home/pablo/dev/pgjw/pgdeployparent/pgdeploy/pgdeploy/src/test/resources/installation/bin/postgres "-D" "../pgdeploy/src/test/resources/stdOutCluster"
