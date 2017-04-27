@@ -30,7 +30,6 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Nullable;
 
@@ -48,13 +47,19 @@ public class PgCtlWrapper {
   private static final String descriptionFirstPart = "pg_ctl - ";
 
   private static final String activeClusterStart = "pg_ctl: server is running";
-  private static final String stoppedClusterStart = "pg_ctl: no server running";
 
+  private Path pgCtlPath;
+  private Path clusterPath;
 
-  public static Status status(Path pgCtlPath, Path clusterPath, @Nullable String logfile)
+  public PgCtlWrapper(Path pgCtlPath, Path clusterPath) {
+    this.pgCtlPath = pgCtlPath;
+    this.clusterPath = clusterPath;
+  }
+
+  public Status status(@Nullable String logFile)
       throws IOException, InterruptedException, BadProcessExecutionException {
 
-    String output = getProcessOutput(pgCtlPath, clusterPath, logfile, status);
+    String output = getProcessOutput(status, logFile);
 
     if (output.startsWith(activeClusterStart)) {
       return Status.ACTIVE;
@@ -65,13 +70,13 @@ public class PgCtlWrapper {
   }
 
 
-  public static void start(Path pgCtlPath, Path clusterPath, @Nullable String logfile)
+  public void start(@Nullable String logFile)
       throws IOException, InterruptedException, BadProcessExecutionException {
 
     try {
-      getProcessOutput(pgCtlPath, clusterPath, logfile, start);
+      getProcessOutput(start, logFile);
     } catch (InterruptedException e) {
-      if (status(pgCtlPath,clusterPath,logfile) != Status.ACTIVE) {
+      if (status(null) != Status.ACTIVE) {
         throw e;
       }
     }
@@ -79,20 +84,19 @@ public class PgCtlWrapper {
   }
 
 
-  public static void stop(Path pgCtlPath, Path clusterPath, @Nullable String logfile)
+  public void stop(@Nullable String logFile)
       throws IOException, InterruptedException, BadProcessExecutionException {
 
-    getProcessOutput(pgCtlPath, clusterPath, logfile, stop);
+    getProcessOutput(stop, logFile);
   }
 
 
 
 
-  private static String getProcessOutput(
-      Path pgCtlPath, Path clusterPath, @Nullable String logfile, String command)
+  private String getProcessOutput( String command, @Nullable String logFile)
       throws IOException, InterruptedException, BadProcessExecutionException {
 
-    Process process = getProcess(pgCtlPath, clusterPath, logfile, command);
+    Process process = getProcess(command, logFile);
 
     String output = ProcessBuilderWrapper.getOutputFromProcess(process);
     String errorOutput = ProcessBuilderWrapper.getErrorOutputFromProcess(process);
@@ -105,8 +109,7 @@ public class PgCtlWrapper {
   }
 
 
-  private static Process getProcess(
-      Path pgCtlPath, Path clusterPath, @Nullable String logfile, String command)
+  private Process getProcess(String command, @Nullable String logFile)
       throws IOException, InterruptedException {
 
     final String message = "pg_ctl file "
@@ -118,9 +121,9 @@ public class PgCtlWrapper {
     args.add("-D");
     args.add(clusterPath.toString());
 
-    if (logfile != null) {
+    if (logFile != null) {
       args.add("-l");
-      args.add(logfile);
+      args.add(logFile);
     }
 
     args.add(command);

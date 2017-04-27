@@ -80,4 +80,6 @@ public class ConcretePostgresInstallationCheckClusterTest {
     installation.checkClusterIsFull(nonClusterPath);
   }
 
+
+
 }

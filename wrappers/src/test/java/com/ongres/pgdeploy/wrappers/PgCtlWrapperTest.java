@@ -57,9 +57,11 @@ public class PgCtlWrapperTest {
   private Path pgCtlPath =
       Paths.get("../pgdeploy/src/test/resources/installation/bin/pg_ctl");
 
+  private PgCtlWrapper pgCtlWrapper;
 
   @Before
   public void cleanBefore() {
+    pgCtlWrapper = new PgCtlWrapper(pgCtlPath, clusterPath);
     clean();
   }
 
@@ -69,9 +71,10 @@ public class PgCtlWrapperTest {
   }
 
   private void clean() {
+
     try {
-      if(PgCtlWrapper.status(pgCtlPath, clusterPath, null) == PgCtlWrapper.Status.ACTIVE) {
-        PgCtlWrapper.stop(pgCtlPath, clusterPath, null);
+      if(pgCtlWrapper.status(null) == PgCtlWrapper.Status.ACTIVE) {
+        pgCtlWrapper.stop(null);
       }
     } catch (IOException e) {
       e.printStackTrace();
@@ -84,10 +87,10 @@ public class PgCtlWrapperTest {
 
   @Test
   public void testStatusOnStoppedCluster() throws Exception {
-    PgCtlWrapper.start(pgCtlPath, clusterPath, null);
+    pgCtlWrapper.start(null);
     TimeUnit.MILLISECONDS.sleep(200);
-    PgCtlWrapper.stop(pgCtlPath, clusterPath, null);
-    PgCtlWrapper.Status status = PgCtlWrapper.status(pgCtlPath, clusterPath, null);
+    pgCtlWrapper.stop(null);
+    PgCtlWrapper.Status status = pgCtlWrapper.status(null);
 
     assertEquals(PgCtlWrapper.Status.STOPPED, status);
   }
@@ -95,54 +98,57 @@ public class PgCtlWrapperTest {
   @Test
   public void testStatusOnActiveCluster() throws Exception {
 
-    PgCtlWrapper.start(pgCtlPath, clusterPath, null);
-    PgCtlWrapper.Status status = PgCtlWrapper.status(pgCtlPath, clusterPath, null);
-    PgCtlWrapper.stop(pgCtlPath, clusterPath, null);
+    pgCtlWrapper.start(null);
+    PgCtlWrapper.Status status = pgCtlWrapper.status(null);
+    pgCtlWrapper.stop(null);
 
     assertEquals(PgCtlWrapper.Status.ACTIVE, status);
   }
 
   @Test (expected = BadProcessExecutionException.class)
   public void testStatusOnNonExistingCluster() throws Exception {
-    PgCtlWrapper.status(pgCtlPath, stdErrClusterPath, null);
+    pgCtlWrapper = new PgCtlWrapper(pgCtlPath, stdErrClusterPath);
+    pgCtlWrapper.status(null);
   }
 
   @Test
   public void testStartAndStopOnStoppedCluster() throws Exception {
-    PgCtlWrapper.start(pgCtlPath, clusterPath, null);
+    pgCtlWrapper.start(null);
     TimeUnit.MILLISECONDS.sleep(200);
-    PgCtlWrapper.stop(pgCtlPath, clusterPath, null);
+    pgCtlWrapper.stop(null);
   }
 
   @Test(expected = BadProcessExecutionException.class)
   public void testStartTwiceOnStoppedCluster() throws Exception {
     try {
-      PgCtlWrapper.start(pgCtlPath, clusterPath, null);
+      pgCtlWrapper.start(null);
       TimeUnit.MILLISECONDS.sleep(200);
-      PgCtlWrapper.start(pgCtlPath, clusterPath, null);
+      pgCtlWrapper.start(null);
     }
     finally {
-      PgCtlWrapper.stop(pgCtlPath, clusterPath, null);
+      pgCtlWrapper.stop(null);
     }
   }
 
   @Test(expected = BadProcessExecutionException.class)
   public void testStopClusterTwice() throws Exception {
-    PgCtlWrapper.start(pgCtlPath, clusterPath, null);
+    pgCtlWrapper.start(null);
     TimeUnit.MILLISECONDS.sleep(200);
-    PgCtlWrapper.stop(pgCtlPath, clusterPath, null);
+    pgCtlWrapper.stop(null);
     TimeUnit.MILLISECONDS.sleep(200);
-    PgCtlWrapper.stop(pgCtlPath, clusterPath, null);
+    pgCtlWrapper.stop(null);
   }
 
   @Test(expected = BadProcessExecutionException.class)
   public void testStartOnStdErrFailingCluster() throws Exception {
-    PgCtlWrapper.start(pgCtlPath, stdErrClusterPath, null);
+    pgCtlWrapper = new PgCtlWrapper(pgCtlPath, stdErrClusterPath);
+    pgCtlWrapper.start(null);
   }
 
   @Test(expected = BadProcessExecutionException.class)
   public void testStartOnStdOutFailingCluster() throws Exception {
-    PgCtlWrapper.start(pgCtlPath, stdOutClusterPath, null);
+    pgCtlWrapper = new PgCtlWrapper(pgCtlPath, stdOutClusterPath);
+    pgCtlWrapper.start(null);
   }
 
 
@@ -156,8 +162,8 @@ public class PgCtlWrapperTest {
 
       Files.createFile(logFile);
 
-      PgCtlWrapper.start(pgCtlPath, clusterPath, logfileName);
-      PgCtlWrapper.stop(pgCtlPath, clusterPath, logfileName);
+      pgCtlWrapper.start(logfileName);
+      pgCtlWrapper.stop(logfileName);
 
       String fileContent = Files.readAllLines(logFile).stream().reduce("", (s1, s2) -> s1 + '\n' + s2);
 

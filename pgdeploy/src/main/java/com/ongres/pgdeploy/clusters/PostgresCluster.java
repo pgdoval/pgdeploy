@@ -39,22 +39,28 @@
 package com.ongres.pgdeploy.clusters;
 
 import com.ongres.pgdeploy.pgconfig.PostgresConfig;
-import com.ongres.pgdeploy.wrappers.PgCtlWrapper;
+import com.ongres.pgdeploy.wrappers.exceptions.BadProcessExecutionException;
 
 import java.io.File;
+import java.io.IOException;
+
+import javax.annotation.Nullable;
 
 /**
  * Created by pablo on 25/04/17.
  */
 public abstract class PostgresCluster {
 
-  public abstract void start();
+  public abstract void start(@Nullable String logFile)
+      throws InterruptedException, BadProcessExecutionException, IOException;
 
-  public abstract void stop();
+  public abstract void stop(@Nullable String logFile)
+      throws InterruptedException, BadProcessExecutionException, IOException;
 
-  public abstract Status status();
+  public abstract Status status(@Nullable String logFile)
+      throws InterruptedException, BadProcessExecutionException, IOException;
 
-  public abstract void config(PostgresConfig config);
+  public abstract void config(PostgresConfig config, @Nullable String logFile);
 
   public abstract PostgresConfig.Builder createConfigBuilder();
 

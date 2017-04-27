@@ -42,9 +42,13 @@ import com.ongres.pgdeploy.installations.PostgresInstallation;
 import com.ongres.pgdeploy.pgconfig.PostgresConfig;
 import com.ongres.pgdeploy.pgconfig.PropertyParser;
 import com.ongres.pgdeploy.wrappers.PgCtlWrapper;
+import com.ongres.pgdeploy.wrappers.exceptions.BadProcessExecutionException;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
+
+import javax.annotation.Nullable;
 
 /**
  * Created by pablo on 25/04/17.
@@ -58,31 +62,43 @@ public class ConcretePostgresCluster extends PostgresCluster {
   private final Path directory;
   private final PostgresInstallation installation;
   private final PropertyParser supplier;
+  private final PgCtlWrapper pgCtlWrapper;
 
   public ConcretePostgresCluster(
       Path directory, PostgresInstallation installation, PropertyParser supplier) {
     this.directory = directory;
     this.installation = installation;
     this.supplier = supplier;
+    pgCtlWrapper = new PgCtlWrapper(installation.getPath(),directory);
+  }
+
+  ConcretePostgresCluster(PgCtlWrapper wrapper) {
+    pgCtlWrapper = wrapper;
+    this.directory = null;
+    this.installation = null;
+    this.supplier = null;
   }
 
   @Override
-  public void start() {
-
+  public void start(@Nullable String logFile)
+      throws InterruptedException, BadProcessExecutionException, IOException {
+    pgCtlWrapper.start(logFile);
   }
 
   @Override
-  public void stop() {
-
+  public void stop(@Nullable String logFile)
+      throws InterruptedException, BadProcessExecutionException, IOException {
+    pgCtlWrapper.stop(logFile);
   }
 
   @Override
-  public Status status() {
-    return null;
+  public Status status(@Nullable String logFile)
+      throws InterruptedException, BadProcessExecutionException, IOException {
+    return Status.valueOf(pgCtlWrapper.status(logFile).name());
   }
 
   @Override
-  public void config(PostgresConfig config) {
+  public void config(PostgresConfig config, @Nullable String logFile) {
 
   }
 
