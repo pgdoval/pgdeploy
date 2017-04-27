@@ -51,14 +51,35 @@ import javax.annotation.Nullable;
  */
 public abstract class PostgresCluster {
 
+  /** Starts a cluster by calling pg_ctl start on it
+   * @param logFile The route to the optional log file. If provided, the output
+   *     of the command is redirected to it.
+   * @throws BadProcessExecutionException If the command wasn't able to run. For example, running
+   *     it in an empty folder, a folder with permissions bigger than rwx------, etc.
+   * @throws IOException The pg_ctl file or the cluster don't exist
+   */
   public abstract void start(@Nullable String logFile)
-      throws InterruptedException, BadProcessExecutionException, IOException;
+      throws BadProcessExecutionException, IOException;
 
+  /** Stops a cluster by calling pg_ctl stop on it
+   * @param logFile The route to the optional log file. If provided, the output
+   *     of the command is redirected to it.
+   * @throws BadProcessExecutionException If the command wasn't able to run. For example, running
+   *     it in an empty folder, an already stopped cluster, etc.
+   * @throws IOException The pg_ctl file or the cluster don't exist
+   */
   public abstract void stop(@Nullable String logFile)
-      throws InterruptedException, BadProcessExecutionException, IOException;
+      throws BadProcessExecutionException, IOException;
 
+  /** Gets the status of a cluster by calling pg_ctl status on it
+   * @param logFile The route to the optional log file. If provided, the output
+   *     of the command is redirected to it.
+   * @throws BadProcessExecutionException If the command wasn't able to run. For example, running
+   *     it in an empty folder, a non-existing folder, etc.
+   * @throws IOException The pg_ctl file or the cluster don't exist
+   */
   public abstract Status status(@Nullable String logFile)
-      throws InterruptedException, BadProcessExecutionException, IOException;
+      throws BadProcessExecutionException, IOException;
 
   public abstract void config(PostgresConfig config, @Nullable String logFile);
 

@@ -81,19 +81,19 @@ public class ConcretePostgresCluster extends PostgresCluster {
 
   @Override
   public void start(@Nullable String logFile)
-      throws InterruptedException, BadProcessExecutionException, IOException {
+      throws BadProcessExecutionException, IOException {
     pgCtlWrapper.start(logFile);
   }
 
   @Override
   public void stop(@Nullable String logFile)
-      throws InterruptedException, BadProcessExecutionException, IOException {
+      throws BadProcessExecutionException, IOException {
     pgCtlWrapper.stop(logFile);
   }
 
   @Override
   public Status status(@Nullable String logFile)
-      throws InterruptedException, BadProcessExecutionException, IOException {
+      throws BadProcessExecutionException, IOException {
     return Status.valueOf(pgCtlWrapper.status(logFile).name());
   }
 

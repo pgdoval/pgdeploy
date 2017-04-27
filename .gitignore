@@ -21,6 +21,6 @@ hs_err*.log
 /documentation/static
 /documentation/site
 .DS_Store
-pgdeploy/src/test/resources/cluster/global/pg_control
-pgdeploy/src/test/resources/cluster/pg_stat/global.stat
-pgdeploy/src/test/resources/cluster/pg_xlog/000000010000000000000001
+/pgdeploy/src/test/resources/cluster/global/pg_control
+/pgdeploy/src/test/resources/cluster/pg_stat/global.stat
+/pgdeploy/src/test/resources/cluster/pg_xlog/000000010000000000000001

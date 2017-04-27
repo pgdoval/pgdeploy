@@ -78,8 +78,6 @@ public class PgCtlWrapperTest {
       }
     } catch (IOException e) {
       e.printStackTrace();
-    } catch (InterruptedException e) {
-      e.printStackTrace();
     } catch (BadProcessExecutionException e) {
       e.printStackTrace();
     }

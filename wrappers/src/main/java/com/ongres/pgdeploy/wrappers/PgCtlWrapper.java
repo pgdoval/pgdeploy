@@ -57,7 +57,7 @@ public class PgCtlWrapper {
   }
 
   public Status status(@Nullable String logFile)
-      throws IOException, InterruptedException, BadProcessExecutionException {
+      throws IOException, BadProcessExecutionException {
 
     String output = getProcessOutput(status, logFile);
 
@@ -71,21 +71,14 @@ public class PgCtlWrapper {
 
 
   public void start(@Nullable String logFile)
-      throws IOException, InterruptedException, BadProcessExecutionException {
-
-    try {
-      getProcessOutput(start, logFile);
-    } catch (InterruptedException e) {
-      if (status(null) != Status.ACTIVE) {
-        throw e;
-      }
-    }
+      throws IOException, BadProcessExecutionException {
+    getProcessOutput(start, logFile);
 
   }
 
 
   public void stop(@Nullable String logFile)
-      throws IOException, InterruptedException, BadProcessExecutionException {
+      throws IOException, BadProcessExecutionException {
 
     getProcessOutput(stop, logFile);
   }
@@ -94,7 +87,7 @@ public class PgCtlWrapper {
 
 
   private String getProcessOutput( String command, @Nullable String logFile)
-      throws IOException, InterruptedException, BadProcessExecutionException {
+      throws IOException, BadProcessExecutionException {
 
     Process process = getProcess(command, logFile);
 
@@ -110,7 +103,7 @@ public class PgCtlWrapper {
 
 
   private Process getProcess(String command, @Nullable String logFile)
-      throws IOException, InterruptedException {
+      throws IOException {
 
     final String message = "pg_ctl file "
         + pgCtlPath.toAbsolutePath().toString()

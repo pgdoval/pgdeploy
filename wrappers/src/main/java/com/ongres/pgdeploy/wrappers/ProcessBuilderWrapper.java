@@ -45,7 +45,7 @@ class ProcessBuilderWrapper {
 
   static Process runProcess(
       Path pathToCommand, String exceptionMessage, List<String> arguments)
-      throws IOException, InterruptedException {
+      throws IOException {
 
     if (!Files.exists(pathToCommand)) {
       throw new IOException(exceptionMessage);
