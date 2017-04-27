@@ -39,6 +39,7 @@
 package com.ongres.pgdeploy.clusters;
 
 import com.ongres.pgdeploy.pgconfig.PostgresConfig;
+import com.ongres.pgdeploy.wrappers.PgCtlWrapper;
 
 import java.io.File;
 
@@ -63,9 +64,8 @@ public abstract class PostgresCluster {
 
 
   public enum Status {
-    START,
-    STOP,
-    RESTART
+    ACTIVE,
+    STOPPED
   }
 
 }

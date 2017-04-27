@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Nullable;
 
@@ -39,9 +40,70 @@ import javax.annotation.Nullable;
 public class PgCtlWrapper {
 
   private static final String badWord = "FATAL:";
+
   private static final String start = "start";
-  //private static final String stop = "stop";
+  private static final String stop = "stop";
   private static final String status = "status";
+
+  private static final String descriptionFirstPart = "pg_ctl - ";
+
+  private static final String activeClusterStart = "pg_ctl: server is running";
+  private static final String stoppedClusterStart = "pg_ctl: no server running";
+
+
+  public static Status status(Path pgCtlPath, Path clusterPath, @Nullable String logfile)
+      throws IOException, InterruptedException, BadProcessExecutionException {
+
+    String output = getProcessOutput(pgCtlPath, clusterPath, logfile, status);
+
+    if (output.startsWith(activeClusterStart)) {
+      return Status.ACTIVE;
+    }
+
+    return Status.STOPPED;
+
+  }
+
+
+  public static void start(Path pgCtlPath, Path clusterPath, @Nullable String logfile)
+      throws IOException, InterruptedException, BadProcessExecutionException {
+
+    try {
+      getProcessOutput(pgCtlPath, clusterPath, logfile, start);
+    } catch (InterruptedException e) {
+      if (status(pgCtlPath,clusterPath,logfile) != Status.ACTIVE) {
+        throw e;
+      }
+    }
+
+  }
+
+
+  public static void stop(Path pgCtlPath, Path clusterPath, @Nullable String logfile)
+      throws IOException, InterruptedException, BadProcessExecutionException {
+
+    getProcessOutput(pgCtlPath, clusterPath, logfile, stop);
+  }
+
+
+
+
+  private static String getProcessOutput(
+      Path pgCtlPath, Path clusterPath, @Nullable String logfile, String command)
+      throws IOException, InterruptedException, BadProcessExecutionException {
+
+    Process process = getProcess(pgCtlPath, clusterPath, logfile, command);
+
+    String output = ProcessBuilderWrapper.getOutputFromProcess(process);
+    String errorOutput = ProcessBuilderWrapper.getErrorOutputFromProcess(process);
+
+    String processDescription = descriptionFirstPart + command;
+    ProcessBuilderWrapper.throwIfOutputContainsErrors(output, badWord, processDescription);
+    ProcessBuilderWrapper.throwIfErrorOutputContainsErrors(errorOutput, processDescription);
+
+    return output;
+  }
+
 
   private static Process getProcess(
       Path pgCtlPath, Path clusterPath, @Nullable String logfile, String command)
@@ -60,47 +122,17 @@ public class PgCtlWrapper {
       args.add("-l");
       args.add(logfile);
     }
-    
+
     args.add(command);
 
-    return ProcessBuilderWrapper.runProcess(pgCtlPath, message, args);    
-  }
-
-  private static String getProcessOutput(
-      Path pgCtlPath, Path clusterPath, @Nullable String logfile, String command)
-      throws IOException, InterruptedException, BadProcessExecutionException {
-
-    Process process = getProcess(pgCtlPath, clusterPath, logfile, command);
-
-    String output = ProcessBuilderWrapper.getOutputFromProcess(process);
-    String errorOutput = ProcessBuilderWrapper.getErrorOutputFromProcess(process);
-
-
-    System.out.println(output);
-    System.out.println("********************");
-    System.out.println(errorOutput);
-
-
-    String processDescription = "pg_ctl - " + command;
-    ProcessBuilderWrapper.throwIfOutputContainsErrors(output, badWord, processDescription);
-    ProcessBuilderWrapper.throwIfErrorOutputContainsErrors(errorOutput, processDescription);
-
-    return output;
-  }
-
-  public static void status(Path pgCtlPath, Path clusterPath, @Nullable String logfile)
-      throws IOException, InterruptedException, BadProcessExecutionException {
-
-    getProcessOutput(pgCtlPath, clusterPath, logfile, status);
+    return ProcessBuilderWrapper.runProcess(pgCtlPath, message, args);
   }
 
 
-  public static void start(Path pgCtlPath, Path clusterPath, @Nullable String logfile)
-      throws IOException, InterruptedException, BadProcessExecutionException {
 
-    getProcessOutput(pgCtlPath, clusterPath, logfile, start);
+  public enum Status {
+    ACTIVE,
+    STOPPED
   }
-
-
 
 }

@@ -41,6 +41,7 @@ package com.ongres.pgdeploy.clusters;
 import com.ongres.pgdeploy.installations.PostgresInstallation;
 import com.ongres.pgdeploy.pgconfig.PostgresConfig;
 import com.ongres.pgdeploy.pgconfig.PropertyParser;
+import com.ongres.pgdeploy.wrappers.PgCtlWrapper;
 
 import java.io.File;
 import java.nio.file.Path;

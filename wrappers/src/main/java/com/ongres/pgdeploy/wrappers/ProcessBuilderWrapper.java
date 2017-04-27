@@ -42,6 +42,7 @@ import java.util.concurrent.TimeUnit;
  */
 class ProcessBuilderWrapper {
 
+
   static Process runProcess(
       Path pathToCommand, String exceptionMessage, List<String> arguments)
       throws IOException, InterruptedException {
@@ -60,6 +61,7 @@ class ProcessBuilderWrapper {
   }
 
 
+
   static String getOutputFromProcess(Process process) throws IOException {
     return fromStream(process.getInputStream());
   }
@@ -68,41 +70,6 @@ class ProcessBuilderWrapper {
     return fromStream(process.getErrorStream());
   }
 
-  static void throwIfOutputContainsErrors(String output, String badWord, String processDescription)
-      throws BadProcessExecutionException {
-
-    if (!output.contains(badWord)) {
-      return;
-    }
-
-    StringBuilder sb = new StringBuilder();
-
-    sb.append("The process ");
-    sb.append(processDescription);
-    sb.append(" failed, this is the output");
-    sb.append(output);
-
-    throw new BadProcessExecutionException(sb.toString());
-  }
-
-  static void throwIfErrorOutputContainsErrors(String output, String processDescription)
-      throws BadProcessExecutionException {
-
-    if (output.isEmpty()) {
-      return;
-    }
-
-    StringBuilder sb = new StringBuilder();
-
-    sb.append("The process ");
-    sb.append(processDescription);
-    sb.append(" failed, this is the output:\n");
-    sb.append(output);
-
-    throw new BadProcessExecutionException(sb.toString());
-  }
-
-
   private static String fromStream(InputStream is) throws IOException {
     BufferedReader reader =
         new BufferedReader(new InputStreamReader(is, "UTF-8"));
@@ -110,7 +77,6 @@ class ProcessBuilderWrapper {
 
     StringBuilder builder = new StringBuilder();
     String line;
-
     while ( (line = reader.readLine()) != null) {
       builder.append(line);
       builder.append(System.getProperty("line.separator"));
@@ -118,4 +84,24 @@ class ProcessBuilderWrapper {
 
     return builder.toString();
   }
+
+
+
+  static void throwIfOutputContainsErrors(String output, String badWord, String processDescription)
+      throws BadProcessExecutionException {
+
+    if (output.contains(badWord)) {
+      throw BadProcessExecutionException.create(output, processDescription);
+    }
+  }
+
+  static void throwIfErrorOutputContainsErrors(String output, String processDescription)
+      throws BadProcessExecutionException {
+
+    if (!output.isEmpty()) {
+      throw BadProcessExecutionException.create(output, processDescription);
+    }
+
+  }
+
 }

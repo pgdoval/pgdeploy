@@ -32,4 +32,15 @@ public class BadProcessExecutionException extends Exception {
   public BadProcessExecutionException(String s) {
     super(s);
   }
+
+  public static BadProcessExecutionException create(String output, String processDescription) {
+    StringBuilder sb = new StringBuilder();
+
+    sb.append("The process ");
+    sb.append(processDescription);
+    sb.append(" failed, this is the output:\n");
+    sb.append(output);
+
+    return new BadProcessExecutionException(sb.toString());
+  }
 }

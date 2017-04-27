@@ -25,11 +25,20 @@
 package com.ongres.pgdeploy.wrappers;
 
 import com.ongres.pgdeploy.wrappers.exceptions.BadProcessExecutionException;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.concurrent.TimeUnit;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 /**
  * Created by pablo on 26/04/17.
@@ -48,30 +57,82 @@ public class PgCtlWrapperTest {
   private Path pgCtlPath =
       Paths.get("../pgdeploy/src/test/resources/installation/bin/pg_ctl");
 
+
+  @Before
+  public void cleanBefore() {
+    clean();
+  }
+
+  @After
+  public void cleanAfter() {
+    clean();
+  }
+
+  private void clean() {
+    try {
+      if(PgCtlWrapper.status(pgCtlPath, clusterPath, null) == PgCtlWrapper.Status.ACTIVE) {
+        PgCtlWrapper.stop(pgCtlPath, clusterPath, null);
+      }
+    } catch (IOException e) {
+      e.printStackTrace();
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    } catch (BadProcessExecutionException e) {
+      e.printStackTrace();
+    }
+  }
+
   @Test
   public void testStatusOnStoppedCluster() throws Exception {
-    PgCtlWrapper.status(pgCtlPath, clusterPath, null);
+    PgCtlWrapper.start(pgCtlPath, clusterPath, null);
+    TimeUnit.MILLISECONDS.sleep(200);
+    PgCtlWrapper.stop(pgCtlPath, clusterPath, null);
+    PgCtlWrapper.Status status = PgCtlWrapper.status(pgCtlPath, clusterPath, null);
+
+    assertEquals(PgCtlWrapper.Status.STOPPED, status);
   }
 
   @Test
   public void testStatusOnActiveCluster() throws Exception {
 
-  }
-
-  @Test
-  public void testStatusOnRestartingCluster() throws Exception {
-
-  }
-
-  @Test
-  public void testStatusOnNonExistingCluster() throws Exception {
-
-  }
-
-  @Ignore
-  @Test
-  public void testStartOnStoppedCluster() throws Exception {
     PgCtlWrapper.start(pgCtlPath, clusterPath, null);
+    PgCtlWrapper.Status status = PgCtlWrapper.status(pgCtlPath, clusterPath, null);
+    PgCtlWrapper.stop(pgCtlPath, clusterPath, null);
+
+    assertEquals(PgCtlWrapper.Status.ACTIVE, status);
+  }
+
+  @Test (expected = BadProcessExecutionException.class)
+  public void testStatusOnNonExistingCluster() throws Exception {
+    PgCtlWrapper.status(pgCtlPath, stdErrClusterPath, null);
+  }
+
+  @Test
+  public void testStartAndStopOnStoppedCluster() throws Exception {
+    PgCtlWrapper.start(pgCtlPath, clusterPath, null);
+    TimeUnit.MILLISECONDS.sleep(200);
+    PgCtlWrapper.stop(pgCtlPath, clusterPath, null);
+  }
+
+  @Test(expected = BadProcessExecutionException.class)
+  public void testStartTwiceOnStoppedCluster() throws Exception {
+    try {
+      PgCtlWrapper.start(pgCtlPath, clusterPath, null);
+      TimeUnit.MILLISECONDS.sleep(200);
+      PgCtlWrapper.start(pgCtlPath, clusterPath, null);
+    }
+    finally {
+      PgCtlWrapper.stop(pgCtlPath, clusterPath, null);
+    }
+  }
+
+  @Test(expected = BadProcessExecutionException.class)
+  public void testStopClusterTwice() throws Exception {
+    PgCtlWrapper.start(pgCtlPath, clusterPath, null);
+    TimeUnit.MILLISECONDS.sleep(200);
+    PgCtlWrapper.stop(pgCtlPath, clusterPath, null);
+    TimeUnit.MILLISECONDS.sleep(200);
+    PgCtlWrapper.stop(pgCtlPath, clusterPath, null);
   }
 
   @Test(expected = BadProcessExecutionException.class)
@@ -83,4 +144,28 @@ public class PgCtlWrapperTest {
   public void testStartOnStdOutFailingCluster() throws Exception {
     PgCtlWrapper.start(pgCtlPath, stdOutClusterPath, null);
   }
+
+
+  @Test
+  public void testLogClusterOperations() throws Exception {
+    String logfileName = "logFile";
+
+    Path logFile = Paths.get(logfileName);
+
+    try {
+
+      Files.createFile(logFile);
+
+      PgCtlWrapper.start(pgCtlPath, clusterPath, logfileName);
+      PgCtlWrapper.stop(pgCtlPath, clusterPath, logfileName);
+
+      String fileContent = Files.readAllLines(logFile).stream().reduce("", (s1, s2) -> s1 + '\n' + s2);
+
+      assertFalse(fileContent.isEmpty());
+    } finally {
+      Files.delete(logFile);
+    }
+
+  }
+
 }
