@@ -31,6 +31,7 @@ import net.jcip.annotations.Immutable;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 /**
  * Created by pablo on 27/04/17.
@@ -62,8 +63,14 @@ public class Property {
   public PropertyValue parse(Object obj)
       throws WrongTypePropertyException, UnitNotAvailableForPropertyException {
 
-    String realClassName = "different";
+    String realClassName = null;
     if (obj instanceof Integer) {
+      //Non String values cannot have units. To express a value with unit, concat them in a String
+      if (!availableUnits.contains(Unit.NONE)) {
+        throw UnitNotAvailableForPropertyException.fromValues(
+            availableUnits, name, obj.toString());
+      }
+
       if (type == DataType.INTEGER) {
         return parseInteger((Integer) obj);
       } else {
@@ -71,6 +78,12 @@ public class Property {
       }
     }
     if (obj instanceof Double) {
+      //Non String values cannot have units. To express a value with unit, concat them in a String
+      if (!availableUnits.contains(Unit.NONE)) {
+        throw UnitNotAvailableForPropertyException.fromValues(
+            availableUnits, name, obj.toString());
+      }
+
       if (type == DataType.DOUBLE) {
         return parseDouble((Double) obj);
       } else {
@@ -79,6 +92,10 @@ public class Property {
     }
     if (obj instanceof String) {
       return parseString((String) obj);
+    }
+
+    if (realClassName == null) {
+      realClassName = obj.getClass().getSimpleName();
     }
 
     throw WrongTypePropertyException.fromValues(type.getClazz(), realClassName, name, obj);
@@ -100,10 +117,11 @@ public class Property {
     return new PropertyValue<>(value,unit);
   }
 
-  private PropertyValue parseString(String value) throws UnitNotAvailableForPropertyException {
+  private PropertyValue parseString(String value)
+      throws UnitNotAvailableForPropertyException, WrongTypePropertyException {
     Optional<Unit> chosenUnitOptional = availableUnits.stream()
         .filter(unit -> value.endsWith(unit.getUnitName()))
-        .sorted(Comparator.comparingInt(unit -> unit.getUnitName().length()))
+        .sorted(Comparator.comparingInt(unit -> -unit.getUnitName().length()))
         .findFirst();
 
     if (!chosenUnitOptional.isPresent()) {
@@ -114,15 +132,30 @@ public class Property {
 
     String realValue = value.substring(0,value.lastIndexOf(chosenUnit.getUnitName()));
 
-    switch (type) {
-      case DOUBLE:
-        return parseDouble(Double.valueOf(realValue), chosenUnit);
-      case INTEGER:
-        return parseInteger(Integer.valueOf(realValue), chosenUnit);
-      case STRING:
-        return new PropertyValue<>(realValue, chosenUnit);
-      default:
-        return null;
+    try {
+
+      switch (type) {
+        case DOUBLE:
+          return parseDouble(Double.valueOf(realValue), chosenUnit);
+        case INTEGER:
+          return parseInteger(Integer.valueOf(realValue), chosenUnit);
+        case STRING:
+          return new PropertyValue<>(realValue, chosenUnit);
+        default:
+          return null; //should never happen
+      }
+    } catch (NumberFormatException e) {
+      if ((chosenUnit == Unit.NONE)
+          && Stream.of(Unit.values())
+          .filter(unit -> value.endsWith(unit.getUnitName()))
+          .count() > 1) {
+        //We assume that in this case, there's a unit in the value but the unit isn't allowed
+        //for the property, and so chosenUnit is none. We throw a wrong unit exception
+        throw UnitNotAvailableForPropertyException.fromValues(availableUnits, name, value);
+      } else {
+        //In this case, the user may have written "9l5TB" instead "9.5TB"
+        throw WrongTypePropertyException.fromValues(type.getClazz(), "String", name, realValue);
+      }
     }
   }
 

@@ -24,11 +24,16 @@
  */
 package com.ongres.pgdeploy.pgconfig.properties;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 /**
  * Created by pablo on 28/04/17.
  */
 public enum Unit {
   NONE(""),
+  B("B"),
   KB("KB"),
   MB("MB"),
   GB("GB"),
@@ -43,4 +48,8 @@ public enum Unit {
   Unit(String unitName) {
     this.unitName = unitName;
   }
+
+  static final List<Unit> noneList = Collections.singletonList(NONE);
+
+  static final List<Unit> byteList = Arrays.asList(B, KB, MB, GB, TB);
 }
