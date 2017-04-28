@@ -96,7 +96,7 @@ public class ConcretePostgresInstallation extends PostgresInstallation {
     checkClusterIsFull(destination);
 
     PropertyParser parser = (router instanceof PostgresInstallationSupplier)
-        ? (PostgresInstallationSupplier) router : new DefaultPropertyParser();
+        ? (PostgresInstallationSupplier) router : DefaultPropertyParser.getInstance();
 
     return new ConcretePostgresCluster(destination,this, parser);
 

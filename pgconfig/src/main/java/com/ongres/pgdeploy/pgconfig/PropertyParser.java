@@ -24,8 +24,14 @@
  */
 package com.ongres.pgdeploy.pgconfig;
 
+import com.ongres.pgdeploy.pgconfig.properties.Property;
+
+import java.util.Optional;
+
 /**
  * Created by pablo on 25/04/17.
  */
 public interface PropertyParser {
+
+  Optional<Property> parse(String property);
 }

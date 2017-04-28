@@ -29,6 +29,8 @@ import com.ongres.pgdeploy.core.exceptions.ExtraFoldersFoundException;
 import com.ongres.pgdeploy.core.exceptions.NonWritableDestinationException;
 import com.ongres.pgdeploy.core.exceptions.UnreachableBinariesException;
 import com.ongres.pgdeploy.core.router.DefaultRouter;
+import com.ongres.pgdeploy.pgconfig.DefaultPropertyParser;
+import com.ongres.pgdeploy.pgconfig.properties.Property;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -41,6 +43,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
@@ -205,5 +208,8 @@ public abstract class AbstractPostgresInstallationSupplier implements PostgresIn
     return DefaultRouter.getInstance().routeToInitDb(basePath);
   }
 
-
+  @Override
+  public Optional<Property> parse(String property) {
+    return DefaultPropertyParser.getInstance().parse(property);
+  }
 }

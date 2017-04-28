@@ -24,8 +24,28 @@
  */
 package com.ongres.pgdeploy.pgconfig;
 
+import com.ongres.pgdeploy.pgconfig.properties.Property;
+
+import java.util.Optional;
+
 /**
  * Created by pablo on 25/04/17.
  */
 public class DefaultPropertyParser implements PropertyParser {
+  @Override
+  public Optional<Property> parse(String property) {
+    return Optional.empty();
+  }
+
+  private DefaultPropertyParser() {
+  }
+
+  public static DefaultPropertyParser getInstance() {
+    return SingletonHolder.INSTANCE;
+  }
+
+
+  private static class SingletonHolder {
+    private static final DefaultPropertyParser INSTANCE = new DefaultPropertyParser();
+  }
 }
