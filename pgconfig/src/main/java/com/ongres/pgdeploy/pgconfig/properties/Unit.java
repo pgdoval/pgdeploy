@@ -24,6 +24,8 @@
  */
 package com.ongres.pgdeploy.pgconfig.properties;
 
+import com.google.common.collect.ImmutableList;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -49,7 +51,7 @@ public enum Unit {
     this.unitName = unitName;
   }
 
-  static final List<Unit> noneList = Collections.singletonList(NONE);
+  public static final List<Unit> noneList = Collections.singletonList(NONE);
 
-  static final List<Unit> byteList = Arrays.asList(B, KB, MB, GB, TB);
+  public static final List<Unit> byteList = ImmutableList.copyOf(Arrays.asList(B, KB, MB, GB, TB));
 }

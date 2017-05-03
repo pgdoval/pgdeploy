@@ -22,52 +22,31 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.ongres.pgdeploy.pgconfig.properties;
+package com.ongres.pgdeploy.pgconfig;
 
-import net.jcip.annotations.Immutable;
+import com.ongres.pgdeploy.pgconfig.properties.DataType;
+import com.ongres.pgdeploy.pgconfig.properties.Property;
+import com.ongres.pgdeploy.pgconfig.properties.Unit;
+
+import java.util.Objects;
+import java.util.Optional;
 
 /**
- * Created by pablo on 27/04/17.
+ * Created by pablo on 3/05/17.
  */
-@Immutable
-public class PropertyValue<T> {
-  private final T value;
-  private final Unit unit;
-
-  public PropertyValue(T value, Unit unit) {
-    this.value = value;
-    this.unit = unit;
-  }
-
-  public T getValue() {
-    return value;
-  }
-
-  public Unit getUnit() {
-    return unit;
-  }
+public class MockedParser implements PropertyParser{
 
   @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
+  public Optional<Property> parse(String property) {
+    if (Objects.equals(property, "prop1")) {
+      return Optional.of(new Property("prop1", false, DataType.STRING, Unit.byteList));
     }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
+    if (Objects.equals(property, "prop2")) {
+      return Optional.of(new Property("prop2", true, DataType.INTEGER, Unit.byteList));
     }
-
-    PropertyValue<?> that = (PropertyValue<?>) o;
-
-    if (!value.equals(that.value)) {
-      return false;
+    if (Objects.equals(property, "prop3")) {
+      return Optional.of(new Property("prop3", true, DataType.DOUBLE, Unit.noneList));
     }
-    return unit == that.unit;
-  }
-
-  @Override
-  public int hashCode() {
-    int result = value.hashCode();
-    result = 31 * result + unit.hashCode();
-    return result;
+    return Optional.empty();
   }
 }

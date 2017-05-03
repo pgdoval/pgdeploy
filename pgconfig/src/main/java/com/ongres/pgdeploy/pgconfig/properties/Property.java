@@ -96,10 +96,9 @@ public class Property {
    *     a unit from a property whose <tt>availableUnits</tt> don't include
    *     {@link Unit}<tt>.NONE</tt>
    */
-  public PropertyValue parse(@Nonnull Object obj)
+  public PropertyValue parse(Object obj)
       throws WrongTypePropertyException, UnitNotAvailableForPropertyException {
 
-    //Necessary for mvn tests to pass
     if (obj == null) {
       throw new IllegalArgumentException("Illegal null argument for PropertyValue.parse");
     }
@@ -190,6 +189,39 @@ public class Property {
         throw WrongTypePropertyException.fromValues(type.getClazz(), "String", name, realValue);
       }
     }
+  }
+
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+
+    Property property = (Property) o;
+
+    if (needToRestart != property.needToRestart) {
+      return false;
+    }
+    if (!name.equals(property.name)) {
+      return false;
+    }
+    if (type != property.type) {
+      return false;
+    }
+    return availableUnits.equals(property.availableUnits);
+  }
+
+  @Override
+  public int hashCode() {
+    int result = name.hashCode();
+    result = 31 * result + (needToRestart ? 1 : 0);
+    result = 31 * result + type.hashCode();
+    result = 31 * result + availableUnits.hashCode();
+    return result;
   }
 
   private static class PropertyValueParsingUtils<T> {
