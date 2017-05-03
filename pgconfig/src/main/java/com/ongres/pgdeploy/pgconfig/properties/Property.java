@@ -28,10 +28,13 @@ import com.ongres.pgdeploy.pgconfig.properties.exceptions.UnitNotAvailableForPro
 import com.ongres.pgdeploy.pgconfig.properties.exceptions.WrongTypePropertyException;
 import net.jcip.annotations.Immutable;
 
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
+
+import javax.annotation.Nonnull;
 
 /**
  * Created by pablo on 27/04/17.
@@ -43,6 +46,13 @@ public class Property {
   private final boolean needToRestart;
   private final DataType type;
   private final List<Unit> availableUnits;
+
+  private static final List<PropertyValueParsingUtils<?>> directTransformations = Arrays.asList(
+      new PropertyValueParsingUtils<Integer>(Integer.class, DataType.INTEGER, "Integer"),
+      new PropertyValueParsingUtils<Long>(Long.class, DataType.INTEGER, "Long"),
+      new PropertyValueParsingUtils<Double>(Double.class, DataType.DOUBLE, "Double"),
+      new PropertyValueParsingUtils<Float>(Float.class, DataType.DOUBLE, "Float")
+  );
 
   public String getName() {
     return name;
@@ -60,65 +70,62 @@ public class Property {
     this.availableUnits = availableUnits;
   }
 
-  public PropertyValue parse(Object obj)
+  public PropertyValue parse(@Nonnull Object obj)
       throws WrongTypePropertyException, UnitNotAvailableForPropertyException {
 
-    String realClassName = null;
-    if (obj instanceof Integer) {
-      //Non String values cannot have units. To express a value with unit, concat them in a String
-      if (!availableUnits.contains(Unit.NONE)) {
-        throw UnitNotAvailableForPropertyException.fromValues(
-            availableUnits, name, obj.toString());
-      }
-
-      if (type == DataType.INTEGER) {
-        return parseInteger((Integer) obj);
-      } else {
-        realClassName = "Integer";
-      }
+    //Necessary for mvn tests to pass
+    if (obj == null) {
+      throw new IllegalArgumentException("Illegal null argument for PropertyValue.parse");
     }
-    if (obj instanceof Double) {
-      //Non String values cannot have units. To express a value with unit, concat them in a String
-      if (!availableUnits.contains(Unit.NONE)) {
-        throw UnitNotAvailableForPropertyException.fromValues(
-            availableUnits, name, obj.toString());
-      }
 
-      if (type == DataType.DOUBLE) {
-        return parseDouble((Double) obj);
-      } else {
-        realClassName = "Double";
-      }
+    //Non String values cannot have units. To express a value with unit, concat them in a String
+    if (!(obj instanceof String) && !availableUnits.contains(Unit.NONE)) {
+      throw UnitNotAvailableForPropertyException.fromValues(
+          availableUnits, name, obj.toString());
     }
+
+
+    //First, seek for a direct transformation
+    Optional<PropertyValueParsingUtils<?>> optionalDirectTransformation =
+        directTransformations.stream().filter(it -> it.clazz == obj.getClass()).findFirst();
+
+    if (optionalDirectTransformation.isPresent()) {
+      PropertyValueParsingUtils<?> directTransformation = optionalDirectTransformation.get();
+      return tryToParse(obj, directTransformation);
+    }
+
+    //If it comes as a String, the parsing is totally different
     if (obj instanceof String) {
       return parseString((String) obj);
     }
 
-    if (realClassName == null) {
-      realClassName = obj.getClass().getSimpleName();
+    throw WrongTypePropertyException.fromValues(
+        type.getClazz(), obj.getClass().getSimpleName(), name, obj);
+  }
+
+
+  private <T> PropertyValue<T> tryToParse(Object obj, PropertyValueParsingUtils utils)
+      throws WrongTypePropertyException {
+
+    if (obj.getClass() == utils.clazz) {
+
+      if (type == utils.acceptableType) {
+        return new PropertyValue<T>((T) obj, Unit.NONE);
+      } else {
+        throw WrongTypePropertyException.fromValues(
+            type.getClazz(), utils.realClassName, name, obj);
+      }
     }
 
-    throw WrongTypePropertyException.fromValues(type.getClazz(), realClassName, name, obj);
+    return null;
   }
 
-  private PropertyValue<Integer> parseInteger(Integer value) {
-    return parseInteger(value, Unit.NONE);
-  }
-
-  private PropertyValue<Integer> parseInteger(Integer value, Unit unit) {
-    return new PropertyValue<>(value,unit);
-  }
-
-  private PropertyValue<Double> parseDouble(Double value) {
-    return parseDouble(value,Unit.NONE);
-  }
-
-  private PropertyValue<Double> parseDouble(Double value, Unit unit) {
-    return new PropertyValue<>(value,unit);
-  }
 
   private PropertyValue parseString(String value)
       throws UnitNotAvailableForPropertyException, WrongTypePropertyException {
+
+    //The chosen unit is the longest one included at the end of the string
+    //This way, if KB and B are acceptable, KB will be chosen for "9KB" and B for "9B"
     Optional<Unit> chosenUnitOptional = availableUnits.stream()
         .filter(unit -> value.endsWith(unit.getUnitName()))
         .sorted(Comparator.comparingInt(unit -> -unit.getUnitName().length()))
@@ -130,15 +137,15 @@ public class Property {
 
     Unit chosenUnit = chosenUnitOptional.get();
 
-    String realValue = value.substring(0,value.lastIndexOf(chosenUnit.getUnitName()));
+    String realValue = value.substring(0,value.lastIndexOf(chosenUnit.getUnitName())).trim();
 
     try {
 
       switch (type) {
         case DOUBLE:
-          return parseDouble(Double.valueOf(realValue), chosenUnit);
+          return new PropertyValue<>(Double.valueOf(realValue), chosenUnit);
         case INTEGER:
-          return parseInteger(Integer.valueOf(realValue), chosenUnit);
+          return new PropertyValue<>(Long.valueOf(realValue), chosenUnit);
         case STRING:
           return new PropertyValue<>(realValue, chosenUnit);
         default:
@@ -156,6 +163,19 @@ public class Property {
         //In this case, the user may have written "9l5TB" instead "9.5TB"
         throw WrongTypePropertyException.fromValues(type.getClazz(), "String", name, realValue);
       }
+    }
+  }
+
+  private static class PropertyValueParsingUtils<T> {
+    Class<T> clazz;
+    DataType acceptableType;
+    String realClassName;
+
+    private PropertyValueParsingUtils(
+        Class<T> clazz, DataType acceptableType, String realClassName) {
+      this.clazz = clazz;
+      this.acceptableType = acceptableType;
+      this.realClassName = realClassName;
     }
   }
 

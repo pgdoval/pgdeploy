@@ -75,27 +75,54 @@ public class PropertyTest {
   public static Collection getParams() {
     List<Object[]> result = new ArrayList<>();
 
-    //Basic type checking
+    List<Integer> emptyList = new ArrayList<>();
+
+    //Basic type checking without units
+    //Double comes
     result.add(new Object []{DOUBLE, Unit.noneList, 9.3D, 9.3D, NONE, null});
     result.add(new Object []{INTEGER, Unit.noneList, 9.3D, 9.3D, NONE, WrongTypePropertyException.class});
     result.add(new Object []{STRING, Unit.noneList, 9.3D, 9.3D, NONE, WrongTypePropertyException.class});
+    //Integer comes
     result.add(new Object []{INTEGER, Unit.noneList, 9, 9, NONE, null});
     result.add(new Object []{DOUBLE, Unit.noneList, 9, 9, NONE, WrongTypePropertyException.class});
     result.add(new Object []{STRING, Unit.noneList, 9, 9, NONE, WrongTypePropertyException.class});
+    //String comes
     result.add(new Object []{STRING, Unit.noneList, "value", "value", NONE, null});
     result.add(new Object []{DOUBLE, Unit.noneList, "value", "value", NONE, WrongTypePropertyException.class});
     result.add(new Object []{INTEGER, Unit.noneList, "value", "value", NONE, WrongTypePropertyException.class});
+    //Unexpected type
+    result.add(new Object []{INTEGER, Unit.noneList, emptyList, "value", NONE, WrongTypePropertyException.class});
+    result.add(new Object []{DOUBLE, Unit.noneList, emptyList, "value", NONE, WrongTypePropertyException.class});
+    result.add(new Object []{DOUBLE, Unit.noneList, emptyList, "value", NONE, WrongTypePropertyException.class});
+    //Float comes
+    result.add(new Object []{DOUBLE, Unit.noneList, 9.3F, 9.3F, NONE, null});
+    result.add(new Object []{INTEGER, Unit.noneList, 9.3F, 9.3F, NONE, WrongTypePropertyException.class});
+    result.add(new Object []{STRING, Unit.noneList, 9.3F, 9.3F, NONE, WrongTypePropertyException.class});
+    //Long comes
+    result.add(new Object []{INTEGER, Unit.noneList, 9L, 9L, NONE, null});
+    result.add(new Object []{DOUBLE, Unit.noneList, 9L, 9L, NONE, WrongTypePropertyException.class});
+    result.add(new Object []{STRING, Unit.noneList, 9L, 9L, NONE, WrongTypePropertyException.class});
+
 
     //Basic unit checking
+    //NonString comes and a unit is required
     result.add(new Object []{DOUBLE, Unit.byteList, 9.3D, 9.3D, NONE, UnitNotAvailableForPropertyException.class});
     result.add(new Object []{INTEGER, Unit.byteList, 9.3D, 9.3D, NONE, UnitNotAvailableForPropertyException.class});
-    result.add(new Object []{INTEGER, Unit.byteList, "9TB", 9, TB, null});
+    //Units encapsulated in the string
+    result.add(new Object []{INTEGER, Unit.byteList, "9TB", 9L, TB, null});
     result.add(new Object []{DOUBLE, Unit.byteList, "9TB", 9D, TB, null});
     result.add(new Object []{DOUBLE, Unit.byteList, "9.5TB", 9.5D, TB, null});
     result.add(new Object []{STRING, Unit.byteList, "MBTB", "MB", TB, null});
+    //Invalid values encapsulated in a string
     result.add(new Object []{DOUBLE, Unit.noneList, "9.5TB", 9.5D, TB, UnitNotAvailableForPropertyException.class});
     result.add(new Object []{DOUBLE, Unit.byteList, "9ert5TB", 9.5D, TB, WrongTypePropertyException.class});
     result.add(new Object []{INTEGER, Unit.byteList, "9caucaucau", 9.3D, NONE, UnitNotAvailableForPropertyException.class});
+
+
+    //New ideas
+    result.add(new Object []{INTEGER, Unit.byteList, " 9 TB", 9L, TB, null});
+    result.add(new Object []{INTEGER, Unit.noneList, " 9 ", 9L, NONE, null});
+    result.add(new Object []{INTEGER, Unit.byteList, null, 9, TB, IllegalArgumentException.class});
 
 
     return result;
