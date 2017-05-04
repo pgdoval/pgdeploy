@@ -32,14 +32,20 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.AbstractMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
  * Created by pablo on 3/05/17.
  */
 public class PostgreSqlConfWrapper {
+
+  private static String equals = "=";
+  private static String comment = "#";
 
   public static void updateConfFile(Path path, PostgresConfig config) throws IOException {
     List<String> lines = Files.readAllLines(path);
@@ -50,10 +56,96 @@ public class PostgreSqlConfWrapper {
 
   }
 
+  private static Map.Entry<String, String> getEntryFromLine(String line) {
+
+    int eqPosition = line.indexOf(equals);
+
+    if (eqPosition < 0) {
+      return new AbstractMap.SimpleEntry<>("", "");
+    }
+
+    String key = line.substring(0, eqPosition).trim();
+    if (key.startsWith(comment)) {
+      key = comment + key.substring(1).trim();
+    }
+
+    String value = line.substring(eqPosition + 1).trim();
+
+    return new AbstractMap.SimpleEntry<>(key, value);
+  }
+
   static List<String> updateLines(
       List<String> currentProperties, Stream<Map.Entry<Property, PropertyValue>> newProperties) {
 
+    List<Map.Entry<String, String>> adaptedProperties =
+        currentProperties.stream()
+            .map(PostgreSqlConfWrapper::getEntryFromLine)
+            .collect(Collectors.toList());
 
-    return currentProperties;
+    newProperties
+        .map(entry -> new AbstractMap.SimpleEntry<>(
+            entry.getKey().getName(), entry.getValue().getValue().toString()))
+        .forEachOrdered(entry -> {
+
+          int indexOfProperty = -1;
+          int indexOfCommentedProperty = -1;
+
+          String key = entry.getKey();
+          String commentedKey = "#" + key;
+          String value = entry.getValue();
+
+          for (int i = 0; i < adaptedProperties.size(); i++) {
+            if (Objects.equals(adaptedProperties.get(i).getKey(), key)) {
+              indexOfProperty = i;
+            }
+            if (Objects.equals(adaptedProperties.get(i).getKey(), commentedKey)) {
+              indexOfCommentedProperty = i;
+            }
+          }
+
+          //If the property doesn't exist, we simply add it
+          if (indexOfProperty == -1 && indexOfCommentedProperty == -1) {
+            adaptedProperties.add(entry);
+          }
+
+          //If the property exists but not its commented version,
+          //we have to comment it and add the new one afterwards
+          if (indexOfProperty > -1) {
+
+            String currentValue = adaptedProperties.get(indexOfProperty).getValue();
+            if (!Objects.equals(currentValue, value)) {
+
+              if (indexOfProperty < indexOfCommentedProperty && indexOfCommentedProperty > -1) {
+                adaptedProperties.remove(indexOfCommentedProperty);
+              }
+
+              adaptedProperties.set(indexOfProperty,
+                  new AbstractMap.SimpleEntry<>(commentedKey,currentValue));
+              adaptedProperties.add(indexOfProperty + 1, entry);
+
+              if (indexOfProperty > indexOfCommentedProperty && indexOfCommentedProperty > -1) {
+                adaptedProperties.remove(indexOfCommentedProperty);
+              }
+            }
+
+          }
+
+          //If the property is commented, we have to tell its value
+          if (indexOfProperty == -1 && indexOfCommentedProperty > -1) {
+            String currentValue = adaptedProperties.get(indexOfCommentedProperty).getValue();
+            if (Objects.equals(currentValue, value)) {
+              adaptedProperties.set(indexOfCommentedProperty, entry);
+            } else {
+              adaptedProperties.add(indexOfCommentedProperty + 1, entry);
+            }
+
+          }
+
+
+        });
+
+    return adaptedProperties.stream()
+        .map(entry -> entry.getKey().isEmpty() ? "" : (entry.getKey() + equals + entry.getValue()))
+        .collect(Collectors.toList());
   }
 }

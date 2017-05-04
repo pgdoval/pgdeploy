@@ -56,44 +56,70 @@ public class PostgreSqlConfWrapperTest {
   public PostgresConfig config;
 
   @Parameterized.Parameter(0)
-  public List<String> lines;
+  public String lines;
   
   @Parameterized.Parameter(1)
-  public List<String> expectedResult;
+  public String expectedResult;
 
   public List<String> result;
 
   public DefaultPropertyParser mockedParser;
   public DefaultPropertyParser spy;
 
-  public static String diffPropertyCommented = "#prop1=234";
-  public static String diffPropertyUntrimmedCommented = "# prop1 =234";
 
+  //Properties
+
+  //Different property
+  public static String commentedDiffProperty = "#prop1=234";
+  public static String commentedUntrimmedDiffProperty = "# prop1 =234";
   public static String diffProperty = "prop1=234";
   public static String untrimmedDiffProperty = " prop1 =234";
 
-  public static String commented = "#prop=234";
-  public static String untrimmedCommented = "# prop =234";
+  //Same property, different value
 
+  public static String commentedSamePropertyDiffValue = "#prop=234";
+  public static String commentedUntrimmedSamePropertyDiffValue = "# prop =234";
   public static String samePropertyDiffValue = "prop=234";
   public static String untrimmedSamePropertyDiffValue = " prop =234";
 
+  //Same property, same value
+  public static String commentedSamePropertySameValue = "#prop=value";
+  public static String commentedUntrimmedSamePropertySameUntrimmedValue = "# prop = value ";
+  public static String commentedUntrimmedSamePropertySameValue = "# prop =value";
   public static String samePropertySameValue = "prop=value";
-  public static String untrimmedSamePropertySameValue = " prop =value";
   public static String untrimmedSamePropertySameUntrimmedValue = " prop = value ";
+  public static String untrimmedSamePropertySameValue = " prop =value";
 
 
-  public static List<String> emptyList = new ArrayList<>();
-  public static List<String> samePropertySameValueList = Arrays.asList(samePropertySameValue);
-  public static List<String> samePropertyDiffValueList = Arrays.asList(samePropertyDiffValue);
-
-
-  
   @Parameterized.Parameters
   public static Collection getParams() {
     List<Object[]> result = new ArrayList<>();
 
-    result.add(new Object []{ samePropertySameValueList, samePropertySameValueList });
+    //Property is not found before
+    result.add(new Object []{ "", "\nprop=value" });
+    result.add(new Object []{ "prop1=234", "prop1=234\nprop=value" });
+
+
+    //Property is found in comments
+    result.add(new Object []{ "#prop=value", "prop=value" });
+    result.add(new Object []{ "# prop =value", "prop=value" });
+    result.add(new Object []{ "# prop = value ", "prop=value" });
+
+
+    //Property is found
+    result.add(new Object []{ "prop=value", "prop=value" });
+    result.add(new Object []{ " prop =value", "prop=value" });
+    result.add(new Object []{ " prop = value ", "prop=value" });
+    //With a different value
+    result.add(new Object []{ "prop=234", "#prop=234\nprop=value" });
+    result.add(new Object []{ " prop = 234 ", "#prop=234\nprop=value"  });
+
+
+    //Comments, positions and other properties or elements
+    result.add(new Object []{ "#prop=1\n\nprop=234", "\n#prop=234\nprop=value"  });
+    result.add(new Object []{ "#prop=1\nprop1=val1\nprop=234", "prop1=val1\n#prop=234\nprop=value"  });
+    result.add(new Object []{ "prop=234\n\n#prop=1", "#prop=234\nprop=value\n"  });
+
 
     return result;
   }
@@ -120,9 +146,9 @@ public class PostgreSqlConfWrapperTest {
 
   @Test
   public void updateLinesNormalChange() throws Exception {
-     result = PostgreSqlConfWrapper.updateLines(lines, config.asStream());
+     result = PostgreSqlConfWrapper.updateLines(Arrays.asList(lines.split("\n")), config.asStream());
 
-     assertEquals(expectedResult.stream().collect(Collectors.joining("\n")),
+     assertEquals(expectedResult,
          result.stream().collect(Collectors.joining("\n")));
 
   }
