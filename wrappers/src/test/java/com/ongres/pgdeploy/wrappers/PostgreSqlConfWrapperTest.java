@@ -29,6 +29,8 @@ import com.ongres.pgdeploy.pgconfig.PostgresConfig;
 import com.ongres.pgdeploy.pgconfig.properties.DataType;
 import com.ongres.pgdeploy.pgconfig.properties.Property;
 import com.ongres.pgdeploy.pgconfig.properties.Unit;
+import com.ongres.pgdeploy.wrappers.postgresqlconf.BasicUpdateLinesStrategy;
+import com.ongres.pgdeploy.wrappers.postgresqlconf.PostgreSqlConfWrapper;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -53,7 +55,7 @@ import static org.mockito.Mockito.spy;
 @RunWith(Parameterized.class)
 public class PostgreSqlConfWrapperTest {
 
-  public PostgresConfig config;
+  private PostgresConfig config;
 
   @Parameterized.Parameter(0)
   public String lines;
@@ -61,34 +63,12 @@ public class PostgreSqlConfWrapperTest {
   @Parameterized.Parameter(1)
   public String expectedResult;
 
-  public List<String> result;
+  private List<String> result;
 
-  public DefaultPropertyParser mockedParser;
-  public DefaultPropertyParser spy;
+  private DefaultPropertyParser mockedParser;
+  private DefaultPropertyParser spy;
 
-
-  //Properties
-
-  //Different property
-  public static String commentedDiffProperty = "#prop1=234";
-  public static String commentedUntrimmedDiffProperty = "# prop1 =234";
-  public static String diffProperty = "prop1=234";
-  public static String untrimmedDiffProperty = " prop1 =234";
-
-  //Same property, different value
-
-  public static String commentedSamePropertyDiffValue = "#prop=234";
-  public static String commentedUntrimmedSamePropertyDiffValue = "# prop =234";
-  public static String samePropertyDiffValue = "prop=234";
-  public static String untrimmedSamePropertyDiffValue = " prop =234";
-
-  //Same property, same value
-  public static String commentedSamePropertySameValue = "#prop=value";
-  public static String commentedUntrimmedSamePropertySameUntrimmedValue = "# prop = value ";
-  public static String commentedUntrimmedSamePropertySameValue = "# prop =value";
-  public static String samePropertySameValue = "prop=value";
-  public static String untrimmedSamePropertySameUntrimmedValue = " prop = value ";
-  public static String untrimmedSamePropertySameValue = " prop =value";
+  private BasicUpdateLinesStrategy strategy = new BasicUpdateLinesStrategy();
 
 
   @Parameterized.Parameters
@@ -146,7 +126,7 @@ public class PostgreSqlConfWrapperTest {
 
   @Test
   public void updateLinesNormalChange() throws Exception {
-     result = PostgreSqlConfWrapper.updateLines(Arrays.asList(lines.split("\n")), config.asStream());
+     result = strategy.updateLines(Arrays.asList(lines.split("\n")), config.asStream());
 
      assertEquals(expectedResult,
          result.stream().collect(Collectors.joining("\n")));
