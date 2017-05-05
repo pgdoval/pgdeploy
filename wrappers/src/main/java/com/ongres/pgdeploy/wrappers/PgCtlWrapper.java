@@ -43,6 +43,8 @@ public class PgCtlWrapper {
   private static final String start = "start";
   private static final String stop = "stop";
   private static final String status = "status";
+  private static final String restart = "restart";
+  private static final String reload = "reload";
 
   private static final String descriptionFirstPart = "pg_ctl - ";
 
@@ -79,8 +81,19 @@ public class PgCtlWrapper {
 
   public void stop(@Nullable String logFile)
       throws IOException, BadProcessExecutionException {
-
     getProcessOutput(stop, logFile);
+  }
+
+
+  public void restart(@Nullable String logFile)
+      throws IOException, BadProcessExecutionException {
+    System.out.println(getProcessOutput(restart, logFile));
+  }
+
+
+  public void reload(@Nullable String logFile)
+      throws IOException, BadProcessExecutionException {
+    getProcessOutput(reload, logFile);
   }
 
 

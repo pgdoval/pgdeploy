@@ -81,7 +81,8 @@ public abstract class PostgresCluster {
   public abstract Status status(@Nullable String logFile)
       throws BadProcessExecutionException, IOException;
 
-  public abstract void config(PostgresConfig config, @Nullable String logFile);
+  public abstract void config(PostgresConfig config, @Nullable String logFile)
+      throws IOException, BadProcessExecutionException;
 
   public abstract PostgresConfig.Builder createConfigBuilder();
 

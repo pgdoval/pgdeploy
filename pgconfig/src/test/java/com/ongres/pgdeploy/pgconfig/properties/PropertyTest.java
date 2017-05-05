@@ -117,11 +117,15 @@ public class PropertyTest {
     result.add(new Object []{DOUBLE, Unit.noneList, "9.5TB", 9.5D, TB, UnitNotAvailableForPropertyException.class});
     result.add(new Object []{DOUBLE, Unit.byteList, "9ert5TB", 9.5D, TB, WrongTypePropertyException.class});
     result.add(new Object []{INTEGER, Unit.byteList, "9caucaucau", 9.3D, NONE, UnitNotAvailableForPropertyException.class});
+    //In case of 2 units available, the longest one available is chosen
+    result.add(new Object []{INTEGER, Unit.timeList, "9ms", 9L, MS, null});
 
 
-    //New ideas
+    //Trimming
     result.add(new Object []{INTEGER, Unit.byteList, " 9 TB", 9L, TB, null});
     result.add(new Object []{INTEGER, Unit.noneList, " 9 ", 9L, NONE, null});
+
+    //Nulls
     result.add(new Object []{INTEGER, Unit.byteList, null, 9, TB, IllegalArgumentException.class});
 
 

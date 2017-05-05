@@ -24,10 +24,23 @@
  */
 package com.ongres.pgdeploy.clusters;
 
+import com.ongres.pgdeploy.core.RelativeRoute;
+import com.ongres.pgdeploy.pgconfig.PostgresConfig;
+import com.ongres.pgdeploy.pgconfig.properties.DataType;
+import com.ongres.pgdeploy.pgconfig.properties.Property;
+import com.ongres.pgdeploy.pgconfig.properties.Unit;
 import com.ongres.pgdeploy.wrappers.PgCtlWrapper;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.Optional;
 
 import static org.mockito.Mockito.*;
 
@@ -40,6 +53,7 @@ public class ConcretePostgresClusterMethodsTest {
 
   private PgCtlWrapper mockedWrapper;
   private PgCtlWrapper spy;
+  private Path clusterPath = new RelativeRoute(Arrays.asList("src","test","resources","cluster")).asRelativePath();
 
   private String logFile = "";
 
@@ -55,12 +69,17 @@ public class ConcretePostgresClusterMethodsTest {
           .start(anyString());
       doNothing().when(spy)
           .stop(anyString());
+      doNothing().when(spy)
+          .restart(anyString());
+      doNothing().when(spy)
+          .reload(anyString());
+
     } catch (Exception e) {
       e.printStackTrace();
     }
 
 
-    cluster = new ConcretePostgresCluster(spy);
+    cluster = new ConcretePostgresCluster(spy, clusterPath);
   }
 
 
@@ -84,6 +103,40 @@ public class ConcretePostgresClusterMethodsTest {
 
   @Test
   public void config() throws Exception {
+    PostgresConfig config = new PostgresConfig.Builder(
+        property -> Optional.of(new Property(property, true, DataType.INTEGER, Unit.noneList)))
+        .withProperty("port", 25433)
+        .build();
+
+    cluster.config(config, logFile);
+
+    verify(spy, times(1)).restart(logFile);
+
+    config = new PostgresConfig.Builder(
+        property -> Optional.of(new Property(property, true, DataType.INTEGER, Unit.noneList)))
+        .withProperty("port", 25432)
+        .build();
+
+    cluster.config(config, logFile);
+  }
+
+  @Test
+  public void configWithReload() throws Exception {
+    PostgresConfig config = new PostgresConfig.Builder(
+        property -> Optional.of(new Property(property, false, DataType.INTEGER, Unit.noneList)))
+        .withProperty("port", 25433)
+        .build();
+
+    cluster.config(config, logFile);
+
+    verify(spy, times(1)).reload(logFile);
+
+    config = new PostgresConfig.Builder(
+        property -> Optional.of(new Property(property, false, DataType.INTEGER, Unit.noneList)))
+        .withProperty("port", 25432)
+        .build();
+
+    cluster.config(config, logFile);
   }
 
   @Test
@@ -93,5 +146,6 @@ public class ConcretePostgresClusterMethodsTest {
   @Test
   public void setPgHbaConf1() throws Exception {
   }
+
 
 }

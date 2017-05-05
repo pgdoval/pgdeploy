@@ -57,7 +57,7 @@ public class BasicUpdateLinesStrategy implements UpdateLinesStrategy {
     int eqPosition = line.indexOf(equals);
 
     if (eqPosition < 0) {
-      return new AbstractMap.SimpleEntry<>("", "");
+      return new AbstractMap.SimpleEntry<>("", line);
     }
 
     String key = line.substring(0, eqPosition).trim();
@@ -146,7 +146,9 @@ public class BasicUpdateLinesStrategy implements UpdateLinesStrategy {
         });
 
     return adaptedProperties.stream()
-        .map(entry -> entry.getKey().isEmpty() ? "" : (entry.getKey() + equals + entry.getValue()))
+        .map(entry -> entry.getKey().isEmpty()
+            ? entry.getValue()
+            : (entry.getKey() + equals + entry.getValue()))
         .collect(Collectors.toList());
   }
 }

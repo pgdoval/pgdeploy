@@ -24,21 +24,32 @@
  */
 package com.ongres.pgdeploy.wrappers;
 
+import com.ongres.pgdeploy.pgconfig.PostgresConfig;
+import com.ongres.pgdeploy.pgconfig.properties.DataType;
+import com.ongres.pgdeploy.pgconfig.properties.Property;
+import com.ongres.pgdeploy.pgconfig.properties.Unit;
 import com.ongres.pgdeploy.wrappers.exceptions.BadProcessExecutionException;
+import com.ongres.pgdeploy.wrappers.postgresqlconf.PostgreSqlConfWrapper;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Stream;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.fail;
 
 /**
  * Created by pablo on 26/04/17.
@@ -151,6 +162,42 @@ public class PgCtlWrapperTest {
 
 
   @Test
+  public void testRestart() throws Exception {
+
+    pgCtlWrapper.start(null);
+
+    PostgresConfig config = new PostgresConfig.Builder(
+        property -> Optional.of(new Property(property, false, DataType.INTEGER, Unit.noneList)))
+        .withProperty("port", 25433)
+        .build();
+    PostgreSqlConfWrapper.updateConfFile(clusterPath.resolve("postgresql.conf"),config);
+
+    pgCtlWrapper.restart(null);
+
+    Process process = new ProcessBuilder().command("netstat", "-nltpo").start();
+
+    String output = fromStream(process.getInputStream());
+
+    Optional<String> optional = Stream.of(output.split("\n")).filter(it -> it.contains(":25433")).findFirst();
+
+    if (!optional.isPresent() || !optional.get().contains("/postgres")) {
+      fail("No process launched at new port: pg_ctl restart not working");
+    }
+
+    optional = Stream.of(output.split("\n")).filter(it -> it.contains(":25432")).findFirst();
+
+    if (optional.isPresent() && optional.get().contains("/postgres")) {
+      fail("Postgres process launched at old port: pg_ctl restart not working");
+    }
+
+    config = new PostgresConfig.Builder(
+        property -> Optional.of(new Property(property, false, DataType.INTEGER, Unit.noneList)))
+        .withProperty("port", 25432)
+        .build();
+    PostgreSqlConfWrapper.updateConfFile(clusterPath.resolve("postgresql.conf"),config);
+  }
+
+  @Test
   public void testLogClusterOperations() throws Exception {
     String logfileName = "logFile";
 
@@ -170,6 +217,21 @@ public class PgCtlWrapperTest {
       Files.delete(logFile);
     }
 
+  }
+
+  private static String fromStream(InputStream is) throws IOException {
+    BufferedReader reader =
+        new BufferedReader(new InputStreamReader(is, "UTF-8"));
+
+
+    StringBuilder builder = new StringBuilder();
+    String line;
+    while ( (line = reader.readLine()) != null) {
+      builder.append(line);
+      builder.append(System.getProperty("line.separator"));
+    }
+
+    return builder.toString();
   }
 
 }

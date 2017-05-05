@@ -38,11 +38,15 @@
  */
 package com.ongres.pgdeploy.clusters;
 
+import com.ongres.pgdeploy.core.router.DefaultRouter;
+import com.ongres.pgdeploy.core.router.Router;
 import com.ongres.pgdeploy.installations.PostgresInstallation;
+import com.ongres.pgdeploy.pgconfig.DefaultPropertyParser;
 import com.ongres.pgdeploy.pgconfig.PostgresConfig;
 import com.ongres.pgdeploy.pgconfig.PropertyParser;
 import com.ongres.pgdeploy.wrappers.PgCtlWrapper;
 import com.ongres.pgdeploy.wrappers.exceptions.BadProcessExecutionException;
+import com.ongres.pgdeploy.wrappers.postgresqlconf.PostgreSqlConfWrapper;
 
 import java.io.File;
 import java.io.IOException;
@@ -60,23 +64,34 @@ import javax.annotation.Nullable;
 public class ConcretePostgresCluster extends PostgresCluster {
 
   private final Path directory;
-  private final PostgresInstallation installation;
-  private final PropertyParser supplier;
+  private final Router router;
+  private final PropertyParser parser;
   private final PgCtlWrapper pgCtlWrapper;
 
   public ConcretePostgresCluster(
       Path directory, PostgresInstallation installation, PropertyParser supplier) {
-    this.directory = directory;
-    this.installation = installation;
-    this.supplier = supplier;
-    pgCtlWrapper = new PgCtlWrapper(installation.getPath(),directory);
+    this( directory, installation.getPath(), supplier, installation.getRouter());
   }
 
-  ConcretePostgresCluster(PgCtlWrapper wrapper) {
+  public ConcretePostgresCluster(
+      Path directory, Path installationDirectory, PropertyParser supplier, Router router) {
+    this( new PgCtlWrapper(installationDirectory,directory),
+        directory, supplier, router);
+  }
+
+  ConcretePostgresCluster(
+      PgCtlWrapper wrapper, Path directory, PropertyParser parser, Router router) {
     pgCtlWrapper = wrapper;
-    this.directory = null;
-    this.installation = null;
-    this.supplier = null;
+    this.directory = directory;
+    this.router = router;
+    this.parser = parser;
+  }
+
+  ConcretePostgresCluster(PgCtlWrapper wrapper, Path directory) {
+    pgCtlWrapper = wrapper;
+    this.directory = directory;
+    this.router = DefaultRouter.getInstance();
+    this.parser = DefaultPropertyParser.getInstance();
   }
 
   @Override
@@ -98,13 +113,22 @@ public class ConcretePostgresCluster extends PostgresCluster {
   }
 
   @Override
-  public void config(PostgresConfig config, @Nullable String logFile) {
+  public void config(PostgresConfig config, @Nullable String logFile)
+      throws IOException, BadProcessExecutionException {
+    PostgreSqlConfWrapper.updateConfFile(router.routeToPostgresqlConf(directory), config);
 
+    boolean needToRestart = config.asStream().anyMatch(entry -> entry.getKey().isNeedToRestart());
+
+    if (needToRestart) {
+      pgCtlWrapper.restart(logFile);
+    } else {
+      pgCtlWrapper.reload(logFile);
+    }
   }
 
   @Override
   public PostgresConfig.Builder createConfigBuilder() {
-    return null;
+    return new PostgresConfig.Builder(parser);
   }
 
   @Override

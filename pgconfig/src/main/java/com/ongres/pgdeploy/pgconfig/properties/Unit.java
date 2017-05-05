@@ -35,11 +35,15 @@ import java.util.List;
  */
 public enum Unit {
   NONE(""),
-  B("B"),
-  KB("KB"),
+  KB("kB"),
   MB("MB"),
   GB("GB"),
-  TB("TB");
+  TB("TB"),
+  MS("ms"),
+  S("s"),
+  MIN("min"),
+  H("h"),
+  D("d");
 
   private String unitName;
 
@@ -53,5 +57,7 @@ public enum Unit {
 
   public static final List<Unit> noneList = Collections.singletonList(NONE);
 
-  public static final List<Unit> byteList = ImmutableList.copyOf(Arrays.asList(B, KB, MB, GB, TB));
+  public static final List<Unit> byteList = ImmutableList.copyOf(Arrays.asList(KB, MB, GB, TB));
+
+  public static final List<Unit> timeList = ImmutableList.copyOf(Arrays.asList(MS, S, MIN, H, D));
 }

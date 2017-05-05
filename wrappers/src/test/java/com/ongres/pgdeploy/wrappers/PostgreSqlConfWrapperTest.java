@@ -99,7 +99,8 @@ public class PostgreSqlConfWrapperTest {
     result.add(new Object []{ "#prop=1\n\nprop=234", "\n#prop=234\nprop=value"  });
     result.add(new Object []{ "#prop=1\nprop1=val1\nprop=234", "prop1=val1\n#prop=234\nprop=value"  });
     result.add(new Object []{ "prop=234\n\n#prop=1", "#prop=234\nprop=value\n"  });
-
+    result.add(new Object []{ "#single comment without equals", "#single comment without equals\nprop=value"  });
+    result.add(new Object []{ "        #single comment without equals", "        #single comment without equals\nprop=value"  });
 
     return result;
   }
