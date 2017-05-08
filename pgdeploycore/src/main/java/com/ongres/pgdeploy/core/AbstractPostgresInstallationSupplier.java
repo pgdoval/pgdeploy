@@ -153,43 +153,9 @@ public abstract class AbstractPostgresInstallationSupplier implements PostgresIn
   public void checkInstallation(Path destination, List<PostgresInstallationFolder> folders)
       throws BadInstallationException, ExtraFoldersFoundException {
 
-    List<Path> notFound = new ArrayList<>();
-    List<String> extraFound = new ArrayList<>();
-    List<Path> notADirectory = new ArrayList<>();
+    InstallationChecker.checkInstallationIsComplete(destination, folders);
+    InstallationChecker.checkInstallationExtraFolders(destination, folders);
 
-    folders.stream()
-        .map(folder -> destination.resolve(folder.getStringId()))
-        .forEach(path -> {
-          if (!Files.exists(path)) {
-            notFound.add(path);
-          } else {
-            if (!Files.isDirectory(path)) {
-              notADirectory.add(path);
-            }
-          }
-        });
-
-
-    if (!notFound.isEmpty() || !notADirectory.isEmpty()) {
-      throw BadInstallationException.fromNotFoundAndNotADirectory(notFound, notADirectory);
-    }
-
-    Stream.of(PostgresInstallationFolder.values())
-        .filter(folder -> !folders.contains(folder))
-        .map(folder -> destination.resolve(folder.getStringId()))
-        .forEach(path -> {
-          if (Files.exists(path)) {
-            extraFound.add(path.getFileName().toString());
-          }
-        });
-
-    if (!extraFound.isEmpty()) {
-      List<String> requested = folders.stream()
-          .map(PostgresInstallationFolder::getStringId)
-          .collect(Collectors.toList());
-
-      throw ExtraFoldersFoundException.fromExpectedAndFound(requested,extraFound);
-    }
   }
 
   @Override

@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
 
 public class BadInstallationException extends Exception {
 
-  BadInstallationException(String message) {
+  public BadInstallationException(String message) {
     super(message);
   }
 

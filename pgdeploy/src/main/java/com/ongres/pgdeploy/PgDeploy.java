@@ -38,16 +38,20 @@
  */
 package com.ongres.pgdeploy;
 
+import com.ongres.pgdeploy.core.InstallationChecker;
 import com.ongres.pgdeploy.core.Platform;
 import com.ongres.pgdeploy.core.PostgresInstallationFolder;
 import com.ongres.pgdeploy.core.PostgresInstallationSupplier;
 import com.ongres.pgdeploy.core.exceptions.BadInstallationException;
 import com.ongres.pgdeploy.core.exceptions.ExtraFoldersFoundException;
+import com.ongres.pgdeploy.core.router.DefaultRouter;
+import com.ongres.pgdeploy.core.router.Router;
 import com.ongres.pgdeploy.installations.ConcretePostgresInstallation;
 import com.ongres.pgdeploy.installations.PostgresInstallation;
 import net.jcip.annotations.Immutable;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -170,6 +174,40 @@ public class PgDeploy {
 
     return new ConcretePostgresInstallation(supplier, destination);
   }
+
+
+
+  public PostgresInstallation retrieveInstallation(
+      @Nonnull PostgresInstallationSupplier supplier,
+      @Nonnull Path destination)
+      throws BadInstallationException, ExtraFoldersFoundException, IOException {
+    return retrieveInstallationWithRouter(supplier, destination);
+  }
+
+  public PostgresInstallation retrieveInstallation(
+      @Nonnull Path destination)
+      throws BadInstallationException, ExtraFoldersFoundException, IOException {
+    return retrieveInstallationWithRouter(DefaultRouter.getInstance(), destination);
+  }
+
+  private PostgresInstallation retrieveInstallationWithRouter(
+      @Nonnull Router router,
+      @Nonnull Path destination)
+      throws BadInstallationException, ExtraFoldersFoundException, IOException {
+
+    if (!Files.exists(destination)) {
+      throw new IOException("Installation folder " + destination.toString() + "not found");
+    }
+
+    //We check that the folder contains at least bin and lib folders
+    InstallationChecker.checkInstallationIsComplete(
+        destination, InstallOptions.binaries().toFolderList());
+
+    return new ConcretePostgresInstallation(router, destination);
+  }
+
+
+
 
   public static class InstallOptions {
 
