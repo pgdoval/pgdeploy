@@ -103,6 +103,15 @@ public class PgDeployRetrieveInstallationTest {
   @Test
   public void retrieveValidCluster() throws Exception {
     PostgresCluster cluster = pgDeploy.retrieveCluster(realClusterPath, realInstallationPath);
+    assertNotNull(cluster);
+  }
+
+  @Test
+  public void retrieveValidClusterWithSupplier() throws Exception {
+    PostgresInstallationSupplier supplier = new MockedPostgresInstallationSupplier(0, 0, 0, Platform.LINUX, null);
+
+    PostgresCluster cluster = pgDeploy.retrieveCluster(realClusterPath, realInstallationPath, supplier);
+    assertNotNull(cluster);
   }
 
 

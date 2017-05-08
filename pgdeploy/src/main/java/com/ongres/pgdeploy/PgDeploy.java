@@ -238,6 +238,17 @@ public class PgDeploy {
   }
 
 
+  /** Retrieves a previously existing cluster and links it to the installation in the desired path.
+   *     As no {@link PostgresInstallationSupplier} instance is provided, default versions of
+   *     {@link Router} and
+   *     {@link com.ongres.pgdeploy.pgconfig.PropertyParser PropertyParser} are used instead.
+   * @param clusterPath The path to the directory which contains the cluster
+   * @param installationPath The path to the directory which contains the installation files
+   * @return An instance of {@link PostgresCluster} to manage the operations of the desired cluster
+   * @throws BadInstallationException When the installation path does not contain an installation.
+   * @throws IOException When either the installation folder or the cluster folder don't exist.
+   * @throws BadClusterException When the cluster path is not pointing to a real cluster
+   */
   public PostgresCluster retrieveCluster(
       Path clusterPath, Path installationPath)
       throws BadInstallationException, IOException, BadClusterException {
@@ -246,6 +257,16 @@ public class PgDeploy {
         DefaultPropertyParser.getInstance(), DefaultRouter.getInstance());
   }
 
+  /** Retrieves a previously existing cluster and links it to the installation in the desired path.
+   * @param clusterPath The path to the directory which contains the cluster
+   * @param installationPath The path to the directory which contains the installation files
+   * @param supplier The {@link PostgresInstallationSupplier} instance to be used by the cluster as
+   *                 {@link Router} and {@link PropertyParser}.
+   * @return An instance of {@link PostgresCluster} to manage the operations of the desired cluster
+   * @throws BadInstallationException When the installation path does not contain an installation.
+   * @throws IOException When either the installation folder or the cluster folder don't exist.
+   * @throws BadClusterException When the cluster path is not pointing to a real cluster
+   */
   public PostgresCluster retrieveCluster(
       Path clusterPath, Path installationPath, PostgresInstallationSupplier supplier)
       throws BadInstallationException, IOException, BadClusterException {
