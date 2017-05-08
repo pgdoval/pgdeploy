@@ -31,6 +31,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -72,7 +73,7 @@ class ProcessBuilderWrapper {
 
   private static String fromStream(InputStream is) throws IOException {
     BufferedReader reader =
-        new BufferedReader(new InputStreamReader(is, "UTF-8"));
+        new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
 
 
     StringBuilder builder = new StringBuilder();

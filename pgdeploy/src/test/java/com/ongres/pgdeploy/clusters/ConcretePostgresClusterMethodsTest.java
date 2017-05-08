@@ -38,10 +38,13 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 
 /**
@@ -141,11 +144,29 @@ public class ConcretePostgresClusterMethodsTest {
 
   @Test
   public void setPgHbaConf() throws Exception {
+
+    Path originalPath = new RelativeRoute(Arrays.asList("src","test","resources","or.conf")).asRelativePath();
+    Path finalPath = new RelativeRoute(Arrays.asList("src","test","resources","pg_hba.conf")).asRelativePath();
+
+    Files.createFile(originalPath);
+    Files.createFile(finalPath);
+
+    String pgHbaContent = "The content\nof the pg_hba.conf file";
+
+    Files.write(originalPath, pgHbaContent.getBytes("UTF-8"));
+
+    try{
+      cluster = new ConcretePostgresCluster(spy, new RelativeRoute(Arrays.asList("src","test","resources")).asRelativePath());
+      cluster.setPgHbaConf(originalPath, null);
+      assertEquals(pgHbaContent, Files.lines(finalPath).collect(Collectors.joining("\n")));
+    }
+    finally {
+      Files.delete(originalPath);
+      Files.delete(finalPath);
+    }
+
   }
 
-  @Test
-  public void setPgHbaConf1() throws Exception {
-  }
 
 
 }

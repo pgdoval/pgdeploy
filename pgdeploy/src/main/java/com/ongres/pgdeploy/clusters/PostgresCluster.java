@@ -43,6 +43,7 @@ import com.ongres.pgdeploy.wrappers.exceptions.BadProcessExecutionException;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 
 import javax.annotation.Nullable;
 
@@ -86,9 +87,11 @@ public abstract class PostgresCluster {
 
   public abstract PostgresConfig.Builder createConfigBuilder();
 
-  public abstract void setPgHbaConf(String content);
+  public abstract void setPgHbaConf(String content, @Nullable String logFile)
+      throws IOException, BadProcessExecutionException;
 
-  public abstract void setPgHbaConf(File originalFile);
+  public abstract void setPgHbaConf(Path originalFile, @Nullable String logFile)
+      throws IOException, BadProcessExecutionException;
 
 
   public enum Status {

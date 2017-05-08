@@ -45,12 +45,16 @@ import com.ongres.pgdeploy.pgconfig.DefaultPropertyParser;
 import com.ongres.pgdeploy.pgconfig.PostgresConfig;
 import com.ongres.pgdeploy.pgconfig.PropertyParser;
 import com.ongres.pgdeploy.wrappers.PgCtlWrapper;
+import com.ongres.pgdeploy.wrappers.PgHbaConfWrapper;
 import com.ongres.pgdeploy.wrappers.exceptions.BadProcessExecutionException;
 import com.ongres.pgdeploy.wrappers.postgresqlconf.PostgreSqlConfWrapper;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
 
@@ -132,12 +136,17 @@ public class ConcretePostgresCluster extends PostgresCluster {
   }
 
   @Override
-  public void setPgHbaConf(String content) {
+  public void setPgHbaConf(String content, @Nullable String logFile)
+      throws IOException, BadProcessExecutionException {
+
+    PgHbaConfWrapper.overwriteConf(router.routeToPgHbaConf(directory),content);
+    pgCtlWrapper.restart(logFile);
 
   }
 
   @Override
-  public void setPgHbaConf(File originalFile) {
-
+  public void setPgHbaConf(Path originalFile, @Nullable String logFile)
+      throws IOException, BadProcessExecutionException {
+    setPgHbaConf(Files.lines(originalFile).collect(Collectors.joining("\n")), logFile);
   }
 }
