@@ -39,6 +39,7 @@
 package com.ongres.pgdeploy.installations;
 
 import com.ongres.pgdeploy.clusters.PostgresCluster;
+import com.ongres.pgdeploy.clusters.PostgresClusterCreationOptions;
 import com.ongres.pgdeploy.core.router.Router;
 import net.jcip.annotations.Immutable;
 
@@ -69,6 +70,28 @@ public abstract class PostgresInstallation {
    *     folder had to be empty wasn't fulfilled.
    */
   public abstract PostgresCluster createCluster(@Nonnull Path destination)
+      throws BadClusterCreationException, IOException,
+      InterruptedException, ClusterDirectoryNotEmptyException;
+
+  /** Creates a cluster by running initdb. By default, it uses UTF-8 encoding.
+   * @param destination The folder where the cluster will be created. It may not exist, but it is
+   *                    mandatory that if it exists, it is empty. It may exist and not be writable
+   *                    as well. The initdb process will do its job anyway.
+   * @param options The options for cluster creation: encoding, locale, super user and data
+   *                checksums. Created via <tt>fromDefault</tt> static method in class
+   *                {@link PostgresClusterCreationOptions}.
+   * @return An instance of {@link PostgresCluster} that will be able to perform
+   *     operations on this cluster
+   * @throws BadClusterCreationException The cluster created does not have the
+   *     expected contents
+   * @throws IOException The path to initdb is wrong
+   * @throws InterruptedException The execution of the command lasted more than
+   *     expected (40 seconds) and thus has been stopped.
+   * @throws ClusterDirectoryNotEmptyException The precondition that the <tt>destination</tt>
+   *     folder had to be empty wasn't fulfilled.
+   */
+  public abstract PostgresCluster createCluster(
+      @Nonnull Path destination, PostgresClusterCreationOptions options)
       throws BadClusterCreationException, IOException,
       InterruptedException, ClusterDirectoryNotEmptyException;
 

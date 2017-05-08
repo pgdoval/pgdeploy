@@ -39,6 +39,7 @@
 package com.ongres.pgdeploy.installations;
 
 import com.ongres.pgdeploy.clusters.PostgresCluster;
+import com.ongres.pgdeploy.clusters.PostgresClusterCreationOptions;
 import com.ongres.pgdeploy.core.RelativeRoute;
 import com.ongres.pgdeploy.core.router.DefaultRouter;
 import com.ongres.pgdeploy.core.router.Router;
@@ -135,6 +136,38 @@ public class PostgresInstallationTest {
     Files.createFile(path.resolve("a.txt"));
 
     PostgresCluster cluster = installation.createCluster(path);
+    assertNotNull(cluster);
+  }
+
+  @Test(expected = BadClusterCreationException.class)
+  public void createClusterWithWrongLocale() throws Exception {
+
+    Files.createDirectory(path);
+
+    PostgresClusterCreationOptions options = PostgresClusterCreationOptions
+        .fromDefault()
+        .defaultEncoding()
+        .withLocale("wertwert")
+        .defaultSuperUser()
+        .withoutDataChecksums();
+
+    PostgresCluster cluster = installation.createCluster(path, options);
+    assertNotNull(cluster);
+  }
+
+  @Test(expected = BadClusterCreationException.class)
+  public void createClusterWithEncoding() throws Exception {
+
+    Files.createDirectory(path);
+
+    PostgresClusterCreationOptions options = PostgresClusterCreationOptions
+        .fromDefault()
+        .withEncoding("wertwert")
+        .defaultLocale()
+        .defaultSuperUser()
+        .withoutDataChecksums();
+
+    PostgresCluster cluster = installation.createCluster(path, options);
     assertNotNull(cluster);
   }
 

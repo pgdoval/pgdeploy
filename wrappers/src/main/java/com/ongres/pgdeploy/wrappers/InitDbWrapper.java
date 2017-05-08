@@ -29,13 +29,14 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * Created by pablo on 26/04/17.
  */
 public class InitDbWrapper {
 
-  public static void run(Path initDbPath, Path clusterPath)
+  public static void run(Path initDbPath, Path clusterPath, List<String> options)
       throws IOException, InterruptedException {
 
     final String message = "initDB file "
@@ -46,8 +47,7 @@ public class InitDbWrapper {
 
     args.add("-D");
     args.add(clusterPath.toString());
-    args.add("-E");
-    args.add("UTF-8");
+    args.addAll(options);
 
     Process process = ProcessBuilderWrapper.runProcess(initDbPath, message, args);
 

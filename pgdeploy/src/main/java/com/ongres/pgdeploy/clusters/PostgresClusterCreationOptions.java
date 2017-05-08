@@ -50,6 +50,10 @@ public class PostgresClusterCreationOptions {
     this.dataChecksums = dataChecksums;
   }
 
+  public static PostgresClusterCreationOptions defaultOptions() {
+    return new PostgresClusterCreationOptions( null, null, null, false);
+  }
+
   public List<String> toArgumentList() {
     List<String> result = new ArrayList<>();
 

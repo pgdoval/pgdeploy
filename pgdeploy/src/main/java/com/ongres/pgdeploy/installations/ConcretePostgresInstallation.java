@@ -40,6 +40,7 @@ package com.ongres.pgdeploy.installations;
 
 import com.ongres.pgdeploy.clusters.ConcretePostgresCluster;
 import com.ongres.pgdeploy.clusters.PostgresCluster;
+import com.ongres.pgdeploy.clusters.PostgresClusterCreationOptions;
 import com.ongres.pgdeploy.core.PostgresInstallationSupplier;
 import com.ongres.pgdeploy.core.router.Router;
 import com.ongres.pgdeploy.pgconfig.DefaultPropertyParser;
@@ -78,6 +79,14 @@ public class ConcretePostgresInstallation extends PostgresInstallation {
       throws BadClusterCreationException, IOException,
       InterruptedException, ClusterDirectoryNotEmptyException {
 
+    return createCluster(destination, PostgresClusterCreationOptions.defaultOptions());
+  }
+
+  public PostgresCluster createCluster(
+      @Nonnull Path destination, PostgresClusterCreationOptions options)
+      throws BadClusterCreationException, IOException,
+      InterruptedException, ClusterDirectoryNotEmptyException {
+
     if (Files.exists(destination)) {
 
       boolean isEmpty;
@@ -91,7 +100,7 @@ public class ConcretePostgresInstallation extends PostgresInstallation {
       }
     }
 
-    InitDbWrapper.run(router.routeToInitDb(path),destination);
+    InitDbWrapper.run(router.routeToInitDb(path),destination, options.toArgumentList());
 
     checkClusterIsFull(destination);
 

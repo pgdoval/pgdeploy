@@ -64,6 +64,7 @@ public class PostgresClusterCreationOptionsTest {
   public void test() throws Exception {
     assertListEquals(result1, options1.toArgumentList());
     assertListEquals(result2, options2.toArgumentList());
+    assertTrue(PostgresClusterCreationOptions.defaultOptions().toArgumentList().isEmpty());
   }
 
   private void assertListEquals(List<String> expected, List<String> actual) {
