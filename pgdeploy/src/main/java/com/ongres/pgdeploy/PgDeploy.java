@@ -176,24 +176,50 @@ public class PgDeploy {
   }
 
 
-
+  /** Retrieves a previously existing PostgresInstallation.
+   * @param supplier The {@link PostgresInstallationSupplier} instance to be used as {@link Router}
+   *                 and {@link com.ongres.pgdeploy.pgconfig.PropertyParser PropertyParser} by the
+   *                installation or by the clusters it creates.
+   * @param destination The location of the existing installation.
+   * @return An instance of {@link PostgresInstallation} to manage the installation in the
+   *     desired folder.
+   * @throws IOException When there are I/O problems with the folder, for instance, when the folder
+   *     doesn't exist.
+   * @throws BadInstallationException When any of the necessary folders (<tt>bin</tt> and
+   *     <tt>lib</tt>) is not present in the installation folder. Folders <tt>share</tt> and
+   *     <tt>include</tt> are optional.
+   */
   public PostgresInstallation retrieveInstallation(
       @Nonnull PostgresInstallationSupplier supplier,
       @Nonnull Path destination)
-      throws BadInstallationException, ExtraFoldersFoundException, IOException {
+      throws BadInstallationException, IOException {
     return retrieveInstallationWithRouter(supplier, destination);
   }
 
+
+  /** Retrieves a previously existing PostgresInstallation. As no
+   *     {@link PostgresInstallationSupplier} instance is provided, default versions of
+   *     {@link Router} and
+   *     {@link com.ongres.pgdeploy.pgconfig.PropertyParser PropertyParser} are used instead.
+   * @param destination The location of the existing installation.
+   * @return An instance of {@link PostgresInstallation} to manage the installation in the
+   *     desired folder.
+   * @throws IOException When there are I/O problems with the folder, for instance, when the folder
+   *     doesn't exist.
+   * @throws BadInstallationException When any of the necessary folders (<tt>bin</tt> and
+   *     <tt>lib</tt>) is not present in the installation folder. Folders <tt>share</tt> and
+   *     <tt>include</tt> are optional.
+   */
   public PostgresInstallation retrieveInstallation(
       @Nonnull Path destination)
-      throws BadInstallationException, ExtraFoldersFoundException, IOException {
+      throws BadInstallationException, IOException {
     return retrieveInstallationWithRouter(DefaultRouter.getInstance(), destination);
   }
 
   private PostgresInstallation retrieveInstallationWithRouter(
       @Nonnull Router router,
       @Nonnull Path destination)
-      throws BadInstallationException, ExtraFoldersFoundException, IOException {
+      throws BadInstallationException, IOException {
 
     if (!Files.exists(destination)) {
       throw new IOException("Installation folder " + destination.toString() + "not found");
