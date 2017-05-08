@@ -78,9 +78,9 @@ public class ConcretePostgresCluster extends PostgresCluster {
   }
 
   public ConcretePostgresCluster(
-      Path directory, Path installationDirectory, PropertyParser supplier, Router router) {
-    this( new PgCtlWrapper(installationDirectory,directory),
-        directory, supplier, router);
+      Path directory, Path installationDirectory, PropertyParser parser, Router router) {
+    this( new PgCtlWrapper(installationDirectory, directory),
+        directory, parser, router);
   }
 
   ConcretePostgresCluster(

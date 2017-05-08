@@ -71,13 +71,13 @@ public class ConcretePostgresInstallationCheckClusterTest {
 
   @Test
   public void checkRealCluster() throws Exception {
-    installation.checkClusterIsFull(realClusterPath);
+    installation.checkCluster(realClusterPath);
   }
 
 
-  @Test(expected = BadClusterCreationException.class)
+  @Test(expected = BadClusterException.class)
   public void checkNonCluster() throws Exception {
-    installation.checkClusterIsFull(nonClusterPath);
+    installation.checkCluster(nonClusterPath);
   }
 
 

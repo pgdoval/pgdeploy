@@ -44,13 +44,13 @@ import java.nio.file.Path;
 /**
  * Created by pablo on 25/04/17.
  */
-public class BadClusterCreationException extends Exception {
+public class BadClusterException extends Exception {
 
-  public BadClusterCreationException(String s) {
+  public BadClusterException(String s) {
     super(s);
   }
 
-  public static BadClusterCreationException fromPath(Path path) {
+  public static BadClusterException fromPath(Path path) {
 
     StringBuilder sb = new StringBuilder();
 
@@ -58,6 +58,6 @@ public class BadClusterCreationException extends Exception {
     sb.append(path.toString());
     sb.append(" should have been created, but it hasn't");
 
-    return new BadClusterCreationException(sb.toString());
+    return new BadClusterException(sb.toString());
   }
 }

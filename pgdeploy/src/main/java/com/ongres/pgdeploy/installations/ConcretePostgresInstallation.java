@@ -76,7 +76,7 @@ public class ConcretePostgresInstallation extends PostgresInstallation {
   }
 
   public PostgresCluster createCluster(@Nonnull Path destination)
-      throws BadClusterCreationException, IOException,
+      throws BadClusterException, IOException,
       InterruptedException, ClusterDirectoryNotEmptyException {
 
     return createCluster(destination, PostgresClusterCreationOptions.defaultOptions());
@@ -84,7 +84,7 @@ public class ConcretePostgresInstallation extends PostgresInstallation {
 
   public PostgresCluster createCluster(
       @Nonnull Path destination, PostgresClusterCreationOptions options)
-      throws BadClusterCreationException, IOException,
+      throws BadClusterException, IOException,
       InterruptedException, ClusterDirectoryNotEmptyException {
 
     if (Files.exists(destination)) {
@@ -102,7 +102,7 @@ public class ConcretePostgresInstallation extends PostgresInstallation {
 
     InitDbWrapper.run(router.routeToInitDb(path),destination, options.toArgumentList());
 
-    checkClusterIsFull(destination);
+    checkCluster(destination);
 
     PropertyParser parser = (router instanceof PostgresInstallationSupplier)
         ? (PostgresInstallationSupplier) router : DefaultPropertyParser.getInstance();
@@ -111,14 +111,15 @@ public class ConcretePostgresInstallation extends PostgresInstallation {
 
   }
 
-  protected void checkClusterIsFull(@Nonnull Path destination) throws BadClusterCreationException {
+  @Override
+  public void checkCluster(@Nonnull Path destination) throws BadClusterException {
     throwIfNotExists(router.routeToPgHbaConf(destination));
     throwIfNotExists(router.routeToPostgresqlConf(destination));
   }
 
-  private void throwIfNotExists(@Nonnull Path toCheck) throws BadClusterCreationException {
+  private void throwIfNotExists(@Nonnull Path toCheck) throws BadClusterException {
     if (!Files.exists(toCheck)) {
-      throw BadClusterCreationException.fromPath(toCheck);
+      throw BadClusterException.fromPath(toCheck);
     }
   }
 

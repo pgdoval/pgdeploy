@@ -61,7 +61,7 @@ public abstract class PostgresInstallation {
    *                    as well. The initdb process will do its job anyway.
    * @return An instance of {@link PostgresCluster} that will be able to perform
    *     operations on this cluster
-   * @throws BadClusterCreationException The cluster created does not have the
+   * @throws BadClusterException The cluster created does not have the
    *     expected contents
    * @throws IOException The path to initdb is wrong
    * @throws InterruptedException The execution of the command lasted more than
@@ -70,7 +70,7 @@ public abstract class PostgresInstallation {
    *     folder had to be empty wasn't fulfilled.
    */
   public abstract PostgresCluster createCluster(@Nonnull Path destination)
-      throws BadClusterCreationException, IOException,
+      throws BadClusterException, IOException,
       InterruptedException, ClusterDirectoryNotEmptyException;
 
   /** Creates a cluster by running initdb. By default, it uses UTF-8 encoding.
@@ -82,7 +82,7 @@ public abstract class PostgresInstallation {
    *                {@link PostgresClusterCreationOptions}.
    * @return An instance of {@link PostgresCluster} that will be able to perform
    *     operations on this cluster
-   * @throws BadClusterCreationException The cluster created does not have the
+   * @throws BadClusterException The cluster created does not have the
    *     expected contents
    * @throws IOException The path to initdb is wrong
    * @throws InterruptedException The execution of the command lasted more than
@@ -92,7 +92,8 @@ public abstract class PostgresInstallation {
    */
   public abstract PostgresCluster createCluster(
       @Nonnull Path destination, PostgresClusterCreationOptions options)
-      throws BadClusterCreationException, IOException,
+      throws BadClusterException, IOException,
       InterruptedException, ClusterDirectoryNotEmptyException;
 
+  public abstract void checkCluster(@Nonnull Path destination) throws BadClusterException;
 }

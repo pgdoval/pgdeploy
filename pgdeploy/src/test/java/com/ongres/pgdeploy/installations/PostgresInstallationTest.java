@@ -139,7 +139,7 @@ public class PostgresInstallationTest {
     assertNotNull(cluster);
   }
 
-  @Test(expected = BadClusterCreationException.class)
+  @Test(expected = BadClusterException.class)
   public void createClusterWithWrongLocale() throws Exception {
 
     Files.createDirectory(path);
@@ -155,7 +155,7 @@ public class PostgresInstallationTest {
     assertNotNull(cluster);
   }
 
-  @Test(expected = BadClusterCreationException.class)
+  @Test(expected = BadClusterException.class)
   public void createClusterWithEncoding() throws Exception {
 
     Files.createDirectory(path);

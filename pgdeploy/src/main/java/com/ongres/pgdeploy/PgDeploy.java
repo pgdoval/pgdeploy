@@ -38,6 +38,8 @@
  */
 package com.ongres.pgdeploy;
 
+import com.ongres.pgdeploy.clusters.ConcretePostgresCluster;
+import com.ongres.pgdeploy.clusters.PostgresCluster;
 import com.ongres.pgdeploy.core.InstallationChecker;
 import com.ongres.pgdeploy.core.Platform;
 import com.ongres.pgdeploy.core.PostgresInstallationFolder;
@@ -46,8 +48,11 @@ import com.ongres.pgdeploy.core.exceptions.BadInstallationException;
 import com.ongres.pgdeploy.core.exceptions.ExtraFoldersFoundException;
 import com.ongres.pgdeploy.core.router.DefaultRouter;
 import com.ongres.pgdeploy.core.router.Router;
+import com.ongres.pgdeploy.installations.BadClusterException;
 import com.ongres.pgdeploy.installations.ConcretePostgresInstallation;
 import com.ongres.pgdeploy.installations.PostgresInstallation;
+import com.ongres.pgdeploy.pgconfig.DefaultPropertyParser;
+import com.ongres.pgdeploy.pgconfig.PropertyParser;
 import net.jcip.annotations.Immutable;
 
 import java.io.IOException;
@@ -233,7 +238,37 @@ public class PgDeploy {
   }
 
 
+  public PostgresCluster retrieveCluster(
+      Path clusterPath, Path installationPath)
+      throws BadInstallationException, IOException, BadClusterException {
 
+    return retrieveCluster(clusterPath, installationPath,
+        DefaultPropertyParser.getInstance(), DefaultRouter.getInstance());
+  }
+
+  public PostgresCluster retrieveCluster(
+      Path clusterPath, Path installationPath, PostgresInstallationSupplier supplier)
+      throws BadInstallationException, IOException, BadClusterException {
+
+    return retrieveCluster(clusterPath, installationPath, supplier, supplier);
+  }
+
+  private PostgresCluster retrieveCluster(
+      Path directory, Path installationDirectory, PropertyParser parser, Router router)
+      throws IOException, BadInstallationException, BadClusterException {
+
+
+    if (!Files.exists(directory)) {
+      throw new IOException("Cluster folder " + directory.toString() + "not found");
+    }
+    PostgresInstallation installation =
+        retrieveInstallationWithRouter(router, installationDirectory);
+
+    installation.checkCluster(directory);
+
+
+    return new ConcretePostgresCluster(directory, installationDirectory, parser, router);
+  }
 
   public static class InstallOptions {
 

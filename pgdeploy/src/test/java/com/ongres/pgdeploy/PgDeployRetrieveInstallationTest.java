@@ -24,12 +24,13 @@
  */
 package com.ongres.pgdeploy;
 
+import com.ongres.pgdeploy.clusters.PostgresCluster;
 import com.ongres.pgdeploy.core.Platform;
 import com.ongres.pgdeploy.core.PostgresInstallationSupplier;
 import com.ongres.pgdeploy.core.RelativeRoute;
 import com.ongres.pgdeploy.core.exceptions.BadInstallationException;
-import com.ongres.pgdeploy.core.exceptions.ExtraFoldersFoundException;
 import com.ongres.pgdeploy.core.router.DefaultRouter;
+import com.ongres.pgdeploy.installations.BadClusterException;
 import com.ongres.pgdeploy.installations.PostgresInstallation;
 import org.junit.Test;
 
@@ -46,8 +47,8 @@ import static org.junit.Assert.*;
 public class PgDeployRetrieveInstallationTest {
 
   private Path nonExistentPath = new RelativeRoute(Arrays.asList("src", "test", "resources", "noInstall")).asRelativePath();
-  private Path badInstallationPath = new RelativeRoute(Arrays.asList("src", "test", "resources", "cluster")).asRelativePath();
-  private Path realPath = new RelativeRoute(Arrays.asList("src", "test", "resources", "installation")).asRelativePath();
+  private Path realClusterPath = new RelativeRoute(Arrays.asList("src", "test", "resources", "cluster")).asRelativePath();
+  private Path realInstallationPath = new RelativeRoute(Arrays.asList("src", "test", "resources", "installation")).asRelativePath();
 
   private PgDeploy pgDeploy = new PgDeploy(new ArrayList<>());
 
@@ -58,14 +59,14 @@ public class PgDeployRetrieveInstallationTest {
 
   @Test (expected = BadInstallationException.class)
   public void retrieveIncompleteInstallation() throws Exception {
-    pgDeploy.retrieveInstallation(badInstallationPath);
+    pgDeploy.retrieveInstallation(realClusterPath);
   }
 
   @Test
   public void retrieveValidInstallation() throws Exception {
-    PostgresInstallation installation = pgDeploy.retrieveInstallation(realPath);
+    PostgresInstallation installation = pgDeploy.retrieveInstallation(realInstallationPath);
     assertEquals(DefaultRouter.getInstance(), installation.getRouter());
-    assertEquals(realPath, installation.getPath());
+    assertEquals(realInstallationPath, installation.getPath());
   }
 
   @Test
@@ -73,10 +74,37 @@ public class PgDeployRetrieveInstallationTest {
 
     PostgresInstallationSupplier supplier = new MockedPostgresInstallationSupplier(0, 0, 0, Platform.LINUX, null);
 
-    PostgresInstallation installation = pgDeploy.retrieveInstallation(supplier, realPath);
+    PostgresInstallation installation = pgDeploy.retrieveInstallation(supplier, realInstallationPath);
     assertEquals(supplier, installation.getRouter());
-    assertEquals(realPath, installation.getPath());
+    assertEquals(realInstallationPath, installation.getPath());
   }
+
+
+  @Test (expected = BadClusterException.class)
+  public void retrieveNotACluster() throws Exception {
+    PostgresCluster cluster = pgDeploy.retrieveCluster(realInstallationPath, realInstallationPath);
+  }
+
+  @Test (expected = BadInstallationException.class)
+  public void retrieveValidClusterWithInvalidInstallation() throws Exception {
+    PostgresCluster cluster = pgDeploy.retrieveCluster(realClusterPath, realClusterPath);
+  }
+
+  @Test (expected = IOException.class)
+  public void retrieveValidClusterWithNonExistentInstallation() throws Exception {
+    PostgresCluster cluster = pgDeploy.retrieveCluster(realClusterPath, nonExistentPath);
+  }
+
+  @Test (expected = IOException.class)
+  public void retrieveNonExistentCluster() throws Exception {
+    PostgresCluster cluster = pgDeploy.retrieveCluster(nonExistentPath, realInstallationPath);
+  }
+
+  @Test
+  public void retrieveValidCluster() throws Exception {
+    PostgresCluster cluster = pgDeploy.retrieveCluster(realClusterPath, realInstallationPath);
+  }
+
 
 
 }
