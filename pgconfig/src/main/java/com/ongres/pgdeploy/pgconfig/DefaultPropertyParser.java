@@ -24,17 +24,76 @@
  */
 package com.ongres.pgdeploy.pgconfig;
 
+import com.ongres.pgdeploy.pgconfig.properties.DataType;
 import com.ongres.pgdeploy.pgconfig.properties.Property;
+import com.ongres.pgdeploy.pgconfig.properties.Unit;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
+import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 /**
  * Created by pablo on 25/04/17.
  */
 public class DefaultPropertyParser implements PropertyParser {
+
+  private static String delimiter = "|";
+  private static String file = "src/main/resources/pgprops.csv";
+
+  private static final Map<String,DataType> typeFromString = typeFromString();
+
+  private static final Map<String,DataType> typeFromString() {
+    Map<String, DataType> result = new HashMap<>(6);
+
+    result.put("bool", DataType.BOOLEAN);
+    result.put("string", DataType.STRING);
+    result.put("enum", DataType.STRING);
+    result.put("real", DataType.DOUBLE);
+    result.put("integer", DataType.INTEGER);
+
+    return result;
+  }
+
   @Override
   public Optional<Property> parse(String property) {
-    return Optional.empty();
+    try {
+      Optional<String> optionalLine = Files.lines(Paths.get(file))
+          .filter(line -> line.startsWith(property + delimiter))
+          .findAny();
+
+      if (!optionalLine.isPresent()) {
+        return Optional.empty();
+      }
+
+      String[] split = optionalLine.get().split(Pattern.quote(delimiter));
+
+      DataType type = typeFromString.getOrDefault(split[2], DataType.STRING);
+      Unit unit = getUnitFromValue(split[1]);
+
+      return Optional.of(
+          new Property(property, true, type, Unit.getListFromUnit(unit))
+      );
+
+    } catch (IOException e) {
+      e.printStackTrace();
+      return Optional.empty();
+    }
+  }
+
+  private Unit getUnitFromValue(String value) {
+
+    Optional<Unit> chosenUnitOptional = Stream.of(Unit.values())
+        .filter(unit -> value.endsWith(unit.getUnitName()))
+        .sorted(Comparator.comparingInt(unit -> -unit.getUnitName().length()))
+        .findFirst();
+
+    return chosenUnitOptional.orElse(Unit.NONE);
   }
 
   private DefaultPropertyParser() {

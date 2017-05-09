@@ -60,4 +60,14 @@ public enum Unit {
   public static final List<Unit> byteList = ImmutableList.copyOf(Arrays.asList(KB, MB, GB, TB));
 
   public static final List<Unit> timeList = ImmutableList.copyOf(Arrays.asList(MS, S, MIN, H, D));
+
+  public static List<Unit> getListFromUnit(Unit unit) {
+    if (byteList.contains(unit)) {
+      return byteList;
+    } else if (timeList.contains(unit)) {
+      return timeList;
+    } else {
+      return noneList;
+    }
+  }
 }

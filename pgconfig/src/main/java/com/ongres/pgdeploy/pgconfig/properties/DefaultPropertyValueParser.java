@@ -49,7 +49,7 @@ public class DefaultPropertyValueParser implements PropertyValueParser {
       new PropertyValueParsingUtils<Float>(Float.class, DataType.DOUBLE, "Float")
   );
 
-  public static final Map<String,Boolean> boolFromString = boolFromString();
+  private static final Map<String,Boolean> boolFromString = boolFromString();
 
   private static final Map<String,Boolean> boolFromString() {
     Map<String, Boolean> result = new HashMap<>(6);
