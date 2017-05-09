@@ -30,7 +30,8 @@ package com.ongres.pgdeploy.pgconfig.properties;
 public enum DataType {
   STRING(String.class),
   INTEGER(Integer.class),
-  DOUBLE(Double.class);
+  DOUBLE(Double.class),
+  BOOLEAN(Boolean.class);
 
   private Class clazz;
 

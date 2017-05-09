@@ -82,32 +82,52 @@ public class PropertyTest {
     result.add(new Object []{DOUBLE, Unit.noneList, 9.3D, 9.3D, NONE, null});
     result.add(new Object []{INTEGER, Unit.noneList, 9.3D, 9.3D, NONE, WrongTypePropertyException.class});
     result.add(new Object []{STRING, Unit.noneList, 9.3D, 9.3D, NONE, WrongTypePropertyException.class});
+    result.add(new Object []{BOOLEAN, Unit.noneList, 9.3D, 9.3D, NONE, WrongTypePropertyException.class});
     //Integer comes
     result.add(new Object []{INTEGER, Unit.noneList, 9, 9, NONE, null});
     result.add(new Object []{DOUBLE, Unit.noneList, 9, 9, NONE, WrongTypePropertyException.class});
     result.add(new Object []{STRING, Unit.noneList, 9, 9, NONE, WrongTypePropertyException.class});
+    result.add(new Object []{BOOLEAN, Unit.noneList, 9, 9, NONE, WrongTypePropertyException.class});
     //String comes
     result.add(new Object []{STRING, Unit.noneList, "value", "value", NONE, null});
     result.add(new Object []{DOUBLE, Unit.noneList, "value", "value", NONE, WrongTypePropertyException.class});
     result.add(new Object []{INTEGER, Unit.noneList, "value", "value", NONE, WrongTypePropertyException.class});
+    result.add(new Object []{BOOLEAN, Unit.noneList, "value", "value", NONE, WrongTypePropertyException.class});
     //Unexpected type
     result.add(new Object []{INTEGER, Unit.noneList, emptyList, "value", NONE, WrongTypePropertyException.class});
     result.add(new Object []{DOUBLE, Unit.noneList, emptyList, "value", NONE, WrongTypePropertyException.class});
-    result.add(new Object []{DOUBLE, Unit.noneList, emptyList, "value", NONE, WrongTypePropertyException.class});
+    result.add(new Object []{BOOLEAN, Unit.noneList, emptyList, "value", NONE, WrongTypePropertyException.class});
     //Float comes
     result.add(new Object []{DOUBLE, Unit.noneList, 9.3F, 9.3F, NONE, null});
     result.add(new Object []{INTEGER, Unit.noneList, 9.3F, 9.3F, NONE, WrongTypePropertyException.class});
     result.add(new Object []{STRING, Unit.noneList, 9.3F, 9.3F, NONE, WrongTypePropertyException.class});
+    result.add(new Object []{BOOLEAN, Unit.noneList, 9.3F, 9.3F, NONE, WrongTypePropertyException.class});
     //Long comes
     result.add(new Object []{INTEGER, Unit.noneList, 9L, 9L, NONE, null});
     result.add(new Object []{DOUBLE, Unit.noneList, 9L, 9L, NONE, WrongTypePropertyException.class});
     result.add(new Object []{STRING, Unit.noneList, 9L, 9L, NONE, WrongTypePropertyException.class});
+    result.add(new Object []{BOOLEAN, Unit.noneList, 9L, 9L, NONE, WrongTypePropertyException.class});
+    //Boolean comes
+    result.add(new Object []{BOOLEAN, Unit.noneList, true, true, NONE, null});
+    result.add(new Object []{DOUBLE, Unit.noneList, true, true, NONE, WrongTypePropertyException.class});
+    result.add(new Object []{STRING, Unit.noneList, true, true, NONE, WrongTypePropertyException.class});
+    result.add(new Object []{INTEGER, Unit.noneList, true, true, NONE, WrongTypePropertyException.class});
 
 
     //Basic unit checking
     //NonString comes and a unit is required
     result.add(new Object []{DOUBLE, Unit.byteList, 9.3D, 9.3D, NONE, UnitNotAvailableForPropertyException.class});
     result.add(new Object []{INTEGER, Unit.byteList, 9.3D, 9.3D, NONE, UnitNotAvailableForPropertyException.class});
+    //Valid unitless values encapsulated in the string
+    result.add(new Object []{INTEGER, Unit.noneList, "9", 9L, NONE, null});
+    result.add(new Object []{DOUBLE, Unit.noneList, "9", 9D, NONE, null});
+    result.add(new Object []{DOUBLE, Unit.noneList, "9.5", 9.5D, NONE, null});
+    result.add(new Object []{BOOLEAN, Unit.noneList, "true", true, NONE, null});
+    result.add(new Object []{BOOLEAN, Unit.noneList, "on", true, NONE, null});
+    result.add(new Object []{BOOLEAN, Unit.noneList, "1", true, NONE, null});
+    result.add(new Object []{BOOLEAN, Unit.noneList, "false", false, NONE, null});
+    result.add(new Object []{BOOLEAN, Unit.noneList, "off", false, NONE, null});
+    result.add(new Object []{BOOLEAN, Unit.noneList, "0", false, NONE, null});
     //Units encapsulated in the string
     result.add(new Object []{INTEGER, Unit.byteList, "9TB", 9L, TB, null});
     result.add(new Object []{DOUBLE, Unit.byteList, "9TB", 9D, TB, null});
@@ -117,7 +137,7 @@ public class PropertyTest {
     result.add(new Object []{DOUBLE, Unit.noneList, "9.5TB", 9.5D, TB, UnitNotAvailableForPropertyException.class});
     result.add(new Object []{DOUBLE, Unit.byteList, "9ert5TB", 9.5D, TB, WrongTypePropertyException.class});
     result.add(new Object []{INTEGER, Unit.byteList, "9caucaucau", 9.3D, NONE, UnitNotAvailableForPropertyException.class});
-    //In case of 2 units available, the longest one available is chosen
+    //In case of 2 units available, the longest one available is chosen (ms over s)
     result.add(new Object []{INTEGER, Unit.timeList, "9ms", 9L, MS, null});
 
 
