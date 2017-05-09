@@ -70,6 +70,8 @@ public class PropertyTest {
   @Rule
   public final ExpectedException exception = ExpectedException.none();
 
+  private final PropertyValueParser parser = DefaultPropertyValueParser.getInstance();
+
 
   @Parameterized.Parameters
   public static Collection getParams() {
@@ -160,8 +162,8 @@ public class PropertyTest {
       exception.expect(expectedException);
     }
 
-    PropertyValue propertyValue = new Property("name", false, type, availableUnits)
-        .parse(objectReceived);
+    PropertyValue propertyValue = parser.parse(
+        objectReceived,new Property("name", false, type, availableUnits));
 
     assertEquals(objInResult, propertyValue.getValue());
     assertEquals(unitInResult, propertyValue.getUnit());
