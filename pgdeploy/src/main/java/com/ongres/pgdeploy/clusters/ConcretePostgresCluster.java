@@ -113,20 +113,25 @@ public class ConcretePostgresCluster extends PostgresCluster {
   @Override
   public Status status(@Nullable String logFile)
       throws BadProcessExecutionException, IOException {
+
     return Status.valueOf(pgCtlWrapper.status(logFile).name());
   }
 
   @Override
   public void config(PostgresConfig config, @Nullable String logFile)
       throws IOException, BadProcessExecutionException {
+
+    Status status = status(null);
     PostgreSqlConfWrapper.updateConfFile(router.routeToPostgresqlConf(directory), config);
 
     boolean needToRestart = config.asStream().anyMatch(entry -> entry.getKey().isNeedToRestart());
 
-    if (needToRestart) {
-      pgCtlWrapper.restart(logFile);
-    } else {
-      pgCtlWrapper.reload(logFile);
+    if (status == Status.ACTIVE) {
+      if (needToRestart) {
+        pgCtlWrapper.restart(logFile);
+      } else {
+        pgCtlWrapper.reload(logFile);
+      }
     }
   }
 

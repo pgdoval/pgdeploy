@@ -33,6 +33,8 @@ import com.ongres.pgdeploy.wrappers.PgCtlWrapper;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -66,8 +68,12 @@ public class ConcretePostgresClusterMethodsTest {
     spy = spy(mockedWrapper);
 
     try {
-      Mockito.doReturn(PgCtlWrapper.Status.ACTIVE).when(spy)
-          .status(anyString());
+      when(spy.status(anyString())).thenAnswer(
+          invocationOnMock -> PgCtlWrapper.Status.ACTIVE
+      );
+      when(spy.status(null)).thenAnswer(
+          invocationOnMock -> PgCtlWrapper.Status.ACTIVE
+      );
       doNothing().when(spy)
           .start(anyString());
       doNothing().when(spy)
@@ -133,6 +139,30 @@ public class ConcretePostgresClusterMethodsTest {
     cluster.config(config, logFile);
 
     verify(spy, times(1)).reload(logFile);
+
+    config = new PostgresConfig.Builder(
+        property -> Optional.of(new Property(property, false, DataType.INTEGER, Unit.noneList)))
+        .withProperty("port", 25432)
+        .build();
+
+    cluster.config(config, logFile);
+  }
+
+  @Test
+  public void configStoppedCluster() throws Exception {
+    when(spy.status(null)).thenAnswer(
+        invocationOnMock -> PgCtlWrapper.Status.STOPPED
+    );
+
+    PostgresConfig config = new PostgresConfig.Builder(
+        property -> Optional.of(new Property(property, true, DataType.INTEGER, Unit.noneList)))
+        .withProperty("port", 25433)
+        .build();
+
+    cluster.config(config, logFile);
+
+    verify(spy, times(0)).restart(logFile);
+    verify(spy, times(0)).reload(logFile);
 
     config = new PostgresConfig.Builder(
         property -> Optional.of(new Property(property, false, DataType.INTEGER, Unit.noneList)))
