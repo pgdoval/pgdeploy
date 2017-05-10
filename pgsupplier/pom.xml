@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>pgdeploy-parent</artifactId>
+        <groupId>com.ongres</groupId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>pgsupplier</artifactId>
+
+    <packaging>jar</packaging>
+
+    <properties>
+        <postgres.version>9.6.2</postgres.version>
+        <postgres.arch>x86_64</postgres.arch>
+        <dist.path>${basedir}/src/dist/${postgres.version}/${postgres.arch}/pgdeploy.properties</dist.path>
+        <postgres.url.9.6.2-x686>https://get.enterprisedb.com/postgresql/postgresql-9.6.2-4-linux-binaries.tar.gz</postgres.url.9.6.2-x686>
+        <postgres.url.9.6.2-win32>https://get.enterprisedb.com/postgresql/postgresql-9.6.2-4-windows-binaries.zip</postgres.url.9.6.2-win32>
+        <postgres.url.9.5.6-win64>https://get.enterprisedb.com/postgresql/postgresql-9.5.6-2-windows-x64-binaries.zip</postgres.url.9.5.6-win64>
+        <postgres.url.9.5.6-osx>https://get.enterprisedb.com/postgresql/postgresql-9.5.6-1-osx-binaries.zip</postgres.url.9.5.6-osx>
+        <postgres.url.9.5.6-osx-1>https://get.enterprisedb.com/postgresql/postgresql-9.6.2-4-osx-binaries.zip</postgres.url.9.5.6-osx-1>
+    </properties>
+
+    <version>1.0.0-${postgres.version}-${postgres.arch}-SNAPSHOT</version>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>com.googlecode.maven-download-plugin</groupId>
+                    <artifactId>download-maven-plugin</artifactId>
+                    <version>1.3.0</version>
+                    <executions>
+                        <execution>
+                            <id>install-jbpm</id>
+                            <phase>pre-integration-test</phase>
+                            <goals>
+                                <goal>wget</goal>
+                            </goals>
+                            <configuration>
+                                <url>${postgres.url}</url>
+                                <outputFileName></outputFileName>
+                                <outputDirectory>${project.build.directory}/jbpm-3.1.4</outputDirectory>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-assembly-plugin</artifactId>
+                    <version>2.2-beta-5</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>win32</id>
+
+        </profile>
+    </profiles>
+</project>

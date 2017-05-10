@@ -12,6 +12,7 @@
         <module>pgconfig</module>
         <module>pgdeploycore</module>
         <module>wrappers</module>
+        <module>pgsupplier</module>
     </modules>
     <packaging>pom</packaging>
 
