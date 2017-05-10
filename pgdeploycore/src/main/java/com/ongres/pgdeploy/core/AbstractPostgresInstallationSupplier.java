@@ -51,14 +51,30 @@ import java.util.zip.ZipFile;
 
 public abstract class AbstractPostgresInstallationSupplier implements PostgresInstallationSupplier {
 
-  protected int majorVersion;
-  protected int minorVersion;
-  protected int revision;
-  protected Platform platform;
-  protected String extraVersion;
+  protected final int majorVersion;
+  protected final int minorVersion;
+  protected final int revision;
+  protected final Platform platform;
+  protected final String extraVersion;
 
-  protected RelativeRoute routeToZippedCode;
+  protected final RelativeRoute routeToZippedCode;
 
+  protected AbstractPostgresInstallationSupplier(int majorVersion, int minorVersion, int revision,
+                                                 Platform platform,
+                                                 RelativeRoute routeToZippedCode) {
+    this(majorVersion, minorVersion, revision, platform, null, routeToZippedCode);
+  }
+
+  protected AbstractPostgresInstallationSupplier(int majorVersion, int minorVersion, int revision,
+                                                 Platform platform, String extraVersion,
+                                                 RelativeRoute routeToZippedCode) {
+    this.majorVersion = majorVersion;
+    this.minorVersion = minorVersion;
+    this.revision = revision;
+    this.platform = platform;
+    this.extraVersion = extraVersion;
+    this.routeToZippedCode = routeToZippedCode;
+  }
 
   @Override
   public int getMajorVersion() {

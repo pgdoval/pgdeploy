@@ -151,20 +151,5 @@ public class AbstractPostgresInstallationSupplierUnzipFoldersTest {
     supplier.checkInstallation(path, someFolders);
 
   }
-  private class MockedPostgresInstallationSupplier extends AbstractPostgresInstallationSupplier {
-
-    private MockedPostgresInstallationSupplier(
-        int majorVersion, int minorVersion, int revision,
-        Platform platform, String extraVersion, RelativeRoute relativeRoute) {
-      this.majorVersion = majorVersion;
-      this.minorVersion = minorVersion;
-      this.revision = revision;
-      this.platform = platform;
-      this.extraVersion = extraVersion;
-      this.routeToZippedCode = relativeRoute;
-
-    }
-
-  }
 
 }

@@ -36,7 +36,7 @@
  * containing Woodstox, in file "ASL2.0", under the same directory
  * as this file.
  */
-package com.ongres.pgdeploy;
+package com.ongres.pgdeploy.core;
 
 import com.ongres.pgdeploy.core.AbstractPostgresInstallationSupplier;
 import com.ongres.pgdeploy.core.Platform;
