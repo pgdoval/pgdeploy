@@ -31,35 +31,38 @@
  specify the folder in which the binaries will appear, and the binary folders we
  want to unzip (*bin* and *lib* are mandatory, *share* and *include* are optional).
  ```
-PostgresInstallationSupplier supplier = PgDeploy.findSupplier(9, 6, 2, Platform.LINUX)
-                                .getOrElse(throw new UnsupportedVersionException());
+ 
+ PgDeploy pgDeploy = new PgDeploy();
+PostgresInstallationSupplier supplier = pgDeploy.findSupplier(9, 6, 2, Platform.LINUX)
+                                .orElseGet(throw new UnsupportedVersionException());
 //or alternatively
-PostgresInstallationSupplier supplier = PgDeploy.findSupplier(9, 6, 2, Platform.LINUX, "myVersion")
-                                .getOrElse(throw new UnsupportedVersionException());
+PostgresInstallationSupplier supplier = pgDeploy.findSupplier(9, 6, 2, Platform.LINUX, "myVersion")
+                                .orElseGet(throw new UnsupportedVersionException());
 
-PostgresInstallation installation = PgDeploy.install(supplier, InstallOptions.binaries().withShare(), "/home/username/pg962");
+PostgresInstallation installation = pgDeploy.install(supplier, InstallOptions.binaries().withShare(), "/home/username/pg962");
  ```
   
  We can also retrieve a previously created installation, if we specify its supplier:
   
   ```
-  PostgresInstallation installation = PostgresInstallation.retrievePreviouslyInstalled(supplier, "/home/username/pg962");
+  PostgresInstallation installation = pgDeploy.retrieveInstallation(Paths.get("/home/username/pg962"));
    ```
   
  ### Creating a cluster in a location
 
  We use a previously created installation object to create the cluster.
  ```
-PostgresCluster cluster = installation.createCluster(Paths.get("/home/username/clusters/pg962/cluster"));
+PostgresCluster cluster = installation.createCluster(
+        Paths.get("/home/username/clusters/pg962/cluster"), 
+        PostgresClusterCreationOptions.defaultOptions());
  ```
  We can also retrieve a previously created cluster, if we specify the 
  installation that created it, and its supplier:
   
   ```
-  PostgresCluster cluster = PostgresCluster.retrievePreviouslyInstalled(
+  PostgresCluster cluster = pgDeploy.retrieveCluster(
         Paths.get("/home/username/clusters/pg962/cluster"), //cluster path
-        installation, //installation object
-        supplier //supplier object
+        Paths.get("/home/username/pg962") //installation path
   );
    ```
   
@@ -82,11 +85,12 @@ PostgresConfig config = cluster.createConfigBuilder()
                     .withProperty("port", 5432)
                     .withProperty("shared_buffers", "2GB")
                     .withProperty("random_page_cost", 3.5)
+                    .withProperty("autovacuum", false)
                     .build();        
 
 //or alternatively
 PostgresConfig config = cluster.createConfigBuilder()
-                    .paramsFromMap(myMapStringObject)
+                    .FromPropertyMap(myMapStringObject)
                     .build();               
  
 cluster.config(config); //this method calls restart. Future versions will be able to call reload if restart is not needed
