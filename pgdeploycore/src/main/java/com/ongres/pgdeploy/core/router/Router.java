@@ -34,4 +34,6 @@ public interface Router {
 
   Path routeToInitDb(Path basePath);
 
+  Path routeToPgCtl(Path basePath);
+
 }

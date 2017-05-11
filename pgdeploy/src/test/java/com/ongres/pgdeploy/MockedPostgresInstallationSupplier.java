@@ -49,7 +49,7 @@ class MockedPostgresInstallationSupplier extends AbstractPostgresInstallationSup
   }
 
   public MockedPostgresInstallationSupplier(int majorVersion, int minorVersion, int revision, Platform platform, String extraVersion, RelativeRoute route) {
-    super (majorVersion, minorVersion, revision, platform, extraVersion, route);
+    super (majorVersion, minorVersion, revision, platform, extraVersion, route.asRelativePath());
   }
 
 }

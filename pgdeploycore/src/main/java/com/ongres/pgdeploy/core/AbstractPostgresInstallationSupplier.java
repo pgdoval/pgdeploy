@@ -40,10 +40,14 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.attribute.FileAttribute;
+import java.nio.file.attribute.PosixFilePermission;
+import java.nio.file.attribute.PosixFilePermissions;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
@@ -57,17 +61,17 @@ public abstract class AbstractPostgresInstallationSupplier implements PostgresIn
   protected final Platform platform;
   protected final String extraVersion;
 
-  protected final RelativeRoute routeToZippedCode;
+  protected final Path routeToZippedCode;
 
   protected AbstractPostgresInstallationSupplier(int majorVersion, int minorVersion, int revision,
                                                  Platform platform,
-                                                 RelativeRoute routeToZippedCode) {
+                                                 Path routeToZippedCode) {
     this(majorVersion, minorVersion, revision, platform, null, routeToZippedCode);
   }
 
   protected AbstractPostgresInstallationSupplier(int majorVersion, int minorVersion, int revision,
                                                  Platform platform, String extraVersion,
-                                                 RelativeRoute routeToZippedCode) {
+                                                 Path routeToZippedCode) {
     this.majorVersion = majorVersion;
     this.minorVersion = minorVersion;
     this.revision = revision;
@@ -110,7 +114,10 @@ public abstract class AbstractPostgresInstallationSupplier implements PostgresIn
 
     int buffer = 2048;
 
-    File file = routeToZippedCode.asRelativeFile();
+    File file = routeToZippedCode.toFile();
+
+    Set<PosixFilePermission> perms =
+        PosixFilePermissions.fromString("rwxr-xr-x");
 
     try (ZipFile zip = new ZipFile(file)) {
       String newPath = destination.toAbsolutePath().toString();
@@ -132,6 +139,7 @@ public abstract class AbstractPostgresInstallationSupplier implements PostgresIn
         }
 
         File destFile = new File(newPath, currentEntry);
+
         File destinationParent = destFile.getParentFile();
 
         // create the parent directory structure if needed
@@ -155,6 +163,7 @@ public abstract class AbstractPostgresInstallationSupplier implements PostgresIn
               while ((currentByte = is.read(data, 0, buffer)) != -1) {
                 dest.write(data, 0, currentByte);
               }
+              Files.setPosixFilePermissions(destFile.toPath(), perms);
             }
           }
         }
@@ -188,6 +197,11 @@ public abstract class AbstractPostgresInstallationSupplier implements PostgresIn
   @Override
   public Path routeToInitDb(Path basePath) {
     return DefaultRouter.getInstance().routeToInitDb(basePath);
+  }
+
+  @Override
+  public Path routeToPgCtl(Path basePath) {
+    return DefaultRouter.getInstance().routeToPgCtl(basePath);
   }
 
   @Override

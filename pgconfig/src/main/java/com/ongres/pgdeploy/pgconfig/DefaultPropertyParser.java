@@ -44,7 +44,8 @@ import java.util.stream.Stream;
 public class DefaultPropertyParser implements PropertyParser {
 
   private static String delimiter = "|";
-  private static String file = "src/main/resources/pgprops.csv";
+
+  private static String file = "pgconfig/src/main/resources/pgprops.csv";
 
   private static final Map<String,DataType> typeFromString = typeFromString();
 
@@ -58,6 +59,12 @@ public class DefaultPropertyParser implements PropertyParser {
     result.put("integer", DataType.INTEGER);
 
     return result;
+  }
+
+  //For testing only
+  static DefaultPropertyParser withFile(String file) {
+    DefaultPropertyParser.file = file;
+    return getInstance();
   }
 
   @Override

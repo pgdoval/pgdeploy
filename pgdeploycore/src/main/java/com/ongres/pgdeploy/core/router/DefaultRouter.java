@@ -38,6 +38,7 @@ public class DefaultRouter implements Router {
       new RelativeRoute(Arrays.asList("postgresql.conf"));
   protected RelativeRoute pgHbaConfRoute = new RelativeRoute(Arrays.asList("pg_hba.conf"));
   protected RelativeRoute initDbRoute = new RelativeRoute(Arrays.asList("bin", "initdb"));
+  protected RelativeRoute pgCtlRoute = new RelativeRoute(Arrays.asList("bin", "pg_ctl"));
 
   private DefaultRouter() {
   }
@@ -60,6 +61,11 @@ public class DefaultRouter implements Router {
   @Override
   public Path routeToInitDb(Path basePath) {
     return initDbRoute.asPath(basePath);
+  }
+
+  @Override
+  public Path routeToPgCtl(Path basePath) {
+    return pgCtlRoute.asPath(basePath);
   }
 
 
