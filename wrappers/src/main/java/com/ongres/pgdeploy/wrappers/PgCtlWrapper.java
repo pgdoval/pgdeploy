@@ -87,7 +87,7 @@ public class PgCtlWrapper {
 
   public void restart(@Nullable String logFile)
       throws IOException, BadProcessExecutionException {
-    System.out.println(getProcessOutput(restart, logFile));
+    getProcessOutput(restart, logFile);
   }
 
 

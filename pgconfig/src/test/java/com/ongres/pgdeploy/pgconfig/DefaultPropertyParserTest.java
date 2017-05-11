@@ -63,8 +63,7 @@ public class DefaultPropertyParserTest {
   @Parameterized.Parameter(4)
   public boolean isPresent;
 
-  private PropertyParser parser = DefaultPropertyParser.getInstance()
-      .withFile("src/main/resources/pgprops.csv");
+  private PropertyParser parser = DefaultPropertyParser.getInstance();
 
   @Parameterized.Parameters
   public static Collection getParams() {

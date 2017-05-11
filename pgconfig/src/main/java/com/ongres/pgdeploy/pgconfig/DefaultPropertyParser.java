@@ -30,6 +30,7 @@ import com.ongres.pgdeploy.pgconfig.properties.Unit;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -45,7 +46,9 @@ public class DefaultPropertyParser implements PropertyParser {
 
   private static String delimiter = "|";
 
-  private static String file = "pgconfig/src/main/resources/pgprops.csv";
+  private static Path file = Paths.get(
+      DefaultPropertyParser.class.getProtectionDomain().getCodeSource().getLocation().getPath())
+      .resolve("pgprops.csv");
 
   private static final Map<String,DataType> typeFromString = typeFromString();
 
@@ -61,16 +64,11 @@ public class DefaultPropertyParser implements PropertyParser {
     return result;
   }
 
-  //For testing only
-  static DefaultPropertyParser withFile(String file) {
-    DefaultPropertyParser.file = file;
-    return getInstance();
-  }
 
   @Override
   public Optional<Property> parse(String property) {
     try {
-      Optional<String> optionalLine = Files.lines(Paths.get(file))
+      Optional<String> optionalLine = Files.lines(file)
           .filter(line -> line.startsWith(property + delimiter))
           .findAny();
 
