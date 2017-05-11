@@ -59,7 +59,7 @@ public class PostgreSqlConfWrapperTest {
 
   @Parameterized.Parameter(0)
   public String lines;
-  
+
   @Parameterized.Parameter(1)
   public String expectedResult;
 
@@ -111,14 +111,11 @@ public class PostgreSqlConfWrapperTest {
     mockedParser = mock(DefaultPropertyParser.class);
     spy = spy(mockedParser);
 
-    try {
-      Mockito.doReturn(
-          Optional.of(new Property("prop",false, DataType.STRING, Unit.noneList))
-      ).when(spy)
-          .parse(anyString());
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
+    Mockito.doReturn(
+        Optional.of(new Property("prop",false, DataType.STRING, Unit.noneList))
+    ).when(spy)
+        .parse(anyString());
+
 
     config = new PostgresConfig.Builder(spy).withProperty("a", "value").build();
 
@@ -127,10 +124,10 @@ public class PostgreSqlConfWrapperTest {
 
   @Test
   public void updateLinesNormalChange() throws Exception {
-     result = strategy.updateLines(Arrays.asList(lines.split("\n")), config.asStream());
+    result = strategy.updateLines(Arrays.asList(lines.split("\n")), config.asStream());
 
-     assertEquals(expectedResult,
-         result.stream().collect(Collectors.joining("\n")));
+    assertEquals(expectedResult,
+        result.stream().collect(Collectors.joining("\n")));
 
   }
 

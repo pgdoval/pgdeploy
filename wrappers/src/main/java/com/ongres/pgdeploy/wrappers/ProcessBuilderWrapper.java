@@ -27,7 +27,6 @@ package com.ongres.pgdeploy.wrappers;
 import com.ongres.pgdeploy.wrappers.exceptions.BadProcessExecutionException;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -45,8 +44,9 @@ class ProcessBuilderWrapper {
 
 
   static Process runProcess(
-      Path pathToCommand, String exceptionMessage, List<String> arguments)
-      throws IOException {
+      Path pathToCommand, String exceptionMessage, List<String> arguments,
+      int secondsToWait, String processDescription)
+      throws IOException, InterruptedException, BadProcessExecutionException {
 
     if (!Files.exists(pathToCommand)) {
       throw new IOException(exceptionMessage);
@@ -58,7 +58,26 @@ class ProcessBuilderWrapper {
 
     ProcessBuilder processBuilder = new ProcessBuilder().command(args);
 
-    return processBuilder.start();
+    Process process = processBuilder.start();
+
+    if (secondsToWait > 0) {
+      process.waitFor(secondsToWait, TimeUnit.SECONDS);
+    } else {
+      process.waitFor();
+    }
+
+    if (process.exitValue() != 0) {
+      String errorOutput = getErrorOutputFromProcess(process);
+
+      if (errorOutput.isEmpty()) {
+        errorOutput = getOutputFromProcess(process);
+      }
+
+      throw BadProcessExecutionException.create(errorOutput, processDescription);
+    }
+
+
+    return process;
   }
 
 
@@ -84,25 +103,6 @@ class ProcessBuilderWrapper {
     }
 
     return builder.toString();
-  }
-
-
-
-  static void throwIfOutputContainsErrors(String output, String badWord, String processDescription)
-      throws BadProcessExecutionException {
-
-    if (output.contains(badWord)) {
-      throw BadProcessExecutionException.create(output, processDescription);
-    }
-  }
-
-  static void throwIfErrorOutputContainsErrors(String output, String processDescription)
-      throws BadProcessExecutionException {
-
-    if (!output.isEmpty()) {
-      throw BadProcessExecutionException.create(output, processDescription);
-    }
-
   }
 
 }

@@ -65,19 +65,15 @@ public class PgDeployInstallTest {
   private Path path;
 
   @Before
-  public void setup() {
+  public void setup() throws Exception {
     List<PostgresInstallationSupplier> suppliers = new ArrayList<>();
     //mockedSupplier = new MockedPostgresInstallationSupplier(0, 0, 0, Platform.LINUX, null);
     mockedSupplier = mock(AbstractPostgresInstallationSupplier.class);
 
     spy = spy(mockedSupplier);
 
-    try {
-      doNothing().when(spy)
-              .unzipFolders(any(Path.class), anyList());
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
+    doNothing().when(spy)
+        .unzipFolders(any(Path.class), anyList());
 
 
     suppliers.add(mockedSupplier);
@@ -86,16 +82,12 @@ public class PgDeployInstallTest {
   }
 
   @After
-  public void tearDown() {
-    try {
-      Files.deleteIfExists(path);
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
+  public void tearDown() throws Exception {
+    Files.deleteIfExists(path);
   }
 
   @Test
-  public void checkBasicInstallationWorks() {
+  public void checkBasicInstallationWorks() throws Exception {
 
     //given
     PgDeploy.InstallOptions options = PgDeploy.InstallOptions.binaries().withInclude().withShare();
@@ -103,15 +95,8 @@ public class PgDeployInstallTest {
 
     //when
     PostgresInstallation installation = null;
-    try {
-      installation = pgDeploy.install(mockedSupplier, options, path);
-    } catch (BadInstallationException e) {
-      e.printStackTrace();
-    } catch (IOException e) {
-      e.printStackTrace();
-    } catch (ExtraFoldersFoundException e) {
-      e.printStackTrace();
-    }
+
+    installation = pgDeploy.install(mockedSupplier, options, path);
 
     //then
     //the installation process must check itself that the destination
@@ -120,16 +105,8 @@ public class PgDeployInstallTest {
     assertEquals(path, installation.getPath());
     assertEquals(mockedSupplier, installation.getRouter());
 
-    try {
-      verify(mockedSupplier, times(1)).unzipFolders(path,options.toFolderList());
-      verify(mockedSupplier, times(1)).checkInstallation(path,options.toFolderList());
-    } catch (IOException e) {
-      e.printStackTrace();
-    } catch (BadInstallationException e) {
-      e.printStackTrace();
-    } catch (ExtraFoldersFoundException e) {
-      e.printStackTrace();
-    }
+    verify(mockedSupplier, times(1)).unzipFolders(path,options.toFolderList());
+    verify(mockedSupplier, times(1)).checkInstallation(path,options.toFolderList());
 
   }
 

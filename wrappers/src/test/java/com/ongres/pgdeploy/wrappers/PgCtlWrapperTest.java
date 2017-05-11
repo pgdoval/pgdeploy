@@ -71,33 +71,29 @@ public class PgCtlWrapperTest {
   private PgCtlWrapper pgCtlWrapper;
 
   @Before
-  public void cleanBefore() {
+  public void cleanBefore() throws Exception {
     pgCtlWrapper = new PgCtlWrapper(pgCtlPath, clusterPath);
     clean();
   }
 
   @After
-  public void cleanAfter() {
+  public void cleanAfter() throws Exception {
     clean();
   }
 
-  private void clean() {
+  private void clean() throws Exception {
 
-    try {
-      if(pgCtlWrapper.status(null) == PgCtlWrapper.Status.ACTIVE) {
-        pgCtlWrapper.stop(null);
-      }
-    } catch (IOException e) {
-      e.printStackTrace();
-    } catch (BadProcessExecutionException e) {
-      e.printStackTrace();
+    if(pgCtlWrapper.status(null) == PgCtlWrapper.Status.ACTIVE) {
+      pgCtlWrapper.stop(null);
     }
   }
 
   @Test
   public void testStatusOnStoppedCluster() throws Exception {
     pgCtlWrapper.start(null);
-    TimeUnit.MILLISECONDS.sleep(200);
+
+    while (pgCtlWrapper.status(null) != PgCtlWrapper.Status.ACTIVE) {}
+
     pgCtlWrapper.stop(null);
     PgCtlWrapper.Status status = pgCtlWrapper.status(null);
 
@@ -114,10 +110,10 @@ public class PgCtlWrapperTest {
     assertEquals(PgCtlWrapper.Status.ACTIVE, status);
   }
 
-  @Test (expected = BadProcessExecutionException.class)
+  @Test
   public void testStatusOnNonExistingCluster() throws Exception {
     pgCtlWrapper = new PgCtlWrapper(pgCtlPath, stdErrClusterPath);
-    pgCtlWrapper.status(null);
+    assertEquals(PgCtlWrapper.Status.STOPPED, pgCtlWrapper.status(null));
   }
 
   @Test
@@ -131,8 +127,9 @@ public class PgCtlWrapperTest {
   public void testStartTwiceOnStoppedCluster() throws Exception {
     try {
       pgCtlWrapper.start(null);
-      TimeUnit.MILLISECONDS.sleep(200);
+
       pgCtlWrapper.start(null);
+
     }
     finally {
       pgCtlWrapper.stop(null);
@@ -142,9 +139,9 @@ public class PgCtlWrapperTest {
   @Test(expected = BadProcessExecutionException.class)
   public void testStopClusterTwice() throws Exception {
     pgCtlWrapper.start(null);
-    TimeUnit.MILLISECONDS.sleep(200);
+    while (pgCtlWrapper.status(null) != PgCtlWrapper.Status.ACTIVE) {}
     pgCtlWrapper.stop(null);
-    TimeUnit.MILLISECONDS.sleep(200);
+    while (pgCtlWrapper.status(null) == PgCtlWrapper.Status.ACTIVE) {}
     pgCtlWrapper.stop(null);
   }
 

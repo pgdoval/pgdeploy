@@ -42,7 +42,7 @@ public class Main {
   private static final PgDeploy pgDeploy = new PgDeploy();
   private static PostgresInstallationSupplier supplier = null;
 
-  private static Scanner reader = new Scanner(System.in);
+  private static Scanner scanner = new Scanner(System.in);
 
   private static PostgresInstallation installation = null;
   private static PostgresCluster cluster = null;
@@ -78,7 +78,7 @@ public class Main {
       System.out.println("What do you want to do?");
       optionsWithIndex.forEach( (key, value) -> System.out.println(key + " - " + value.text));
 
-      int selectedInt = reader.nextInt();
+      int selectedInt = scanner.nextInt();
 
       Options selectedOption = optionsWithIndex.get(selectedInt);
 
@@ -98,12 +98,12 @@ public class Main {
 
   private static int getIntegerInputForSentence(String statement) {
     System.out.println(statement);
-    return reader.nextInt();
+    return scanner.nextInt();
   }
 
   private static String getStringInputForSentence(String statement) {
     System.out.println(statement);
-    return reader.next();
+    return scanner.next();
   }
 
   private static void getSupplier() {

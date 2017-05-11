@@ -29,6 +29,7 @@ import com.ongres.pgdeploy.wrappers.exceptions.BadProcessExecutionException;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.annotation.Nullable;
@@ -38,7 +39,7 @@ import javax.annotation.Nullable;
  */
 public class PgCtlWrapper {
 
-  private static final String badWord = "FATAL:";
+  private static final int secondsToWait = 300;
 
   private static final String start = "start";
   private static final String stop = "stop";
@@ -59,64 +60,63 @@ public class PgCtlWrapper {
   }
 
   public Status status(@Nullable String logFile)
-      throws IOException, BadProcessExecutionException {
+      throws IOException, InterruptedException {
 
-    String output = getProcessOutput(status, logFile);
+    try {
+      String output = getProcessOutput(status, logFile);
 
-    if (output.startsWith(activeClusterStart)) {
-      return Status.ACTIVE;
+      if (output.startsWith(activeClusterStart)) {
+        return Status.ACTIVE;
+      }
+
+      return Status.STOPPED;
+    } catch (BadProcessExecutionException e) {
+      return Status.STOPPED;
     }
-
-    return Status.STOPPED;
-
   }
 
 
   public void start(@Nullable String logFile)
-      throws IOException, BadProcessExecutionException {
-    getProcessOutput(start, logFile);
-
+      throws IOException, BadProcessExecutionException, InterruptedException {
+    getProcessOutput(start, logFile, "-w");
   }
 
 
   public void stop(@Nullable String logFile)
-      throws IOException, BadProcessExecutionException {
+      throws IOException, BadProcessExecutionException, InterruptedException {
     getProcessOutput(stop, logFile);
   }
 
 
   public void restart(@Nullable String logFile)
-      throws IOException, BadProcessExecutionException {
+      throws IOException, BadProcessExecutionException, InterruptedException {
     getProcessOutput(restart, logFile);
   }
 
 
   public void reload(@Nullable String logFile)
-      throws IOException, BadProcessExecutionException {
+      throws IOException, BadProcessExecutionException, InterruptedException {
     getProcessOutput(reload, logFile);
   }
 
 
 
 
-  private String getProcessOutput( String command, @Nullable String logFile)
-      throws IOException, BadProcessExecutionException {
-
-    Process process = getProcess(command, logFile);
-
-    String output = ProcessBuilderWrapper.getOutputFromProcess(process);
-    String errorOutput = ProcessBuilderWrapper.getErrorOutputFromProcess(process);
+  private String getProcessOutput( String command, @Nullable String logFile, String ... arguments)
+      throws IOException, BadProcessExecutionException, InterruptedException {
 
     String processDescription = descriptionFirstPart + command;
-    ProcessBuilderWrapper.throwIfOutputContainsErrors(output, badWord, processDescription);
-    ProcessBuilderWrapper.throwIfErrorOutputContainsErrors(errorOutput, processDescription);
 
-    return output;
+    Process process = getProcess(command, logFile, processDescription, secondsToWait, arguments);
+
+    return ProcessBuilderWrapper.getOutputFromProcess(process);
   }
 
 
-  private Process getProcess(String command, @Nullable String logFile)
-      throws IOException {
+  private Process getProcess(
+      String command, @Nullable String logFile,
+      String processDescription, int secondsToWait, String [] arguments)
+      throws IOException, BadProcessExecutionException, InterruptedException {
 
     final String message = "pg_ctl file "
         + pgCtlPath.toAbsolutePath().toString()
@@ -134,7 +134,10 @@ public class PgCtlWrapper {
 
     args.add(command);
 
-    return ProcessBuilderWrapper.runProcess(pgCtlPath, message, args);
+    args.addAll(Arrays.asList(arguments));
+
+    return ProcessBuilderWrapper.runProcess(
+        pgCtlPath, message, args, secondsToWait, processDescription);
   }
 
 

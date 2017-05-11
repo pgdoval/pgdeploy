@@ -24,6 +24,8 @@
  */
 package com.ongres.pgdeploy.wrappers;
 
+import com.ongres.pgdeploy.wrappers.exceptions.BadProcessExecutionException;
+
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -36,8 +38,10 @@ import java.util.stream.Collectors;
  */
 public class InitDbWrapper {
 
+  private static final String description = "initdb";
+
   public static void run(Path initDbPath, Path clusterPath, List<String> options)
-      throws IOException, InterruptedException {
+      throws IOException, InterruptedException, BadProcessExecutionException {
 
     final String message = "initDB file "
         + initDbPath.toAbsolutePath().toString()
@@ -49,9 +53,6 @@ public class InitDbWrapper {
     args.add(clusterPath.toString());
     args.addAll(options);
 
-    Process process = ProcessBuilderWrapper.runProcess(initDbPath, message, args);
-
-    process.waitFor(40, TimeUnit.SECONDS);
-
+    ProcessBuilderWrapper.runProcess(initDbPath, message, args, -1, description);
   }
 }

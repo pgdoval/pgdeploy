@@ -63,29 +63,25 @@ public class ConcretePostgresClusterMethodsTest {
   private String logFile = "";
 
   @Before
-  public void setCluster() {
+  public void setCluster() throws Exception {
     mockedWrapper = mock(PgCtlWrapper.class);
     spy = spy(mockedWrapper);
 
-    try {
-      when(spy.status(anyString())).thenAnswer(
-          invocationOnMock -> PgCtlWrapper.Status.ACTIVE
-      );
-      when(spy.status(null)).thenAnswer(
-          invocationOnMock -> PgCtlWrapper.Status.ACTIVE
-      );
-      doNothing().when(spy)
-          .start(anyString());
-      doNothing().when(spy)
-          .stop(anyString());
-      doNothing().when(spy)
-          .restart(anyString());
-      doNothing().when(spy)
-          .reload(anyString());
+    when(spy.status(anyString())).thenAnswer(
+        invocationOnMock -> PgCtlWrapper.Status.ACTIVE
+    );
+    when(spy.status(null)).thenAnswer(
+        invocationOnMock -> PgCtlWrapper.Status.ACTIVE
+    );
+    doNothing().when(spy)
+        .start(anyString());
+    doNothing().when(spy)
+        .stop(anyString());
+    doNothing().when(spy)
+        .restart(anyString());
+    doNothing().when(spy)
+        .reload(anyString());
 
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
 
 
     cluster = new ConcretePostgresCluster(spy, clusterPath);

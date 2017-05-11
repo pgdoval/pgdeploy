@@ -46,6 +46,7 @@ import com.ongres.pgdeploy.core.router.Router;
 import com.ongres.pgdeploy.pgconfig.DefaultPropertyParser;
 import com.ongres.pgdeploy.pgconfig.PropertyParser;
 import com.ongres.pgdeploy.wrappers.InitDbWrapper;
+import com.ongres.pgdeploy.wrappers.exceptions.BadProcessExecutionException;
 
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
@@ -77,7 +78,7 @@ public class ConcretePostgresInstallation extends PostgresInstallation {
 
   public PostgresCluster createCluster(@Nonnull Path destination)
       throws BadClusterException, IOException,
-      InterruptedException, ClusterDirectoryNotEmptyException {
+      InterruptedException, ClusterDirectoryNotEmptyException, BadProcessExecutionException {
 
     return createCluster(destination, PostgresClusterCreationOptions.defaultOptions());
   }
@@ -85,7 +86,7 @@ public class ConcretePostgresInstallation extends PostgresInstallation {
   public PostgresCluster createCluster(
       @Nonnull Path destination, PostgresClusterCreationOptions options)
       throws BadClusterException, IOException,
-      InterruptedException, ClusterDirectoryNotEmptyException {
+      InterruptedException, ClusterDirectoryNotEmptyException, BadProcessExecutionException {
 
     if (Files.exists(destination)) {
 
@@ -99,7 +100,7 @@ public class ConcretePostgresInstallation extends PostgresInstallation {
         throw ClusterDirectoryNotEmptyException.fromPath(destination);
       }
     }
-
+    
     InitDbWrapper.run(router.routeToInitDb(path),destination, options.toArgumentList());
 
     checkCluster(destination);

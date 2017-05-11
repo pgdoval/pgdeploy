@@ -73,8 +73,8 @@ public class ConcretePostgresCluster extends PostgresCluster {
   private final PgCtlWrapper pgCtlWrapper;
 
   public ConcretePostgresCluster(
-      Path directory, PostgresInstallation installation, PropertyParser supplier) {
-    this( directory, installation.getPath(), supplier, installation.getRouter());
+      Path directory, PostgresInstallation installation, PropertyParser parser) {
+    this( directory, installation.getPath(), parser, installation.getRouter());
   }
 
   public ConcretePostgresCluster(
@@ -100,26 +100,26 @@ public class ConcretePostgresCluster extends PostgresCluster {
 
   @Override
   public void start(@Nullable String logFile)
-      throws BadProcessExecutionException, IOException {
+      throws BadProcessExecutionException, IOException, InterruptedException {
     pgCtlWrapper.start(logFile);
   }
 
   @Override
   public void stop(@Nullable String logFile)
-      throws BadProcessExecutionException, IOException {
+      throws BadProcessExecutionException, IOException, InterruptedException {
     pgCtlWrapper.stop(logFile);
   }
 
   @Override
   public Status status(@Nullable String logFile)
-      throws BadProcessExecutionException, IOException {
+      throws BadProcessExecutionException, IOException, InterruptedException {
 
     return Status.valueOf(pgCtlWrapper.status(logFile).name());
   }
 
   @Override
   public void config(PostgresConfig config, @Nullable String logFile)
-      throws IOException, BadProcessExecutionException {
+      throws IOException, BadProcessExecutionException, InterruptedException {
 
     Status status = status(null);
     PostgreSqlConfWrapper.updateConfFile(router.routeToPostgresqlConf(directory), config);
@@ -142,7 +142,7 @@ public class ConcretePostgresCluster extends PostgresCluster {
 
   @Override
   public void setPgHbaConf(String content, @Nullable String logFile)
-      throws IOException, BadProcessExecutionException {
+      throws IOException, BadProcessExecutionException, InterruptedException {
 
     PgHbaConfWrapper.overwriteConf(router.routeToPgHbaConf(directory),content);
     pgCtlWrapper.restart(logFile);
@@ -151,7 +151,7 @@ public class ConcretePostgresCluster extends PostgresCluster {
 
   @Override
   public void setPgHbaConf(Path originalFile, @Nullable String logFile)
-      throws IOException, BadProcessExecutionException {
+      throws IOException, BadProcessExecutionException, InterruptedException {
     setPgHbaConf(Files.lines(originalFile).collect(Collectors.joining("\n")), logFile);
   }
 }

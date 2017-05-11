@@ -49,7 +49,7 @@ import java.util.stream.Stream;
  */
 public class BasicUpdateLinesStrategy implements UpdateLinesStrategy {
 
-  private static String equals = "=";
+  private static String equals = "="; //TODO: ^\s#?([^=]+)=([^#]+)#?.*$
   private static String comment = "#";
 
   private static Map.Entry<String, String> getEntryFromLine(String line) {

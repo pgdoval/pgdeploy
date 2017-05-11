@@ -41,6 +41,7 @@ package com.ongres.pgdeploy.installations;
 import com.ongres.pgdeploy.clusters.PostgresCluster;
 import com.ongres.pgdeploy.clusters.PostgresClusterCreationOptions;
 import com.ongres.pgdeploy.core.router.Router;
+import com.ongres.pgdeploy.wrappers.exceptions.BadProcessExecutionException;
 import net.jcip.annotations.Immutable;
 
 import java.io.IOException;
@@ -71,7 +72,7 @@ public abstract class PostgresInstallation {
    */
   public abstract PostgresCluster createCluster(@Nonnull Path destination)
       throws BadClusterException, IOException,
-      InterruptedException, ClusterDirectoryNotEmptyException;
+      InterruptedException, ClusterDirectoryNotEmptyException, BadProcessExecutionException;
 
   /** Creates a cluster by running initdb. By default, it uses UTF-8 encoding.
    * @param destination The folder where the cluster will be created. It may not exist, but it is
@@ -93,7 +94,7 @@ public abstract class PostgresInstallation {
   public abstract PostgresCluster createCluster(
       @Nonnull Path destination, PostgresClusterCreationOptions options)
       throws BadClusterException, IOException,
-      InterruptedException, ClusterDirectoryNotEmptyException;
+      InterruptedException, ClusterDirectoryNotEmptyException, BadProcessExecutionException;
 
   public abstract void checkCluster(@Nonnull Path destination) throws BadClusterException;
 }

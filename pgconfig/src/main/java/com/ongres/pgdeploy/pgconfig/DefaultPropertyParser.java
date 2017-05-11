@@ -86,7 +86,6 @@ public class DefaultPropertyParser implements PropertyParser {
       );
 
     } catch (IOException e) {
-      e.printStackTrace();
       return Optional.empty();
     }
   }

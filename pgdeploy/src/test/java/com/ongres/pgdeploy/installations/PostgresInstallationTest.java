@@ -43,6 +43,7 @@ import com.ongres.pgdeploy.clusters.PostgresClusterCreationOptions;
 import com.ongres.pgdeploy.core.RelativeRoute;
 import com.ongres.pgdeploy.core.router.DefaultRouter;
 import com.ongres.pgdeploy.core.router.Router;
+import com.ongres.pgdeploy.wrappers.exceptions.BadProcessExecutionException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -139,7 +140,7 @@ public class PostgresInstallationTest {
     assertNotNull(cluster);
   }
 
-  @Test(expected = BadClusterException.class)
+  @Test(expected = BadProcessExecutionException.class)
   public void createClusterWithWrongLocale() throws Exception {
 
     Files.createDirectory(path);
@@ -155,7 +156,7 @@ public class PostgresInstallationTest {
     assertNotNull(cluster);
   }
 
-  @Test(expected = BadClusterException.class)
+  @Test(expected = BadProcessExecutionException.class)
   public void createClusterWithEncoding() throws Exception {
 
     Files.createDirectory(path);

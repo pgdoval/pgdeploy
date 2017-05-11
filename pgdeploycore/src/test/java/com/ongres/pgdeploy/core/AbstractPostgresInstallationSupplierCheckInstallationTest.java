@@ -67,18 +67,15 @@ public class AbstractPostgresInstallationSupplierCheckInstallationTest {
             0, 0, 0, Platform.LINUX, null, route);
   }
 
-  private void prepareFolders(List<PostgresInstallationFolder> folders)
+  private void prepareFolders(List<PostgresInstallationFolder> folders) throws Exception
   {
-    try {
-      Files.createDirectory(path);
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
+    Files.createDirectory(path);
+
     folders.forEach(folder -> {
       try {
         Files.createDirectory(path.resolve(folder.getStringId()));
       } catch (IOException e) {
-        e.printStackTrace();
+        throw new RuntimeException(e);
       }
     });
   }

@@ -60,7 +60,7 @@ public abstract class PostgresCluster {
    * @throws IOException The pg_ctl file or the cluster don't exist
    */
   public abstract void start(@Nullable String logFile)
-      throws BadProcessExecutionException, IOException;
+      throws BadProcessExecutionException, IOException, InterruptedException;
 
   /** Stops a cluster by calling pg_ctl stop on it
    * @param logFile The route to the optional log file. If provided, the output
@@ -70,7 +70,7 @@ public abstract class PostgresCluster {
    * @throws IOException The pg_ctl file or the cluster don't exist
    */
   public abstract void stop(@Nullable String logFile)
-      throws BadProcessExecutionException, IOException;
+      throws BadProcessExecutionException, IOException, InterruptedException;
 
   /** Gets the status of a cluster by calling pg_ctl status on it
    * @param logFile The route to the optional log file. If provided, the output
@@ -80,18 +80,18 @@ public abstract class PostgresCluster {
    * @throws IOException The pg_ctl file or the cluster don't exist
    */
   public abstract Status status(@Nullable String logFile)
-      throws BadProcessExecutionException, IOException;
+      throws BadProcessExecutionException, IOException, InterruptedException;
 
   public abstract void config(PostgresConfig config, @Nullable String logFile)
-      throws IOException, BadProcessExecutionException;
+      throws IOException, BadProcessExecutionException, InterruptedException;
 
   public abstract PostgresConfig.Builder createConfigBuilder();
 
   public abstract void setPgHbaConf(String content, @Nullable String logFile)
-      throws IOException, BadProcessExecutionException;
+      throws IOException, BadProcessExecutionException, InterruptedException;
 
   public abstract void setPgHbaConf(Path originalFile, @Nullable String logFile)
-      throws IOException, BadProcessExecutionException;
+      throws IOException, BadProcessExecutionException, InterruptedException;
 
 
   public enum Status {
