@@ -39,6 +39,8 @@ import javax.annotation.Nullable;
  */
 public class PgCtlWrapper {
 
+  private static final String waitUntilProcessEnds = "-w";
+
   private static final String start = "start";
   private static final String stop = "stop";
   private static final String status = "status";
@@ -76,19 +78,19 @@ public class PgCtlWrapper {
 
   public void start(@Nullable Path logFile)
       throws IOException, BadProcessExecutionException, InterruptedException {
-    getProcessOutput(start, logFile, "-w");
+    getProcessOutput(start, logFile, waitUntilProcessEnds);
   }
 
 
   public void stop(@Nullable Path logFile)
       throws IOException, BadProcessExecutionException, InterruptedException {
-    getProcessOutput(stop, logFile);
+    getProcessOutput(stop, logFile, waitUntilProcessEnds);
   }
 
 
   public void restart(@Nullable Path logFile)
       throws IOException, BadProcessExecutionException, InterruptedException {
-    getProcessOutput(restart, logFile);
+    getProcessOutput(restart, logFile, waitUntilProcessEnds);
   }
 
 
