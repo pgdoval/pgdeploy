@@ -29,6 +29,7 @@ import com.ongres.pgdeploy.core.Platform;
 import com.ongres.pgdeploy.core.PostgresInstallationSupplier;
 import com.ongres.pgdeploy.core.RelativeRoute;
 import com.ongres.pgdeploy.core.exceptions.BadInstallationException;
+import com.ongres.pgdeploy.core.pgversion.Pre10PostgresMajorVersion;
 import com.ongres.pgdeploy.core.router.DefaultRouter;
 import com.ongres.pgdeploy.installations.BadClusterException;
 import com.ongres.pgdeploy.installations.PostgresInstallation;
@@ -72,7 +73,8 @@ public class PgDeployRetrieveInstallationTest {
   @Test
   public void retrieveValidInstallationWithSupplier() throws Exception {
 
-    PostgresInstallationSupplier supplier = new MockedPostgresInstallationSupplier(0, 0, 0, Platform.LINUX, null);
+    PostgresInstallationSupplier supplier = new MockedPostgresInstallationSupplier(
+        new Pre10PostgresMajorVersion(9, 5), 0, Platform.LINUX, null);
 
     PostgresInstallation installation = pgDeploy.retrieveInstallation(supplier, realInstallationPath);
     assertEquals(supplier, installation.getRouter());
@@ -108,7 +110,8 @@ public class PgDeployRetrieveInstallationTest {
 
   @Test
   public void retrieveValidClusterWithSupplier() throws Exception {
-    PostgresInstallationSupplier supplier = new MockedPostgresInstallationSupplier(0, 0, 0, Platform.LINUX, null);
+    PostgresInstallationSupplier supplier = new MockedPostgresInstallationSupplier(
+        new Pre10PostgresMajorVersion(9, 5), 0, Platform.LINUX, null);
 
     PostgresCluster cluster = pgDeploy.retrieveCluster(realClusterPath, realInstallationPath, supplier);
     assertNotNull(cluster);

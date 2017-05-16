@@ -46,6 +46,7 @@ import com.ongres.pgdeploy.core.PostgresInstallationFolder;
 import com.ongres.pgdeploy.core.PostgresInstallationSupplier;
 import com.ongres.pgdeploy.core.exceptions.BadInstallationException;
 import com.ongres.pgdeploy.core.exceptions.ExtraFoldersFoundException;
+import com.ongres.pgdeploy.core.pgversion.PostgresMajorVersion;
 import com.ongres.pgdeploy.core.router.DefaultRouter;
 import com.ongres.pgdeploy.core.router.Router;
 import com.ongres.pgdeploy.installations.BadClusterException;
@@ -91,14 +92,13 @@ public class PgDeploy {
   * that complies to the requirements specified by the parameters
    * @param major Postgres major version (9 for 9.3.2)
    * @param minor Postgres minor version (3 for 9.3.2)
-   * @param revision Postgres revision (2 for 9.3.2)
    * @param platform The OS platform, represented by the enum {@link Platform Platform}
    * @return An optional value containing the supplier found, or <tt>Optional.empty()</tt> if
    *     no complying supplier has been found.
    */
   public Optional<PostgresInstallationSupplier> findSupplier(
-      int major, int minor, int revision, @Nonnull Platform platform) {
-    return findSupplier(major, minor, revision, platform, null);
+      PostgresMajorVersion major, int minor, @Nonnull Platform platform) {
+    return findSupplier(major, minor, platform, null);
   }
 
 
@@ -106,7 +106,6 @@ public class PgDeploy {
    * that complies to the requirements specified by the parameters
    * @param major Postgres major version (9 for 9.3.2)
    * @param minor Postgres minor version (3 for 9.3.2)
-   * @param revision Postgres revision (2 for 9.3.2)
    * @param platform The OS platform, represented by the enum {@link Platform Platform}
    * @param extraVersion This field provides a way for the user to tag his versions and find
    *                     them with the specific tag.
@@ -114,7 +113,7 @@ public class PgDeploy {
    *     no complying supplier has been found.
    */
   public Optional<PostgresInstallationSupplier> findSupplier(
-      int major, int minor, int revision, @Nonnull Platform platform, String extraVersion) {
+      PostgresMajorVersion major, int minor, @Nonnull Platform platform, String extraVersion) {
 
     final Iterator<PostgresInstallationSupplier> iterator = supplierCandidates.iterator();
 
@@ -122,7 +121,7 @@ public class PgDeploy {
 
     while (iterator.hasNext()) {
       supplierCandidate = iterator.next();
-      if (isSupplierSuitable(supplierCandidate, major, minor, revision, platform, extraVersion)) {
+      if (isSupplierSuitable(supplierCandidate, major, minor, platform, extraVersion)) {
         return Optional.of(supplierCandidate);
       }
     }
@@ -134,12 +133,11 @@ public class PgDeploy {
 
 
   private boolean isSupplierSuitable(
-      PostgresInstallationSupplier supplier, int major, int minor,
-      int revision, Platform platform, String extraVersion) {
+      PostgresInstallationSupplier supplier, PostgresMajorVersion major, int minor,
+      Platform platform, String extraVersion) {
 
-    boolean result = supplier.getMajorVersion() == major
+    boolean result = supplier.getMajorVersion().equals(major)
         && supplier.getMinorVersion() == minor
-        && supplier.getRevision() == revision
         && supplier.getPlatform() == platform;
 
     if (extraVersion != null) {
@@ -152,7 +150,7 @@ public class PgDeploy {
 
   /** Installs a specific postgres version in a folder
    * @param supplier the <tt>PostgresInstallationSupplier</tt>, typically obtained via
-   *                 {@link PgDeploy#findSupplier(int, int, int, Platform) findSupplier}.
+   *     {@link PgDeploy#findSupplier(PostgresMajorVersion, int, Platform) findSupplier}.
    * @param options Instance of the <tt>InstallOptions</tt> inner class specifying which
    *                folders in the postgres folder will be copied to the installation folder. Both
    *                <tt>bin</tt> and <tt>lib</tt> folders are mandatory, while <tt>share</tt> and

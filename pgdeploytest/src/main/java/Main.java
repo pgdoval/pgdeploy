@@ -5,9 +5,14 @@ import com.ongres.pgdeploy.core.Platform;
 import com.ongres.pgdeploy.core.PostgresInstallationSupplier;
 import com.ongres.pgdeploy.core.exceptions.BadInstallationException;
 import com.ongres.pgdeploy.core.exceptions.ExtraFoldersFoundException;
+import com.ongres.pgdeploy.core.pgversion.Post10PostgresMajorVersion;
+import com.ongres.pgdeploy.core.pgversion.PostgresMajorVersion;
+import com.ongres.pgdeploy.core.pgversion.Pre10PostgresMajorVersion;
 import com.ongres.pgdeploy.installations.BadClusterException;
 import com.ongres.pgdeploy.installations.ClusterDirectoryNotEmptyException;
 import com.ongres.pgdeploy.installations.PostgresInstallation;
+import com.ongres.pgdeploy.pgconfig.properties.PropertyValue;
+import com.ongres.pgdeploy.pgconfig.properties.exceptions.PropertyNotFoundException;
 import com.ongres.pgdeploy.pgconfig.properties.exceptions.UnitNotAvailableForPropertyException;
 import com.ongres.pgdeploy.pgconfig.properties.exceptions.WrongTypePropertyException;
 import com.ongres.pgdeploy.wrappers.exceptions.BadProcessExecutionException;
@@ -35,7 +40,7 @@ public class Main {
 
   private static Path installationPath = Paths.get("installation").toAbsolutePath();
   private static Path clusterPath = Paths.get("cluster").toAbsolutePath();
-  private static String logFile = null;
+  private static Path logFile = null;
 
   private static final PgDeploy pgDeploy = new PgDeploy();
   private static PostgresInstallationSupplier supplier = null;
@@ -107,14 +112,20 @@ public class Main {
   private static void getSupplier() {
     System.out.println("Find a supplier");
 
-    int major = getIntegerInputForSentence("Enter major:");
+    int first = getIntegerInputForSentence("Enter first number from major:");
+    int second = getIntegerInputForSentence(
+        "Enter second number from major (0 for only first):");
+
+    PostgresMajorVersion major = (second == 0)
+            ? new Post10PostgresMajorVersion(first)
+            : new Pre10PostgresMajorVersion(first, second);
+
     int minor = getIntegerInputForSentence("Enter minor:");
-    int revision = getIntegerInputForSentence("Enter revision:");
     Platform platform = Platform.valueOf(
         getStringInputForSentence("Enter platform (LINUX, WINDOWS or MACOS):").toUpperCase());
 
     Optional<PostgresInstallationSupplier> supplierOptional =
-        pgDeploy.findSupplier(major, minor, revision, platform);
+        pgDeploy.findSupplier(major, minor, platform);
 
     if (supplierOptional.isPresent()) {
       supplier = supplierOptional.get();
@@ -142,7 +153,7 @@ public class Main {
   private static void setLogfile() {
     String home = System.getProperty("user.home");
     logFile = Paths.get(home).resolve(
-        getStringInputForSentence("Path for logfile (from " + home + "):")).toString();
+        getStringInputForSentence("Path for logfile (from " + home + "):"));
     System.out.println("Logfile updated!");
   }
 
@@ -160,8 +171,8 @@ public class Main {
               .withoutDataChecksums()
       );
       System.out.println("Cluster created!");
-    } catch (BadClusterException | IOException
-        | InterruptedException | ClusterDirectoryNotEmptyException e) {
+    } catch (BadClusterException | IOException | InterruptedException
+        | ClusterDirectoryNotEmptyException | BadProcessExecutionException e) {
       System.out.println(e.getMessage() + "\nNothing changed.");
     }
   }
@@ -175,6 +186,7 @@ public class Main {
               .build(), logFile);
       System.out.println("Cluster configured!");
     } catch (IOException | BadProcessExecutionException
+        | PropertyNotFoundException | InterruptedException
         | WrongTypePropertyException | UnitNotAvailableForPropertyException e) {
       System.out.println(e.getMessage() + "\nNothing changed.");
     }
@@ -185,7 +197,8 @@ public class Main {
     try {
       cluster.start(logFile);
       System.out.println("Cluster started!");
-    } catch (BadProcessExecutionException | IOException e) {
+    } catch (BadProcessExecutionException | IOException
+        | InterruptedException e) {
       System.out.println(e.getMessage() + "\nNothing changed.");
     }
   }
@@ -194,7 +207,7 @@ public class Main {
     String key;
     String value;
 
-    Map<String,Object> map = new HashMap<>();
+    Map<String, PropertyValue> map = new HashMap<>();
 
     while (true) {
       key = getStringInputForSentence("Name of the property (- to stop):");
@@ -204,13 +217,14 @@ public class Main {
       }
       value = getStringInputForSentence("New value for the property:");
 
-      map.put(key, value);
+      map.put(key, PropertyValue.from(value));
     }
 
     try {
       cluster.config(cluster.createConfigBuilder().fromPropertyMap(map).build(), logFile);
       System.out.println("Cluster configured!");
     } catch (IOException | BadProcessExecutionException
+        | PropertyNotFoundException | InterruptedException
         | WrongTypePropertyException | UnitNotAvailableForPropertyException e) {
       System.out.println(e.getMessage() + "\nNothing changed.");
     }

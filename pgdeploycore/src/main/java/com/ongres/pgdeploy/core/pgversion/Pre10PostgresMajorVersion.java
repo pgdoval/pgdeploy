@@ -25,7 +25,7 @@
 package com.ongres.pgdeploy.core.pgversion;
 
 public class Pre10PostgresMajorVersion extends PostgresMajorVersion {
-  Pre10PostgresMajorVersion(int first, int second) {
+  public Pre10PostgresMajorVersion(int first, int second) {
     super(first, second);
   }
 }

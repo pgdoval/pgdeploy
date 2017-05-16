@@ -64,7 +64,7 @@ public class AbstractPostgresInstallationSupplierCheckInstallationTest {
     RelativeRoute route = new RelativeRoute(folders);
 
     return new MockedPostgresInstallationSupplier(
-            0, 0, 0, Platform.LINUX, null, route);
+            null, 0, Platform.LINUX, null, route);
   }
 
   private void prepareFolders(List<PostgresInstallationFolder> folders) throws Exception

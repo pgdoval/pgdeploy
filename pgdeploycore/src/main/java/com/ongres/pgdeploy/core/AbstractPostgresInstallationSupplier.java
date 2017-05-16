@@ -28,6 +28,7 @@ import com.ongres.pgdeploy.core.exceptions.BadInstallationException;
 import com.ongres.pgdeploy.core.exceptions.ExtraFoldersFoundException;
 import com.ongres.pgdeploy.core.exceptions.NonWritableDestinationException;
 import com.ongres.pgdeploy.core.exceptions.UnreachableBinariesException;
+import com.ongres.pgdeploy.core.pgversion.PostgresMajorVersion;
 import com.ongres.pgdeploy.core.router.DefaultRouter;
 import com.ongres.pgdeploy.pgconfig.DefaultPropertyParser;
 import com.ongres.pgdeploy.pgconfig.properties.Property;
@@ -55,44 +56,35 @@ import java.util.zip.ZipFile;
 
 public abstract class AbstractPostgresInstallationSupplier implements PostgresInstallationSupplier {
 
-  protected final int majorVersion;
+  protected final PostgresMajorVersion majorVersion;
   protected final int minorVersion;
-  protected final int revision;
   protected final Platform platform;
   protected final String extraVersion;
 
   protected final Path routeToZippedCode;
 
-  protected AbstractPostgresInstallationSupplier(int majorVersion, int minorVersion, int revision,
-                                                 Platform platform,
-                                                 Path routeToZippedCode) {
-    this(majorVersion, minorVersion, revision, platform, null, routeToZippedCode);
+  protected AbstractPostgresInstallationSupplier( PostgresMajorVersion majorVersion,
+      int minorVersion, Platform platform, Path routeToZippedCode) {
+    this(majorVersion, minorVersion, platform, null, routeToZippedCode);
   }
 
-  protected AbstractPostgresInstallationSupplier(int majorVersion, int minorVersion, int revision,
-                                                 Platform platform, String extraVersion,
-                                                 Path routeToZippedCode) {
+  protected AbstractPostgresInstallationSupplier(PostgresMajorVersion majorVersion,
+      int minorVersion, Platform platform, String extraVersion, Path routeToZippedCode) {
     this.majorVersion = majorVersion;
     this.minorVersion = minorVersion;
-    this.revision = revision;
     this.platform = platform;
     this.extraVersion = extraVersion;
     this.routeToZippedCode = routeToZippedCode;
   }
 
   @Override
-  public int getMajorVersion() {
+  public PostgresMajorVersion getMajorVersion() {
     return majorVersion;
   }
 
   @Override
   public int getMinorVersion() {
     return minorVersion;
-  }
-
-  @Override
-  public int getRevision() {
-    return revision;
   }
 
   @Override

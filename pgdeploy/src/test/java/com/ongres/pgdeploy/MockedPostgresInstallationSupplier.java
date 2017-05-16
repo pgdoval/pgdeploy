@@ -41,15 +41,16 @@ package com.ongres.pgdeploy;
 import com.ongres.pgdeploy.core.AbstractPostgresInstallationSupplier;
 import com.ongres.pgdeploy.core.Platform;
 import com.ongres.pgdeploy.core.RelativeRoute;
+import com.ongres.pgdeploy.core.pgversion.PostgresMajorVersion;
 
 class MockedPostgresInstallationSupplier extends AbstractPostgresInstallationSupplier {
 
-  public MockedPostgresInstallationSupplier(int majorVersion, int minorVersion, int revision, Platform platform, String extraVersion) {
-    super (majorVersion, minorVersion, revision, platform, extraVersion, null);
+  public MockedPostgresInstallationSupplier(PostgresMajorVersion majorVersion, int minorVersion, Platform platform, String extraVersion) {
+    super (majorVersion, minorVersion, platform, extraVersion, null);
   }
 
-  public MockedPostgresInstallationSupplier(int majorVersion, int minorVersion, int revision, Platform platform, String extraVersion, RelativeRoute route) {
-    super (majorVersion, minorVersion, revision, platform, extraVersion, route.asRelativePath());
+  public MockedPostgresInstallationSupplier(PostgresMajorVersion majorVersion, int minorVersion, Platform platform, String extraVersion, RelativeRoute route) {
+    super (majorVersion, minorVersion, platform, extraVersion, route.asRelativePath());
   }
 
 }

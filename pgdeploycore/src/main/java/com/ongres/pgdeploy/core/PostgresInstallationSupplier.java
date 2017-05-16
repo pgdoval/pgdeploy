@@ -26,6 +26,7 @@ package com.ongres.pgdeploy.core;
 
 import com.ongres.pgdeploy.core.exceptions.BadInstallationException;
 import com.ongres.pgdeploy.core.exceptions.ExtraFoldersFoundException;
+import com.ongres.pgdeploy.core.pgversion.PostgresMajorVersion;
 import com.ongres.pgdeploy.core.router.Router;
 import com.ongres.pgdeploy.pgconfig.PropertyParser;
 
@@ -35,11 +36,9 @@ import java.util.List;
 
 public interface PostgresInstallationSupplier extends Router, PropertyParser {
 
-  int getMajorVersion();
+  PostgresMajorVersion getMajorVersion();
 
   int getMinorVersion();
-
-  int getRevision();
 
   Platform getPlatform();
 

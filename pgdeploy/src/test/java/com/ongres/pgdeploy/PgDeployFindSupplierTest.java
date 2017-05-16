@@ -40,6 +40,7 @@ package com.ongres.pgdeploy;
 
 import com.ongres.pgdeploy.core.Platform;
 import com.ongres.pgdeploy.core.PostgresInstallationSupplier;
+import com.ongres.pgdeploy.core.pgversion.Pre10PostgresMajorVersion;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -60,13 +61,14 @@ public class PgDeployFindSupplierTest {
   public void checkExistingSupplierWithoutExtraVersionButNotRequired()
   {
     List<PostgresInstallationSupplier> suppliers = new ArrayList<>();
-    PostgresInstallationSupplier mockedSupplier = new MockedPostgresInstallationSupplier(0, 0, 0, Platform.LINUX, null);
+    PostgresInstallationSupplier mockedSupplier = new MockedPostgresInstallationSupplier(
+        new Pre10PostgresMajorVersion(9, 5), 0, Platform.LINUX, null);
     suppliers.add(mockedSupplier);
 
     pgDeploy = new PgDeploy(suppliers);
 
     Optional<PostgresInstallationSupplier> supplier =
-            pgDeploy.findSupplier(0, 0, 0, Platform.LINUX);
+            pgDeploy.findSupplier(new Pre10PostgresMajorVersion(9, 5), 0, Platform.LINUX);
 
     assertTrue("Existing supplier not found", supplier.isPresent());
     assertEquals("Existing supplier not mocked", mockedSupplier, supplier.get());
@@ -78,14 +80,16 @@ public class PgDeployFindSupplierTest {
   {
 
     List<PostgresInstallationSupplier> suppliers = new ArrayList<>();
-    PostgresInstallationSupplier mockedSupplier = new MockedPostgresInstallationSupplier(0, 0, 0, Platform.LINUX, null);
+    PostgresInstallationSupplier mockedSupplier = new MockedPostgresInstallationSupplier(
+        new Pre10PostgresMajorVersion(9, 5), 0, Platform.LINUX, null);
     suppliers.add(mockedSupplier);
 
     pgDeploy = new PgDeploy(suppliers);
 
     assertFalse("Unexpected supplier found",
-            pgDeploy.findSupplier(1, 0, 0, Platform.LINUX).isPresent());
+            pgDeploy.findSupplier(new Pre10PostgresMajorVersion(8, 5), 0, Platform.LINUX).isPresent());
   }
+
 
 
   @Test
@@ -93,28 +97,14 @@ public class PgDeployFindSupplierTest {
   {
 
     List<PostgresInstallationSupplier> suppliers = new ArrayList<>();
-    PostgresInstallationSupplier mockedSupplier = new MockedPostgresInstallationSupplier(0, 0, 0, Platform.LINUX, null);
+    PostgresInstallationSupplier mockedSupplier = new MockedPostgresInstallationSupplier(
+        new Pre10PostgresMajorVersion(9, 5), 0, Platform.LINUX, null);
     suppliers.add(mockedSupplier);
 
     pgDeploy = new PgDeploy(suppliers);
 
     assertFalse("Unexpected supplier found",
-            pgDeploy.findSupplier(0, 1, 0, Platform.LINUX).isPresent());
-  }
-
-
-  @Test
-  public void checkSupplierWithDifferentRevision()
-  {
-
-    List<PostgresInstallationSupplier> suppliers = new ArrayList<>();
-    PostgresInstallationSupplier mockedSupplier = new MockedPostgresInstallationSupplier(0, 0, 0, Platform.LINUX, null);
-    suppliers.add(mockedSupplier);
-
-    pgDeploy = new PgDeploy(suppliers);
-
-    assertFalse("Unexpected supplier found",
-            pgDeploy.findSupplier(0, 0, 1, Platform.LINUX).isPresent());
+            pgDeploy.findSupplier(new Pre10PostgresMajorVersion(9, 5), 1, Platform.LINUX).isPresent());
   }
 
 
@@ -123,13 +113,14 @@ public class PgDeployFindSupplierTest {
   {
 
     List<PostgresInstallationSupplier> suppliers = new ArrayList<>();
-    PostgresInstallationSupplier mockedSupplier = new MockedPostgresInstallationSupplier(0, 0, 0, Platform.LINUX, null);
+    PostgresInstallationSupplier mockedSupplier = new MockedPostgresInstallationSupplier(
+        new Pre10PostgresMajorVersion(9, 5), 0, Platform.LINUX, null);
     suppliers.add(mockedSupplier);
 
     pgDeploy = new PgDeploy(suppliers);
 
     assertFalse("Unexpected supplier found",
-            pgDeploy.findSupplier(00, 0, 0, Platform.WINDOWS).isPresent());
+            pgDeploy.findSupplier(new Pre10PostgresMajorVersion(9, 5), 0, Platform.WINDOWS).isPresent());
   }
 
 
@@ -137,14 +128,15 @@ public class PgDeployFindSupplierTest {
   public void checkExistingSupplierWithExtraVersionButNotRequired()
   {
     List<PostgresInstallationSupplier> suppliers = new ArrayList<>();
-    PostgresInstallationSupplier mockedSupplier = new MockedPostgresInstallationSupplier(0, 0, 0, Platform.LINUX, myExtraVersion);
+    PostgresInstallationSupplier mockedSupplier = new MockedPostgresInstallationSupplier(
+        new Pre10PostgresMajorVersion(9, 5), 0, Platform.LINUX, myExtraVersion);
     suppliers.add(mockedSupplier);
 
     pgDeploy = new PgDeploy(suppliers);
 
 
     Optional<PostgresInstallationSupplier> supplier =
-            pgDeploy.findSupplier(0, 0, 0, Platform.LINUX);
+            pgDeploy.findSupplier(new Pre10PostgresMajorVersion(9, 5), 0, Platform.LINUX);
 
 
     assertTrue("Existing supplier not found", supplier.isPresent());
@@ -155,14 +147,14 @@ public class PgDeployFindSupplierTest {
   public void checkExistingSupplierWithExtraVersionSameAsRequired()
   {
     List<PostgresInstallationSupplier> suppliers = new ArrayList<>();
-    PostgresInstallationSupplier mockedSupplier = new MockedPostgresInstallationSupplier(0, 0, 0, Platform.LINUX, myExtraVersion);
+    PostgresInstallationSupplier mockedSupplier = new MockedPostgresInstallationSupplier(new Pre10PostgresMajorVersion(9, 5), 0, Platform.LINUX, myExtraVersion);
     suppliers.add(mockedSupplier);
 
     pgDeploy = new PgDeploy(suppliers);
 
 
     Optional<PostgresInstallationSupplier> supplier =
-            pgDeploy.findSupplier(0, 0, 0, Platform.LINUX, myExtraVersion);
+            pgDeploy.findSupplier(new Pre10PostgresMajorVersion(9, 5), 0, Platform.LINUX, myExtraVersion);
 
 
     assertTrue("Existing supplier not found", supplier.isPresent());
@@ -173,13 +165,14 @@ public class PgDeployFindSupplierTest {
   public void checkExistingSupplierWithExtraVersionDifferentFromRequired()
   {
     List<PostgresInstallationSupplier> suppliers = new ArrayList<>();
-    PostgresInstallationSupplier mockedSupplier = new MockedPostgresInstallationSupplier(0, 0, 0, Platform.LINUX, myExtraVersion);
+    PostgresInstallationSupplier mockedSupplier = new MockedPostgresInstallationSupplier(
+        new Pre10PostgresMajorVersion(9, 5), 0, Platform.LINUX, myExtraVersion);
     suppliers.add(mockedSupplier);
 
     pgDeploy = new PgDeploy(suppliers);
 
 
-    assertFalse(pgDeploy.findSupplier(0, 0, 0, Platform.LINUX, otherExtraVersion).isPresent());
+    assertFalse(pgDeploy.findSupplier(new Pre10PostgresMajorVersion(9, 5), 0, Platform.LINUX, otherExtraVersion).isPresent());
 
   }
 
@@ -187,13 +180,14 @@ public class PgDeployFindSupplierTest {
   public void checkExistingSupplierWithoutExtraVersionButRequired()
   {
     List<PostgresInstallationSupplier> suppliers = new ArrayList<>();
-    PostgresInstallationSupplier mockedSupplier = new MockedPostgresInstallationSupplier(0, 0, 0, Platform.LINUX, null);
+    PostgresInstallationSupplier mockedSupplier = new MockedPostgresInstallationSupplier(
+        new Pre10PostgresMajorVersion(9, 5), 0, Platform.LINUX, null);
     suppliers.add(mockedSupplier);
 
     pgDeploy = new PgDeploy(suppliers);
 
 
-    assertFalse(pgDeploy.findSupplier(0, 0, 0, Platform.LINUX, myExtraVersion).isPresent());
+    assertFalse(pgDeploy.findSupplier(new Pre10PostgresMajorVersion(9, 5), 0, Platform.LINUX, myExtraVersion).isPresent());
 
   }
 
