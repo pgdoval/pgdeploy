@@ -234,7 +234,9 @@ public class PostgresConfig {
     }
 
     public PostgresConfig build() {
-      return new PostgresConfig(innerMap);
+      Map<Property, PropertyValue> map = innerMap;
+      innerMap = new HashMap<>();
+      return new PostgresConfig(map);
     }
 
 

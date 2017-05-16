@@ -119,5 +119,17 @@ public class PostgresConfigTest {
     assertTrue(config.asStream().findFirst().isPresent());
   }
 
+  @Test
+  public void testReuseBuilder() throws Exception {
+    Map<String, PropertyValue> map = new HashMap<>(1);
+    map.put("prop1",PropertyValue.tb(5));
+    PostgresConfig config = builder.withPropertyUnsafe("propx",PropertyValue.tb(5)).build();
+    config = builder.fromPropertyMapUnsafe(map).build();
+    Map.Entry<Property, PropertyValue> prop = config.asStream().findFirst().get();
+
+    assertEquals(new Property("prop1", false, DataType.INTEGER, Unit.byteList), prop.getKey());
+    assertEquals(PropertyValue.tb(5), prop.getValue());
+  }
+
 
 }
