@@ -83,14 +83,14 @@ PostgresCluster cluster = installation.createCluster(
  ```
 PostgresConfig config = cluster.createConfigBuilder()
                     .withProperty("port", 5432)
-                    .withProperty("shared_buffers", "2GB")
+                    .withProperty("shared_buffers", PropertyValue.gb(2))
                     .withProperty("random_page_cost", 3.5)
                     .withProperty("autovacuum", false)
                     .build();        
 
 //or alternatively
 PostgresConfig config = cluster.createConfigBuilder()
-                    .FromPropertyMap(myMapStringObject)
+                    .FromPropertyMap(myMapStringToPropertyValue)
                     .build();               
  
 cluster.config(config); //this method calls restart. Future versions will be able to call reload if restart is not needed
