@@ -22,54 +22,13 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.ongres.pgdeploy.pgconfig.properties;
-
-import com.google.common.collect.ImmutableList;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+package com.ongres.pgdeploy.pgconfig.properties.exceptions;
 
 /**
- * Created by pablo on 28/04/17.
+ * Created by pablo on 16/05/17.
  */
-public enum Unit {
-  NONE(""),
-  KB("kB"),
-  MB("MB"),
-  GB("GB"),
-  TB("TB"),
-  MS("ms"),
-  S("s"),
-  MIN("min"),
-  H("h"),
-  D("d");
-
-  private String unitName;
-
-  public String getUnitName() {
-    return unitName;
-  }
-
-  Unit(String unitName) {
-    this.unitName = unitName;
-  }
-
-  public static final List<Unit> noneList = Collections.singletonList(NONE);
-
-  public static final List<Unit> byteList = ImmutableList.copyOf(Arrays.asList(KB, MB, GB, TB));
-
-  public static final List<Unit> timeList = ImmutableList.copyOf(Arrays.asList(MS, S, MIN, H, D));
-
-  public static final List<Unit> allList = ImmutableList.copyOf(Arrays.asList(values()));
-
-  public static List<Unit> getListFromUnit(Unit unit) {
-    if (byteList.contains(unit)) {
-      return byteList;
-    } else if (timeList.contains(unit)) {
-      return timeList;
-    } else {
-      return noneList;
-    }
+public class PropertyNotFoundException extends Exception {
+  public PropertyNotFoundException(String s) {
+    super(s);
   }
 }

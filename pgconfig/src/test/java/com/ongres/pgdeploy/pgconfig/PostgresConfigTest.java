@@ -28,13 +28,12 @@ import com.ongres.pgdeploy.pgconfig.properties.DataType;
 import com.ongres.pgdeploy.pgconfig.properties.Property;
 import com.ongres.pgdeploy.pgconfig.properties.PropertyValue;
 import com.ongres.pgdeploy.pgconfig.properties.Unit;
+import com.ongres.pgdeploy.pgconfig.properties.exceptions.PropertyNotFoundException;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
 
 import static org.junit.Assert.*;
 
@@ -60,7 +59,7 @@ public class PostgresConfigTest {
     assertEquals(PropertyValue.tb(5), prop.getValue());
   }
 
-  @Test
+  @Test (expected = PropertyNotFoundException.class)
   public void testWrongWithProperty() throws Exception {
     PostgresConfig config = builder.withProperty("propx",PropertyValue.tb(5)).build();
     assertFalse(config.asStream().findFirst().isPresent());
@@ -77,12 +76,47 @@ public class PostgresConfigTest {
     assertEquals(PropertyValue.tb(5), prop.getValue());
   }
 
-  @Test
+  @Test (expected = PropertyNotFoundException.class)
   public void testWrongFromMap() throws Exception {
     Map<String, PropertyValue> map = new HashMap<>(1);
     map.put("propx",PropertyValue.tb(5));
     PostgresConfig config = builder.fromPropertyMap(map).build();
     assertFalse(config.asStream().findFirst().isPresent());
+  }
+
+
+  @Test
+  public void testWithPropertyUnsafe() throws Exception {
+    PostgresConfig config = builder.withPropertyUnsafe("prop1",PropertyValue.tb(5)).build();
+    Map.Entry<Property, PropertyValue> prop = config.asStream().findFirst().get();
+
+    assertEquals(new Property("prop1", false, DataType.INTEGER, Unit.byteList), prop.getKey());
+    assertEquals(PropertyValue.tb(5), prop.getValue());
+  }
+
+  @Test
+  public void testWrongWithPropertyUnsafe() throws Exception {
+    PostgresConfig config = builder.withPropertyUnsafe("propx",PropertyValue.tb(5)).build();
+    assertTrue(config.asStream().findFirst().isPresent());
+  }
+
+  @Test
+  public void testFromMapUnsafe() throws Exception {
+    Map<String, PropertyValue> map = new HashMap<>(1);
+    map.put("prop1",PropertyValue.tb(5));
+    PostgresConfig config = builder.fromPropertyMapUnsafe(map).build();
+    Map.Entry<Property, PropertyValue> prop = config.asStream().findFirst().get();
+
+    assertEquals(new Property("prop1", false, DataType.INTEGER, Unit.byteList), prop.getKey());
+    assertEquals(PropertyValue.tb(5), prop.getValue());
+  }
+
+  @Test
+  public void testWrongFromMapUnsafe() throws Exception {
+    Map<String, PropertyValue> map = new HashMap<>(1);
+    map.put("propx",PropertyValue.tb(5));
+    PostgresConfig config = builder.fromPropertyMapUnsafe(map).build();
+    assertTrue(config.asStream().findFirst().isPresent());
   }
 
 

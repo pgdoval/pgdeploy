@@ -75,6 +75,10 @@ public class Property {
     this.availableUnits = availableUnits;
   }
 
+  public static Property fromName(String name) {
+    return new Property(name, false, DataType.STRING, Unit.allList);
+  }
+
 
   @Override
   public boolean equals(Object o) {
