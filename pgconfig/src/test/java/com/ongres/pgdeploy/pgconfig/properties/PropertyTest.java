@@ -68,7 +68,6 @@ public class PropertyTest {
   @Rule
   public final ExpectedException exception = ExpectedException.none();
 
-  private final PropertyValueParser parser = DefaultPropertyValueParser.getInstance();
 
 
   @Parameterized.Parameters
@@ -174,8 +173,7 @@ public class PropertyTest {
       exception.expect(expectedException);
     }
 
-    parser.validate(
-        objectReceived,new Property("name", false, type, availableUnits));
+    new Property("name", false, type, availableUnits).validate(objectReceived);
 
     if (objInResult instanceof Double) {
       assertEquals((Double)objInResult, (Double)objectReceived.getValue(), 0.1);

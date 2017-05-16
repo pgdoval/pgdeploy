@@ -24,10 +24,8 @@
  */
 package com.ongres.pgdeploy.pgconfig;
 
-import com.ongres.pgdeploy.pgconfig.properties.DefaultPropertyValueParser;
 import com.ongres.pgdeploy.pgconfig.properties.Property;
 import com.ongres.pgdeploy.pgconfig.properties.PropertyValue;
-import com.ongres.pgdeploy.pgconfig.properties.PropertyValueParser;
 import com.ongres.pgdeploy.pgconfig.properties.exceptions.UnitNotAvailableForPropertyException;
 import com.ongres.pgdeploy.pgconfig.properties.exceptions.WrongTypePropertyException;
 
@@ -56,12 +54,10 @@ public class PostgresConfig {
 
     private PropertyParser parser;
     private Map<Property, PropertyValue> innerMap;
-    private PropertyValueParser pvParser;
 
     public Builder(PropertyParser parser) {
       this.parser = parser;
       innerMap = new HashMap<>();
-      pvParser = DefaultPropertyValueParser.getInstance();
     }
 
     public Builder withProperty(String key, PropertyValue value)
@@ -130,7 +126,7 @@ public class PostgresConfig {
       }
 
       Property property = propertyOptional.get();
-      pvParser.validate(value, property);
+      property.validate(value);
       innerMap.put(property, value);
     }
 

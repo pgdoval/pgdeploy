@@ -26,7 +26,6 @@ package com.ongres.pgdeploy.pgconfig;
 
 import com.ongres.pgdeploy.pgconfig.properties.DataType;
 import com.ongres.pgdeploy.pgconfig.properties.Property;
-import com.ongres.pgdeploy.pgconfig.properties.PropertyValueParser;
 import com.ongres.pgdeploy.pgconfig.properties.Unit;
 import org.junit.Test;
 import org.junit.runner.RunWith;
