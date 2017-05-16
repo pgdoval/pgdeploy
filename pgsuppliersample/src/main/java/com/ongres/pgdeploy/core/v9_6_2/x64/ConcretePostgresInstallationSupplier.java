@@ -8,9 +8,7 @@ import java.net.URISyntaxException;
 import java.nio.file.Paths;
 import java.util.Arrays;
 
-/**
- * Created by pablo on 10/05/17.
- */
+ 
 public class ConcretePostgresInstallationSupplier extends AbstractPostgresInstallationSupplier {
 
   public ConcretePostgresInstallationSupplier() throws URISyntaxException {

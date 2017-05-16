@@ -24,9 +24,7 @@
  */
 package com.ongres.pgdeploy.pgconfig.properties;
 
-/**
- * Created by pablo on 28/04/17.
- */
+ 
 public enum DataType {
   STRING(String.class),
   INTEGER(Long.class),

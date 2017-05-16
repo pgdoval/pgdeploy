@@ -51,9 +51,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
 
-/**
- * Created by pablo on 26/04/17.
- */
+ 
 public class PgCtlWrapperTest {
 
   private Path clusterPath =

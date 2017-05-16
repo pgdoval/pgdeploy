@@ -30,9 +30,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-/**
- * Created by pablo on 10/05/17.
- */
+ 
 public class Main {
 
   private static Path installationPath = Paths.get("installation").toAbsolutePath();

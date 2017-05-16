@@ -24,9 +24,7 @@
  */
 package com.ongres.pgdeploy.pgconfig.properties.exceptions;
 
-/**
- * Created by pablo on 16/05/17.
- */
+ 
 public class PropertyNotFoundException extends Exception {
   public PropertyNotFoundException(String s) {
     super(s);

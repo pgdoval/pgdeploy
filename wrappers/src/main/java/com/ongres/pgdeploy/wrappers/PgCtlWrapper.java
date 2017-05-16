@@ -36,9 +36,7 @@ import java.util.stream.Stream;
 
 import javax.annotation.Nullable;
 
-/**
- * Created by pablo on 26/04/17.
- */
+ 
 public class PgCtlWrapper {
 
   private static final String waitUntilProcessEnds = "-w";

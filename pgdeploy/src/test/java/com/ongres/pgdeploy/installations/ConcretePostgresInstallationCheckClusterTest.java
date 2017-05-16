@@ -49,9 +49,7 @@ import java.util.Arrays;
 
 import static org.mockito.Mockito.mock;
 
-/**
- * Created by pablo on 26/04/17.
- */
+ 
 public class ConcretePostgresInstallationCheckClusterTest {
 
   private ConcretePostgresInstallation installation;

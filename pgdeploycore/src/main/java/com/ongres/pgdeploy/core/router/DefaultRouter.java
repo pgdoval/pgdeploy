@@ -29,9 +29,7 @@ import com.ongres.pgdeploy.core.RelativeRoute;
 import java.nio.file.Path;
 import java.util.Arrays;
 
-/**
- * Created by pablo on 25/04/17.
- */
+ 
 public class DefaultRouter implements Router {
 
   protected RelativeRoute postgresqlConfRoute =

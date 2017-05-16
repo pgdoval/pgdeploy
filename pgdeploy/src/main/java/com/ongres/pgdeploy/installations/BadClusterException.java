@@ -41,9 +41,7 @@ package com.ongres.pgdeploy.installations;
 
 import java.nio.file.Path;
 
-/**
- * Created by pablo on 25/04/17.
- */
+ 
 public class BadClusterException extends Exception {
 
   public BadClusterException(String s) {

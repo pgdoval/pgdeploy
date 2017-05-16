@@ -40,9 +40,7 @@ import static com.ongres.pgdeploy.pgconfig.properties.DataType.*;
 import static com.ongres.pgdeploy.pgconfig.properties.Unit.*;
 import static org.junit.Assert.*;
 
-/**
- * Created by pablo on 28/04/17.
- */
+ 
 
 @RunWith(Parameterized.class)
 public class PropertyTest {

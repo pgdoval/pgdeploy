@@ -50,9 +50,7 @@ import java.util.stream.Collectors;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 
-/**
- * Created by pablo on 27/04/17.
- */
+ 
 public class ConcretePostgresClusterMethodsTest {
 
   private ConcretePostgresCluster cluster;

@@ -26,9 +26,7 @@ package com.ongres.pgdeploy.core.exceptions;
 
 import java.io.IOException;
 
-/**
- * Created by pablo on 25/04/17.
- */
+ 
 public class UnreachableBinariesException extends IOException {
 
   public UnreachableBinariesException(String s) {

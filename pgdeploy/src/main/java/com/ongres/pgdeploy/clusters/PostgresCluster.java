@@ -47,9 +47,7 @@ import java.nio.file.Path;
 
 import javax.annotation.Nullable;
 
-/**
- * Created by pablo on 25/04/17.
- */
+ 
 public abstract class PostgresCluster {
 
   /** Starts a cluster by calling pg_ctl start on it

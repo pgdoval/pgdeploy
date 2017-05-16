@@ -33,9 +33,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-/**
- * Created by pablo on 26/04/17.
- */
+ 
 public class InitDbWrapper {
 
   private static final String description = "initdb";

@@ -55,9 +55,7 @@ import java.nio.file.Path;
 
 import javax.annotation.Nonnull;
 
-/**
- * Created by pablo on 25/04/17.
- */
+ 
 public class ConcretePostgresInstallation extends PostgresInstallation {
 
   private final Router router;

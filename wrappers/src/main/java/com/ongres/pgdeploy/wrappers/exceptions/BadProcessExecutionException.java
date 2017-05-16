@@ -24,9 +24,7 @@
  */
 package com.ongres.pgdeploy.wrappers.exceptions;
 
-/**
- * Created by pablo on 27/04/17.
- */
+ 
 public class BadProcessExecutionException extends Exception {
 
   public BadProcessExecutionException(String s) {

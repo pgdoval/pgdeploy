@@ -59,9 +59,7 @@ import java.util.Set;
 
 import static org.junit.Assert.*;
 
-/**
- * Created by pablo on 25/04/17.
- */
+ 
 public class PostgresInstallationTest {
 
   private PostgresInstallation installation;

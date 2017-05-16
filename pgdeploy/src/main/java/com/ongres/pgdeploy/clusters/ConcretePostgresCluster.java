@@ -58,9 +58,7 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
 
-/**
- * Created by pablo on 25/04/17.
- */
+ 
 
 @edu.umd.cs.findbugs.annotations.SuppressFBWarnings(
     value = "URF_UNREAD_FIELD",

@@ -26,9 +26,7 @@ package com.ongres.pgdeploy.pgconfig.properties;
 
 import net.jcip.annotations.Immutable;
 
-/**
- * Created by pablo on 27/04/17.
- */
+ 
 @Immutable
 public class PropertyValue<T> {
   private final T value;

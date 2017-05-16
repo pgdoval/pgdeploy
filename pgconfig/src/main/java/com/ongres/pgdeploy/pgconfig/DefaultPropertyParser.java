@@ -39,9 +39,7 @@ import java.util.Optional;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
-/**
- * Created by pablo on 25/04/17.
- */
+ 
 public class DefaultPropertyParser implements PropertyParser {
 
   private static String delimiter = "|";

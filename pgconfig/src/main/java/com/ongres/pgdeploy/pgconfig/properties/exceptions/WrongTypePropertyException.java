@@ -24,9 +24,7 @@
  */
 package com.ongres.pgdeploy.pgconfig.properties.exceptions;
 
-/**
- * Created by pablo on 28/04/17.
- */
+ 
 public class WrongTypePropertyException extends Exception {
 
   public WrongTypePropertyException(String s) {

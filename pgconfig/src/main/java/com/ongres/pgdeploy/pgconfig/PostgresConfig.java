@@ -36,9 +36,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-/**
- * Created by pablo on 26/04/17.
- */
+ 
 public class PostgresConfig {
 
   private final Map<Property, PropertyValue> innerMap;

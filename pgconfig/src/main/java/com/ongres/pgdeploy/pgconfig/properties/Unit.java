@@ -30,9 +30,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * Created by pablo on 28/04/17.
- */
+ 
 public enum Unit {
   NONE(""),
   KB("kB"),

@@ -40,9 +40,7 @@ import java.util.stream.Stream;
 
 import javax.annotation.Nonnull;
 
-/**
- * Created by pablo on 27/04/17.
- */
+ 
 @Immutable
 public class Property {
 

@@ -29,9 +29,7 @@ import com.ongres.pgdeploy.pgconfig.properties.Unit;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * Created by pablo on 28/04/17.
- */
+ 
 public class UnitNotAvailableForPropertyException extends Exception {
 
   public UnitNotAvailableForPropertyException(String s) {

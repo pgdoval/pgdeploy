@@ -51,9 +51,7 @@ import java.util.List;
 import static com.ongres.pgdeploy.core.PostgresInstallationFolder.*;
 import static org.junit.Assert.*;
 
-/**
- * Created by pablo on 25/04/17.
- */
+ 
 @RunWith(Parameterized.class)
 public class InstallOptionsTest {
 
