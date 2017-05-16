@@ -66,36 +66,48 @@ public class PostgresConfig {
       return this;
     }
 
+    /** Calls {@link PropertyValue#from(int)}.
+     */
     public Builder withProperty(String key, int value)
         throws WrongTypePropertyException, UnitNotAvailableForPropertyException {
       addProperty(key, PropertyValue.from(value));
       return this;
     }
 
+    /** Calls {@link PropertyValue#from(long)}.
+     */
     public Builder withProperty(String key, long value)
         throws WrongTypePropertyException, UnitNotAvailableForPropertyException {
       addProperty(key, PropertyValue.from(value));
       return this;
     }
 
+    /** Calls {@link PropertyValue#from(float)}.
+     */
     public Builder withProperty(String key, float value)
         throws WrongTypePropertyException, UnitNotAvailableForPropertyException {
       addProperty(key, PropertyValue.from(value));
       return this;
     }
 
+    /** Calls {@link PropertyValue#from(double)}.
+     */
     public Builder withProperty(String key, double value)
         throws WrongTypePropertyException, UnitNotAvailableForPropertyException {
       addProperty(key, PropertyValue.from(value));
       return this;
     }
 
+    /** Calls {@link PropertyValue#from(String)}.
+     */
     public Builder withProperty(String key, String value)
         throws WrongTypePropertyException, UnitNotAvailableForPropertyException {
       addProperty(key, PropertyValue.from(value));
       return this;
     }
 
+    /** Calls {@link PropertyValue#from(boolean)}.
+     */
     public Builder withProperty(String key, boolean value)
         throws WrongTypePropertyException, UnitNotAvailableForPropertyException {
       addProperty(key, PropertyValue.from(value));

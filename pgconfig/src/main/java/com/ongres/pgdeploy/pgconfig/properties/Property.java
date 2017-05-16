@@ -108,27 +108,8 @@ public class Property {
     return result;
   }
 
-  /** Parses a given object into a {@link PropertyValue} representing it.
-   * @param obj The object to be parsed. It cannot be null and has to be compliant to one of these
-   *            rules:
-   *            <ul>
-   *            <li>Be an integer, a long, a float, a double, or a boolean. Depending on the
-   *            property's <tt>type</tt>, this will be parsed correctly or throw a
-   *            {@link WrongTypePropertyException}
-   *            <li>Be a String in one of the following styles:
-   *            <ul>
-   *              <li> <tt>"12"</tt>: Depending on the property's <tt>type</tt>, this will
-   *              return a {@link PropertyValue} containing either 12L, 12D or "12".
-   *              <li> <tt>"12MB"</tt>: It will return a {@link PropertyValue} whose value is
-   *              12D, 12L or even "12", and whose {@link Unit} will be MB.
-   *              <li> Boolean values encapsulated as strings have special rules: on, true and 1
-   *              will be parsed as true; off, false and 0 will be parsed as false. Any other value
-   *              will fail.
-   *            </ul>
-   *            <li>More examples of valid values are: 1, 1L, 1.2F, 1.2D, "1", "2.3", "value",
-   *            "1TB", "2.2TB" or " 2 TB"
-   *            </ul>
-   * @return An instance of {@link PropertyValue} representing the received object
+  /** Validates that the received {@link PropertyValue} is acceptable by the property.
+   * @param value The {@link PropertyValue} to be parsed. It cannot be null.
    * @throws WrongTypePropertyException When the type of the property is different from that of the
    *     value. Example: trying to validate the value 1.3F with  a Property whose <tt>type</tt> is
    *     <tt>INTEGER</tt>.
