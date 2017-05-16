@@ -36,6 +36,8 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Created by pablo on 26/04/17.
@@ -63,10 +65,10 @@ class ProcessBuilderWrapper {
     process.waitFor();
 
     if (process.exitValue() != 0) {
-      String errorOutput = getErrorOutputFromProcess(process);
+      String errorOutput = getErrorOutputFromProcess(process).collect(Collectors.joining("\n"));
 
       if (errorOutput.isEmpty()) {
-        errorOutput = getOutputFromProcess(process);
+        errorOutput = getOutputFromProcess(process).collect(Collectors.joining("\n"));
       }
 
       throw BadProcessExecutionException.create(errorOutput, processDescription);
@@ -78,27 +80,16 @@ class ProcessBuilderWrapper {
 
 
 
-  static String getOutputFromProcess(Process process) throws IOException {
+  static Stream<String> getOutputFromProcess(Process process) throws IOException {
     return fromStream(process.getInputStream());
   }
 
-  static String getErrorOutputFromProcess(Process process) throws IOException {
+  static Stream<String> getErrorOutputFromProcess(Process process) throws IOException {
     return fromStream(process.getErrorStream());
   }
 
-  private static String fromStream(InputStream is) throws IOException {
-    BufferedReader reader =
-        new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
-
-
-    StringBuilder builder = new StringBuilder();
-    String line;
-    while ( (line = reader.readLine()) != null) {
-      builder.append(line);
-      builder.append(System.getProperty("line.separator"));
-    }
-
-    return builder.toString();
+  private static Stream<String> fromStream(InputStream is) throws IOException {
+    return new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8"))).lines();
   }
 
 }

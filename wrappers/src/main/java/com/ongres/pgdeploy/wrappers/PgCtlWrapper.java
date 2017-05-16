@@ -31,6 +31,8 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.annotation.Nullable;
 
@@ -63,7 +65,7 @@ public class PgCtlWrapper {
       throws IOException, InterruptedException {
 
     try {
-      String output = getProcessOutput(status, logFile);
+      String output = getProcessOutput(status, logFile).collect(Collectors.joining("\n"));
 
       if (output.startsWith(activeClusterStart)) {
         return Status.ACTIVE;
@@ -102,7 +104,8 @@ public class PgCtlWrapper {
 
 
 
-  private String getProcessOutput( String command, @Nullable Path logFile, String ... arguments)
+  private Stream<String> getProcessOutput(
+      String command, @Nullable Path logFile, String ... arguments)
       throws IOException, BadProcessExecutionException, InterruptedException {
 
     String processDescription = descriptionFirstPart + command;
