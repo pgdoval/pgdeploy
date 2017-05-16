@@ -44,8 +44,8 @@ class ProcessBuilderWrapper {
 
 
   static Process runProcess(
-      Path pathToCommand, String exceptionMessage, List<String> arguments,
-      int secondsToWait, String processDescription)
+      Path pathToCommand, String exceptionMessage,
+      List<String> arguments, String processDescription)
       throws IOException, InterruptedException, BadProcessExecutionException {
 
     if (!Files.exists(pathToCommand)) {
@@ -60,11 +60,7 @@ class ProcessBuilderWrapper {
 
     Process process = processBuilder.start();
 
-    if (secondsToWait > 0) {
-      process.waitFor(secondsToWait, TimeUnit.SECONDS);
-    } else {
-      process.waitFor();
-    }
+    process.waitFor();
 
     if (process.exitValue() != 0) {
       String errorOutput = getErrorOutputFromProcess(process);

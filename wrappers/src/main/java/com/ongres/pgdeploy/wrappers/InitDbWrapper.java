@@ -53,6 +53,6 @@ public class InitDbWrapper {
     args.add(clusterPath.toString());
     args.addAll(options);
 
-    ProcessBuilderWrapper.runProcess(initDbPath, message, args, -1, description);
+    ProcessBuilderWrapper.runProcess(initDbPath, message, args, description);
   }
 }

@@ -39,8 +39,6 @@ import javax.annotation.Nullable;
  */
 public class PgCtlWrapper {
 
-  private static final int secondsToWait = 300;
-
   private static final String start = "start";
   private static final String stop = "stop";
   private static final String status = "status";
@@ -107,7 +105,7 @@ public class PgCtlWrapper {
 
     String processDescription = descriptionFirstPart + command;
 
-    Process process = getProcess(command, logFile, processDescription, secondsToWait, arguments);
+    Process process = getProcess(command, logFile, processDescription, arguments);
 
     return ProcessBuilderWrapper.getOutputFromProcess(process);
   }
@@ -115,8 +113,8 @@ public class PgCtlWrapper {
 
   private Process getProcess(
       String command, @Nullable Path logFile,
-      String processDescription, int secondsToWait, String [] arguments)
-      throws IOException, BadProcessExecutionException, InterruptedException {
+      String processDescription, String [] arguments)
+      throws IOException, BadProcessExecutionException {
 
     final String message = "pg_ctl file "
         + pgCtlPath.toAbsolutePath().toString()
@@ -136,8 +134,12 @@ public class PgCtlWrapper {
 
     args.addAll(Arrays.asList(arguments));
 
-    return ProcessBuilderWrapper.runProcess(
-        pgCtlPath, message, args, secondsToWait, processDescription);
+    try {
+      return ProcessBuilderWrapper.runProcess(
+          pgCtlPath, message, args, processDescription);
+    } catch (InterruptedException e) {
+      return null;
+    }
   }
 
 

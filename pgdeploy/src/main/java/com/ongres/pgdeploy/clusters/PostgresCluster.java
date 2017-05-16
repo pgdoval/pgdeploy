@@ -53,14 +53,37 @@ import javax.annotation.Nullable;
 public abstract class PostgresCluster {
 
   /** Starts a cluster by calling pg_ctl start on it
+   * @throws BadProcessExecutionException If the command wasn't able to run. For example, running
+   *     it in an empty folder, a folder with permissions bigger than rwx------, etc.
+   * @throws IOException The pg_ctl file or the cluster don't exist
+   * @throws InterruptedException If the execution of the pg_ctl process is interrupted
+   */
+  public  void start()
+      throws BadProcessExecutionException, IOException, InterruptedException {
+    start(null);
+  }
+
+  /** Starts a cluster by calling pg_ctl start on it
    * @param logFile The route to the optional log file. If provided, the output
    *     of the command is redirected to it.
    * @throws BadProcessExecutionException If the command wasn't able to run. For example, running
    *     it in an empty folder, a folder with permissions bigger than rwx------, etc.
    * @throws IOException The pg_ctl file or the cluster don't exist
+   * @throws InterruptedException If the execution of the pg_ctl process is interrupted
    */
   public abstract void start(@Nullable Path logFile)
       throws BadProcessExecutionException, IOException, InterruptedException;
+
+  /** Stops a cluster by calling pg_ctl stop on it
+   * @throws BadProcessExecutionException If the command wasn't able to run. For example, running
+   *     it in an empty folder, an already stopped cluster, etc.
+   * @throws IOException The pg_ctl file or the cluster don't exist
+   * @throws InterruptedException If the execution of the pg_ctl process is interrupted
+   */
+  public void stop()
+      throws BadProcessExecutionException, IOException, InterruptedException {
+    stop(null);
+  }
 
   /** Stops a cluster by calling pg_ctl stop on it
    * @param logFile The route to the optional log file. If provided, the output
@@ -68,9 +91,21 @@ public abstract class PostgresCluster {
    * @throws BadProcessExecutionException If the command wasn't able to run. For example, running
    *     it in an empty folder, an already stopped cluster, etc.
    * @throws IOException The pg_ctl file or the cluster don't exist
+   * @throws InterruptedException If the execution of the pg_ctl process is interrupted
    */
   public abstract void stop(@Nullable Path logFile)
       throws BadProcessExecutionException, IOException, InterruptedException;
+
+  /** Gets the status of a cluster by calling pg_ctl status on it
+   * @throws BadProcessExecutionException If the command wasn't able to run. For example, running
+   *     it in an empty folder, a non-existing folder, etc.
+   * @throws IOException The pg_ctl file or the cluster don't exist
+   * @throws InterruptedException If the execution of the pg_ctl process is interrupted
+   */
+  public Status status()
+      throws BadProcessExecutionException, IOException, InterruptedException {
+    return status(null);
+  }
 
   /** Gets the status of a cluster by calling pg_ctl status on it
    * @param logFile The route to the optional log file. If provided, the output
@@ -78,17 +113,49 @@ public abstract class PostgresCluster {
    * @throws BadProcessExecutionException If the command wasn't able to run. For example, running
    *     it in an empty folder, a non-existing folder, etc.
    * @throws IOException The pg_ctl file or the cluster don't exist
+   * @throws InterruptedException If the execution of the pg_ctl process is interrupted
    */
   public abstract Status status(@Nullable Path logFile)
       throws BadProcessExecutionException, IOException, InterruptedException;
 
+  /** Updates the config in postgresql.conf and then calls pg_ctl restart/reload
+   * @param config An instance of {@link PostgresConfig}, obtained via the builder returned by
+   *               {@link PostgresCluster#createConfigBuilder()}
+   * @throws IOException The pg_ctl file or the cluster don't exist
+   * @throws BadProcessExecutionException If the command wasn't able to run. For example, running
+   *     it in an empty folder, a non-existing folder, etc.
+   * @throws InterruptedException If the execution of the pg_ctl process is interrupted
+   */
+  public void config(PostgresConfig config)
+      throws IOException, BadProcessExecutionException, InterruptedException {
+    config(config, null);
+  }
+
+  /** Updates the config in postgresql.conf and then calls pg_ctl restart/reload
+   * @param config An instance of {@link PostgresConfig}, obtained via the builder returned by
+   *               {@link PostgresCluster#createConfigBuilder()}
+   * @throws IOException The pg_ctl file or the cluster don't exist
+   * @throws BadProcessExecutionException If the command wasn't able to run. For example, running
+   *     it in an empty folder, a non-existing folder, etc.
+   * @throws InterruptedException If the execution of the pg_ctl process is interrupted
+   */
   public abstract void config(PostgresConfig config, @Nullable Path logFile)
       throws IOException, BadProcessExecutionException, InterruptedException;
 
   public abstract PostgresConfig.Builder createConfigBuilder();
 
+  public void setPgHbaConf(String content)
+      throws IOException, BadProcessExecutionException, InterruptedException {
+    setPgHbaConf(content, null);
+  }
+
   public abstract void setPgHbaConf(String content, @Nullable Path logFile)
       throws IOException, BadProcessExecutionException, InterruptedException;
+
+  public void setPgHbaConf(Path originalFile)
+      throws IOException, BadProcessExecutionException, InterruptedException {
+    setPgHbaConf(originalFile, null);
+  }
 
   public abstract void setPgHbaConf(Path originalFile, @Nullable Path logFile)
       throws IOException, BadProcessExecutionException, InterruptedException;
