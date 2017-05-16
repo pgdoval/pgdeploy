@@ -42,6 +42,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -60,27 +61,27 @@ public class ConcretePostgresClusterMethodsTest {
   private PgCtlWrapper spy;
   private Path clusterPath = new RelativeRoute(Arrays.asList("src","test","resources","cluster")).asRelativePath();
 
-  private String logFile = "";
+  private Path logFile = Paths.get("");
 
   @Before
   public void setCluster() throws Exception {
     mockedWrapper = mock(PgCtlWrapper.class);
     spy = spy(mockedWrapper);
 
-    when(spy.status(anyString())).thenAnswer(
+    when(spy.status(any(Path.class))).thenAnswer(
         invocationOnMock -> PgCtlWrapper.Status.ACTIVE
     );
     when(spy.status(null)).thenAnswer(
         invocationOnMock -> PgCtlWrapper.Status.ACTIVE
     );
     doNothing().when(spy)
-        .start(anyString());
+        .start(any(Path.class));
     doNothing().when(spy)
-        .stop(anyString());
+        .stop(any(Path.class));
     doNothing().when(spy)
-        .restart(anyString());
+        .restart(any(Path.class));
     doNothing().when(spy)
-        .reload(anyString());
+        .reload(any(Path.class));
 
 
 

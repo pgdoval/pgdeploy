@@ -196,16 +196,15 @@ public class PgCtlWrapperTest {
 
   @Test
   public void testLogClusterOperations() throws Exception {
-    String logfileName = "logFile";
 
-    Path logFile = Paths.get(logfileName);
+    Path logFile = Paths.get("logFile");
 
     try {
 
       Files.createFile(logFile);
 
-      pgCtlWrapper.start(logfileName);
-      pgCtlWrapper.stop(logfileName);
+      pgCtlWrapper.start(logFile);
+      pgCtlWrapper.stop(logFile);
 
       String fileContent = Files.readAllLines(logFile).stream().reduce("", (s1, s2) -> s1 + '\n' + s2);
 

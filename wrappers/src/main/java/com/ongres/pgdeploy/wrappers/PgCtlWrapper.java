@@ -59,7 +59,7 @@ public class PgCtlWrapper {
     this.clusterPath = clusterPath;
   }
 
-  public Status status(@Nullable String logFile)
+  public Status status(@Nullable Path logFile)
       throws IOException, InterruptedException {
 
     try {
@@ -76,25 +76,25 @@ public class PgCtlWrapper {
   }
 
 
-  public void start(@Nullable String logFile)
+  public void start(@Nullable Path logFile)
       throws IOException, BadProcessExecutionException, InterruptedException {
     getProcessOutput(start, logFile, "-w");
   }
 
 
-  public void stop(@Nullable String logFile)
+  public void stop(@Nullable Path logFile)
       throws IOException, BadProcessExecutionException, InterruptedException {
     getProcessOutput(stop, logFile);
   }
 
 
-  public void restart(@Nullable String logFile)
+  public void restart(@Nullable Path logFile)
       throws IOException, BadProcessExecutionException, InterruptedException {
     getProcessOutput(restart, logFile);
   }
 
 
-  public void reload(@Nullable String logFile)
+  public void reload(@Nullable Path logFile)
       throws IOException, BadProcessExecutionException, InterruptedException {
     getProcessOutput(reload, logFile);
   }
@@ -102,7 +102,7 @@ public class PgCtlWrapper {
 
 
 
-  private String getProcessOutput( String command, @Nullable String logFile, String ... arguments)
+  private String getProcessOutput( String command, @Nullable Path logFile, String ... arguments)
       throws IOException, BadProcessExecutionException, InterruptedException {
 
     String processDescription = descriptionFirstPart + command;
@@ -114,7 +114,7 @@ public class PgCtlWrapper {
 
 
   private Process getProcess(
-      String command, @Nullable String logFile,
+      String command, @Nullable Path logFile,
       String processDescription, int secondsToWait, String [] arguments)
       throws IOException, BadProcessExecutionException, InterruptedException {
 
@@ -129,7 +129,7 @@ public class PgCtlWrapper {
 
     if (logFile != null) {
       args.add("-l");
-      args.add(logFile);
+      args.add(logFile.toString());
     }
 
     args.add(command);

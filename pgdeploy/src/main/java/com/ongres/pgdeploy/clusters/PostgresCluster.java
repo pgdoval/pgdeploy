@@ -59,7 +59,7 @@ public abstract class PostgresCluster {
    *     it in an empty folder, a folder with permissions bigger than rwx------, etc.
    * @throws IOException The pg_ctl file or the cluster don't exist
    */
-  public abstract void start(@Nullable String logFile)
+  public abstract void start(@Nullable Path logFile)
       throws BadProcessExecutionException, IOException, InterruptedException;
 
   /** Stops a cluster by calling pg_ctl stop on it
@@ -69,7 +69,7 @@ public abstract class PostgresCluster {
    *     it in an empty folder, an already stopped cluster, etc.
    * @throws IOException The pg_ctl file or the cluster don't exist
    */
-  public abstract void stop(@Nullable String logFile)
+  public abstract void stop(@Nullable Path logFile)
       throws BadProcessExecutionException, IOException, InterruptedException;
 
   /** Gets the status of a cluster by calling pg_ctl status on it
@@ -79,18 +79,18 @@ public abstract class PostgresCluster {
    *     it in an empty folder, a non-existing folder, etc.
    * @throws IOException The pg_ctl file or the cluster don't exist
    */
-  public abstract Status status(@Nullable String logFile)
+  public abstract Status status(@Nullable Path logFile)
       throws BadProcessExecutionException, IOException, InterruptedException;
 
-  public abstract void config(PostgresConfig config, @Nullable String logFile)
+  public abstract void config(PostgresConfig config, @Nullable Path logFile)
       throws IOException, BadProcessExecutionException, InterruptedException;
 
   public abstract PostgresConfig.Builder createConfigBuilder();
 
-  public abstract void setPgHbaConf(String content, @Nullable String logFile)
+  public abstract void setPgHbaConf(String content, @Nullable Path logFile)
       throws IOException, BadProcessExecutionException, InterruptedException;
 
-  public abstract void setPgHbaConf(Path originalFile, @Nullable String logFile)
+  public abstract void setPgHbaConf(Path originalFile, @Nullable Path logFile)
       throws IOException, BadProcessExecutionException, InterruptedException;
 
 

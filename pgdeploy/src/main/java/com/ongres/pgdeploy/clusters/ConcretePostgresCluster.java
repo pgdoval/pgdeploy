@@ -99,26 +99,26 @@ public class ConcretePostgresCluster extends PostgresCluster {
   }
 
   @Override
-  public void start(@Nullable String logFile)
+  public void start(@Nullable Path logFile)
       throws BadProcessExecutionException, IOException, InterruptedException {
     pgCtlWrapper.start(logFile);
   }
 
   @Override
-  public void stop(@Nullable String logFile)
+  public void stop(@Nullable Path logFile)
       throws BadProcessExecutionException, IOException, InterruptedException {
     pgCtlWrapper.stop(logFile);
   }
 
   @Override
-  public Status status(@Nullable String logFile)
+  public Status status(@Nullable Path logFile)
       throws BadProcessExecutionException, IOException, InterruptedException {
 
     return Status.valueOf(pgCtlWrapper.status(logFile).name());
   }
 
   @Override
-  public void config(PostgresConfig config, @Nullable String logFile)
+  public void config(PostgresConfig config, @Nullable Path logFile)
       throws IOException, BadProcessExecutionException, InterruptedException {
 
     Status status = status(null);
@@ -141,7 +141,7 @@ public class ConcretePostgresCluster extends PostgresCluster {
   }
 
   @Override
-  public void setPgHbaConf(String content, @Nullable String logFile)
+  public void setPgHbaConf(String content, @Nullable Path logFile)
       throws IOException, BadProcessExecutionException, InterruptedException {
 
     PgHbaConfWrapper.overwriteConf(router.routeToPgHbaConf(directory),content);
@@ -150,7 +150,7 @@ public class ConcretePostgresCluster extends PostgresCluster {
   }
 
   @Override
-  public void setPgHbaConf(Path originalFile, @Nullable String logFile)
+  public void setPgHbaConf(Path originalFile, @Nullable Path logFile)
       throws IOException, BadProcessExecutionException, InterruptedException {
     setPgHbaConf(Files.lines(originalFile).collect(Collectors.joining("\n")), logFile);
   }
