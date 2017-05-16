@@ -61,6 +61,14 @@ public class PostgresConfig {
       innerMap = new HashMap<>();
     }
 
+    /** Adds the specified property/value pair to the map of properties. If the property doesn't
+     * exist, or the value provided is not suitable for it, an exception is thrown.
+     * @throws WrongTypePropertyException When there is a type mismatch between the property and
+     *     the value.
+     * @throws UnitNotAvailableForPropertyException When there is a unit mismatch between the
+     *     property and the value.
+     * @throws PropertyNotFoundException When the specified property doesn't exist.
+     */
     public Builder withProperty(String key, PropertyValue value)
         throws WrongTypePropertyException, UnitNotAvailableForPropertyException,
         PropertyNotFoundException {
@@ -68,7 +76,8 @@ public class PostgresConfig {
       return this;
     }
 
-    /** Calls {@link PropertyValue#from(int)}.
+    /** Calls {@link PostgresConfig.Builder#withProperty(String, PropertyValue)}
+     *  with value {@link PropertyValue#from(int)}.
      */
     public Builder withProperty(String key, int value)
         throws WrongTypePropertyException, UnitNotAvailableForPropertyException,
@@ -76,7 +85,8 @@ public class PostgresConfig {
       return withProperty(key, PropertyValue.from(value));
     }
 
-    /** Calls {@link PropertyValue#from(long)}.
+    /** Calls {@link PostgresConfig.Builder#withProperty(String, PropertyValue)}
+     *  with value {@link PropertyValue#from(long)}.
      */
     public Builder withProperty(String key, long value)
         throws WrongTypePropertyException, UnitNotAvailableForPropertyException,
@@ -84,7 +94,8 @@ public class PostgresConfig {
       return withProperty(key, PropertyValue.from(value));
     }
 
-    /** Calls {@link PropertyValue#from(float)}.
+    /** Calls {@link PostgresConfig.Builder#withProperty(String, PropertyValue)}
+     *  with value {@link PropertyValue#from(float)}.
      */
     public Builder withProperty(String key, float value)
         throws WrongTypePropertyException, UnitNotAvailableForPropertyException,
@@ -92,7 +103,8 @@ public class PostgresConfig {
       return withProperty(key, PropertyValue.from(value));
     }
 
-    /** Calls {@link PropertyValue#from(double)}.
+    /** Calls {@link PostgresConfig.Builder#withProperty(String, PropertyValue)}
+     *  with value {@link PropertyValue#from(double)}.
      */
     public Builder withProperty(String key, double value)
         throws WrongTypePropertyException, UnitNotAvailableForPropertyException,
@@ -100,7 +112,8 @@ public class PostgresConfig {
       return withProperty(key, PropertyValue.from(value));
     }
 
-    /** Calls {@link PropertyValue#from(String)}.
+    /** Calls {@link PostgresConfig.Builder#withProperty(String, PropertyValue)}
+     *  with value {@link PropertyValue#from(String)}.
      */
     public Builder withProperty(String key, String value)
         throws WrongTypePropertyException, UnitNotAvailableForPropertyException,
@@ -108,7 +121,8 @@ public class PostgresConfig {
       return withProperty(key, PropertyValue.from(value));
     }
 
-    /** Calls {@link PropertyValue#from(boolean)}.
+    /** Calls {@link PostgresConfig.Builder#withProperty(String, PropertyValue)}
+     *  with value {@link PropertyValue#from(boolean)}.
      */
     public Builder withProperty(String key, boolean value)
         throws WrongTypePropertyException, UnitNotAvailableForPropertyException,
@@ -116,51 +130,53 @@ public class PostgresConfig {
       return withProperty(key, PropertyValue.from(value));
     }
 
-    public Builder withPropertyUnsafe(String key, PropertyValue value)
-        throws WrongTypePropertyException, UnitNotAvailableForPropertyException {
+    /** Adds the specified property/value pair to the map of properties. If the property doesn't
+     * exist, it is created. There is also no validation of the value.
+     */
+    public Builder withPropertyUnsafe(String key, PropertyValue value) {
       addPropertyUnsafe(key, value);
       return this;
     }
 
-    /** Calls {@link PropertyValue#from(int)}.
+    /** Calls {@link PostgresConfig.Builder#withPropertyUnsafe(String, PropertyValue)}
+     *  with value {@link PropertyValue#from(int)}.
      */
-    public Builder withPropertyUnsafe(String key, int value)
-        throws WrongTypePropertyException, UnitNotAvailableForPropertyException {
+    public Builder withPropertyUnsafe(String key, int value) {
       return withPropertyUnsafe(key, PropertyValue.from(value));
     }
 
-    /** Calls {@link PropertyValue#from(long)}.
+    /** Calls {@link PostgresConfig.Builder#withPropertyUnsafe(String, PropertyValue)}
+     *  with value {@link PropertyValue#from(long)}.
      */
-    public Builder withPropertyUnsafe(String key, long value)
-        throws WrongTypePropertyException, UnitNotAvailableForPropertyException {
+    public Builder withPropertyUnsafe(String key, long value) {
       return withPropertyUnsafe(key, PropertyValue.from(value));
     }
 
-    /** Calls {@link PropertyValue#from(float)}.
+    /** Calls {@link PostgresConfig.Builder#withPropertyUnsafe(String, PropertyValue)}
+     *  with value {@link PropertyValue#from(float)}.
      */
-    public Builder withPropertyUnsafe(String key, float value)
-        throws WrongTypePropertyException, UnitNotAvailableForPropertyException {
+    public Builder withPropertyUnsafe(String key, float value) {
       return withPropertyUnsafe(key, PropertyValue.from(value));
     }
 
-    /** Calls {@link PropertyValue#from(double)}.
+    /** Calls {@link PostgresConfig.Builder#withPropertyUnsafe(String, PropertyValue)}
+     *  with value {@link PropertyValue#from(double)}.
      */
-    public Builder withPropertyUnsafe(String key, double value)
-        throws WrongTypePropertyException, UnitNotAvailableForPropertyException {
+    public Builder withPropertyUnsafe(String key, double value) {
       return withPropertyUnsafe(key, PropertyValue.from(value));
     }
 
-    /** Calls {@link PropertyValue#from(String)}.
+    /** Calls {@link PostgresConfig.Builder#withPropertyUnsafe(String, PropertyValue)}
+     *  with value {@link PropertyValue#from(String)}.
      */
-    public Builder withPropertyUnsafe(String key, String value)
-        throws WrongTypePropertyException, UnitNotAvailableForPropertyException {
+    public Builder withPropertyUnsafe(String key, String value) {
       return withPropertyUnsafe(key, PropertyValue.from(value));
     }
 
-    /** Calls {@link PropertyValue#from(boolean)}.
+    /** Calls {@link PostgresConfig.Builder#withPropertyUnsafe(String, PropertyValue)}
+     *  with value {@link PropertyValue#from(boolean)}.
      */
-    public Builder withPropertyUnsafe(String key, boolean value)
-        throws WrongTypePropertyException, UnitNotAvailableForPropertyException {
+    public Builder withPropertyUnsafe(String key, boolean value) {
       return withPropertyUnsafe(key, PropertyValue.from(value));
     }
 
@@ -210,8 +226,7 @@ public class PostgresConfig {
       innerMap.put(property, value);
     }
 
-    private void addPropertyUnsafe(String key, PropertyValue value)
-        throws WrongTypePropertyException, UnitNotAvailableForPropertyException {
+    private void addPropertyUnsafe(String key, PropertyValue value) {
       Optional<Property> propertyOptional = parser.parse(key);
 
       Property property = propertyOptional.orElseGet(() -> Property.fromName(key));
