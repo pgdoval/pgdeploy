@@ -53,34 +53,34 @@ public class PostgresConfigTest {
 
   @Test
   public void testWithProperty() throws Exception {
-    PostgresConfig config = builder.withProperty("prop1","RBTB").build();
+    PostgresConfig config = builder.withProperty("prop1",PropertyValue.tb(5)).build();
     Map.Entry<Property, PropertyValue> prop = config.asStream().findFirst().get();
 
-    assertEquals(new Property("prop1", false, DataType.STRING, Unit.byteList), prop.getKey());
-    assertEquals(new PropertyValue("RB", Unit.TB), prop.getValue());
+    assertEquals(new Property("prop1", false, DataType.INTEGER, Unit.byteList), prop.getKey());
+    assertEquals(PropertyValue.tb(5), prop.getValue());
   }
 
   @Test
   public void testWrongWithProperty() throws Exception {
-    PostgresConfig config = builder.withProperty("propx","RBTB").build();
+    PostgresConfig config = builder.withProperty("propx",PropertyValue.tb(5)).build();
     assertFalse(config.asStream().findFirst().isPresent());
   }
 
   @Test
   public void testFromMap() throws Exception {
-    Map<String, Object> map = new HashMap<>(1);
-    map.put("prop1","RBTB");
+    Map<String, PropertyValue> map = new HashMap<>(1);
+    map.put("prop1",PropertyValue.tb(5));
     PostgresConfig config = builder.fromPropertyMap(map).build();
     Map.Entry<Property, PropertyValue> prop = config.asStream().findFirst().get();
 
-    assertEquals(new Property("prop1", false, DataType.STRING, Unit.byteList), prop.getKey());
-    assertEquals(new PropertyValue("RB", Unit.TB), prop.getValue());
+    assertEquals(new Property("prop1", false, DataType.INTEGER, Unit.byteList), prop.getKey());
+    assertEquals(PropertyValue.tb(5), prop.getValue());
   }
 
   @Test
   public void testWrongFromMap() throws Exception {
-    Map<String, Object> map = new HashMap<>(1);
-    map.put("propx","RBTB");
+    Map<String, PropertyValue> map = new HashMap<>(1);
+    map.put("propx",PropertyValue.tb(5));
     PostgresConfig config = builder.fromPropertyMap(map).build();
     assertFalse(config.asStream().findFirst().isPresent());
   }

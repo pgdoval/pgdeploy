@@ -64,18 +64,54 @@ public class PostgresConfig {
       pvParser = DefaultPropertyValueParser.getInstance();
     }
 
-    public Builder withProperty(String key, Object value)
+    public Builder withProperty(String key, PropertyValue value)
         throws WrongTypePropertyException, UnitNotAvailableForPropertyException {
       addProperty(key, value);
       return this;
     }
 
-    public Builder fromPropertyMap(Map<String,Object> properties)
+    public Builder withProperty(String key, int value)
+        throws WrongTypePropertyException, UnitNotAvailableForPropertyException {
+      addProperty(key, PropertyValue.from(value));
+      return this;
+    }
+
+    public Builder withProperty(String key, long value)
+        throws WrongTypePropertyException, UnitNotAvailableForPropertyException {
+      addProperty(key, PropertyValue.from(value));
+      return this;
+    }
+
+    public Builder withProperty(String key, float value)
+        throws WrongTypePropertyException, UnitNotAvailableForPropertyException {
+      addProperty(key, PropertyValue.from(value));
+      return this;
+    }
+
+    public Builder withProperty(String key, double value)
+        throws WrongTypePropertyException, UnitNotAvailableForPropertyException {
+      addProperty(key, PropertyValue.from(value));
+      return this;
+    }
+
+    public Builder withProperty(String key, String value)
+        throws WrongTypePropertyException, UnitNotAvailableForPropertyException {
+      addProperty(key, PropertyValue.from(value));
+      return this;
+    }
+
+    public Builder withProperty(String key, boolean value)
+        throws WrongTypePropertyException, UnitNotAvailableForPropertyException {
+      addProperty(key, PropertyValue.from(value));
+      return this;
+    }
+
+    public Builder fromPropertyMap(Map<String, PropertyValue> properties)
         throws WrongTypePropertyException, UnitNotAvailableForPropertyException {
 
-      Iterator<Map.Entry<String, Object>> iterator = properties.entrySet().iterator();
+      Iterator<Map.Entry<String, PropertyValue>> iterator = properties.entrySet().iterator();
 
-      Map.Entry<String, Object> next;
+      Map.Entry<String, PropertyValue> next;
 
       while (iterator.hasNext()) {
         next = iterator.next();
@@ -85,7 +121,7 @@ public class PostgresConfig {
       return this;
     }
 
-    private void addProperty(String key, Object value)
+    private void addProperty(String key, PropertyValue value)
         throws WrongTypePropertyException, UnitNotAvailableForPropertyException {
       Optional<Property> propertyOptional = parser.parse(key);
 
@@ -94,8 +130,8 @@ public class PostgresConfig {
       }
 
       Property property = propertyOptional.get();
-      PropertyValue propertyValue = pvParser.parse(value, property);
-      innerMap.put(property,propertyValue);
+      pvParser.validate(value, property);
+      innerMap.put(property, value);
     }
 
     public PostgresConfig build() {

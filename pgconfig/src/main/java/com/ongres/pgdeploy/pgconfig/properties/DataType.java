@@ -29,7 +29,7 @@ package com.ongres.pgdeploy.pgconfig.properties;
  */
 public enum DataType {
   STRING(String.class),
-  INTEGER(Integer.class),
+  INTEGER(Long.class),
   DOUBLE(Double.class),
   BOOLEAN(Boolean.class);
 

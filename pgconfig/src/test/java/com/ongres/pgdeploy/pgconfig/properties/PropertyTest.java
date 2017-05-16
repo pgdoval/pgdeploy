@@ -33,9 +33,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 import static com.ongres.pgdeploy.pgconfig.properties.DataType.*;
@@ -56,7 +54,7 @@ public class PropertyTest {
   public List<Unit> availableUnits;
 
   @Parameterized.Parameter(2)
-  public Object objectReceived;
+  public PropertyValue<?> objectReceived;
 
   @Parameterized.Parameter(3)
   public Object objInResult;
@@ -81,71 +79,85 @@ public class PropertyTest {
 
     //Basic type checking without units
     //Double comes
-    result.add(new Object []{DOUBLE, Unit.noneList, 9.3D, 9.3D, NONE, null});
-    result.add(new Object []{INTEGER, Unit.noneList, 9.3D, 9.3D, NONE, WrongTypePropertyException.class});
-    result.add(new Object []{STRING, Unit.noneList, 9.3D, 9.3D, NONE, WrongTypePropertyException.class});
-    result.add(new Object []{BOOLEAN, Unit.noneList, 9.3D, 9.3D, NONE, WrongTypePropertyException.class});
+    result.add(new Object []{DOUBLE, Unit.noneList, PropertyValue.from(9.3D), 9.3D, NONE, null});
+    result.add(new Object []{INTEGER, Unit.noneList, PropertyValue.from(9.3D), 9.3D, NONE, WrongTypePropertyException.class});
+    result.add(new Object []{STRING, Unit.noneList, PropertyValue.from(9.3D), 9.3D, NONE, WrongTypePropertyException.class});
+    result.add(new Object []{BOOLEAN, Unit.noneList, PropertyValue.from(9.3D), 9.3D, NONE, WrongTypePropertyException.class});
     //Integer comes
-    result.add(new Object []{INTEGER, Unit.noneList, 9, 9, NONE, null});
-    result.add(new Object []{DOUBLE, Unit.noneList, 9, 9, NONE, WrongTypePropertyException.class});
-    result.add(new Object []{STRING, Unit.noneList, 9, 9, NONE, WrongTypePropertyException.class});
-    result.add(new Object []{BOOLEAN, Unit.noneList, 9, 9, NONE, WrongTypePropertyException.class});
+    result.add(new Object []{INTEGER, Unit.noneList, PropertyValue.from(9), 9L, NONE, null});
+    result.add(new Object []{DOUBLE, Unit.noneList, PropertyValue.from(9), 9L, NONE, WrongTypePropertyException.class});
+    result.add(new Object []{STRING, Unit.noneList, PropertyValue.from(9), 9L, NONE, WrongTypePropertyException.class});
+    result.add(new Object []{BOOLEAN, Unit.noneList, PropertyValue.from(9), 9L, NONE, WrongTypePropertyException.class});
     //String comes
-    result.add(new Object []{STRING, Unit.noneList, "value", "value", NONE, null});
-    result.add(new Object []{DOUBLE, Unit.noneList, "value", "value", NONE, WrongTypePropertyException.class});
-    result.add(new Object []{INTEGER, Unit.noneList, "value", "value", NONE, WrongTypePropertyException.class});
-    result.add(new Object []{BOOLEAN, Unit.noneList, "value", "value", NONE, WrongTypePropertyException.class});
-    //Unexpected type
-    result.add(new Object []{INTEGER, Unit.noneList, emptyList, "value", NONE, WrongTypePropertyException.class});
-    result.add(new Object []{DOUBLE, Unit.noneList, emptyList, "value", NONE, WrongTypePropertyException.class});
-    result.add(new Object []{BOOLEAN, Unit.noneList, emptyList, "value", NONE, WrongTypePropertyException.class});
+    result.add(new Object []{STRING, Unit.noneList, PropertyValue.from("value"), "value", NONE, null});
+    result.add(new Object []{DOUBLE, Unit.noneList, PropertyValue.from("value"), "value", NONE, WrongTypePropertyException.class});
+    result.add(new Object []{INTEGER, Unit.noneList, PropertyValue.from("value"), "value", NONE, WrongTypePropertyException.class});
+    result.add(new Object []{BOOLEAN, Unit.noneList, PropertyValue.from("value"), "value", NONE, WrongTypePropertyException.class});
     //Float comes
-    result.add(new Object []{DOUBLE, Unit.noneList, 9.3F, 9.3F, NONE, null});
-    result.add(new Object []{INTEGER, Unit.noneList, 9.3F, 9.3F, NONE, WrongTypePropertyException.class});
-    result.add(new Object []{STRING, Unit.noneList, 9.3F, 9.3F, NONE, WrongTypePropertyException.class});
-    result.add(new Object []{BOOLEAN, Unit.noneList, 9.3F, 9.3F, NONE, WrongTypePropertyException.class});
+    result.add(new Object []{DOUBLE, Unit.noneList, PropertyValue.from(9.3F), 9.3D, NONE, null});
+    result.add(new Object []{INTEGER, Unit.noneList, PropertyValue.from(9.3F), 9.3D, NONE, WrongTypePropertyException.class});
+    result.add(new Object []{STRING, Unit.noneList, PropertyValue.from(9.3F), 9.3D, NONE, WrongTypePropertyException.class});
+    result.add(new Object []{BOOLEAN, Unit.noneList, PropertyValue.from(9.3F), 9.3D, NONE, WrongTypePropertyException.class});
     //Long comes
-    result.add(new Object []{INTEGER, Unit.noneList, 9L, 9L, NONE, null});
-    result.add(new Object []{DOUBLE, Unit.noneList, 9L, 9L, NONE, WrongTypePropertyException.class});
-    result.add(new Object []{STRING, Unit.noneList, 9L, 9L, NONE, WrongTypePropertyException.class});
-    result.add(new Object []{BOOLEAN, Unit.noneList, 9L, 9L, NONE, WrongTypePropertyException.class});
+    result.add(new Object []{INTEGER, Unit.noneList, PropertyValue.from(9L), 9L, NONE, null});
+    result.add(new Object []{DOUBLE, Unit.noneList, PropertyValue.from(9L), 9L, NONE, WrongTypePropertyException.class});
+    result.add(new Object []{STRING, Unit.noneList, PropertyValue.from(9L), 9L, NONE, WrongTypePropertyException.class});
+    result.add(new Object []{BOOLEAN, Unit.noneList, PropertyValue.from(9L), 9L, NONE, WrongTypePropertyException.class});
     //Boolean comes
-    result.add(new Object []{BOOLEAN, Unit.noneList, true, true, NONE, null});
-    result.add(new Object []{DOUBLE, Unit.noneList, true, true, NONE, WrongTypePropertyException.class});
-    result.add(new Object []{STRING, Unit.noneList, true, true, NONE, WrongTypePropertyException.class});
-    result.add(new Object []{INTEGER, Unit.noneList, true, true, NONE, WrongTypePropertyException.class});
+    result.add(new Object []{BOOLEAN, Unit.noneList, PropertyValue.from(true), true, NONE, null});
+    result.add(new Object []{DOUBLE, Unit.noneList, PropertyValue.from(true), true, NONE, WrongTypePropertyException.class});
+    result.add(new Object []{STRING, Unit.noneList, PropertyValue.from(true), true, NONE, WrongTypePropertyException.class});
+    result.add(new Object []{INTEGER, Unit.noneList, PropertyValue.from(true), true, NONE, WrongTypePropertyException.class});
 
 
     //Basic unit checking
     //NonString comes and a unit is required
-    result.add(new Object []{DOUBLE, Unit.byteList, 9.3D, 9.3D, NONE, UnitNotAvailableForPropertyException.class});
-    result.add(new Object []{INTEGER, Unit.byteList, 9.3D, 9.3D, NONE, UnitNotAvailableForPropertyException.class});
-    //Valid unitless values encapsulated in the string
-    result.add(new Object []{INTEGER, Unit.noneList, "9", 9L, NONE, null});
-    result.add(new Object []{DOUBLE, Unit.noneList, "9", 9D, NONE, null});
-    result.add(new Object []{DOUBLE, Unit.noneList, "9.5", 9.5D, NONE, null});
-    result.add(new Object []{BOOLEAN, Unit.noneList, "true", true, NONE, null});
-    result.add(new Object []{BOOLEAN, Unit.noneList, "on", true, NONE, null});
-    result.add(new Object []{BOOLEAN, Unit.noneList, "1", true, NONE, null});
-    result.add(new Object []{BOOLEAN, Unit.noneList, "false", false, NONE, null});
-    result.add(new Object []{BOOLEAN, Unit.noneList, "off", false, NONE, null});
-    result.add(new Object []{BOOLEAN, Unit.noneList, "0", false, NONE, null});
-    //Units encapsulated in the string
-    result.add(new Object []{INTEGER, Unit.byteList, "9TB", 9L, TB, null});
-    result.add(new Object []{DOUBLE, Unit.byteList, "9TB", 9D, TB, null});
-    result.add(new Object []{DOUBLE, Unit.byteList, "9.5TB", 9.5D, TB, null});
-    result.add(new Object []{STRING, Unit.byteList, "MBTB", "MB", TB, null});
-    //Invalid values encapsulated in a string
-    result.add(new Object []{DOUBLE, Unit.noneList, "9.5TB", 9.5D, TB, UnitNotAvailableForPropertyException.class});
-    result.add(new Object []{DOUBLE, Unit.byteList, "9ert5TB", 9.5D, TB, WrongTypePropertyException.class});
-    result.add(new Object []{INTEGER, Unit.byteList, "9caucaucau", 9.3D, NONE, UnitNotAvailableForPropertyException.class});
-    //In case of 2 units available, the longest one available is chosen (ms over s)
-    result.add(new Object []{INTEGER, Unit.timeList, "9ms", 9L, MS, null});
-
-
-    //Trimming
-    result.add(new Object []{INTEGER, Unit.byteList, " 9 TB", 9L, TB, null});
-    result.add(new Object []{INTEGER, Unit.noneList, " 9 ", 9L, NONE, null});
+    result.add(new Object []{DOUBLE, Unit.byteList, PropertyValue.from(9.3D), 9.3D, NONE, UnitNotAvailableForPropertyException.class});
+    result.add(new Object []{INTEGER, Unit.byteList, PropertyValue.from(9L), 9L, NONE, UnitNotAvailableForPropertyException.class});
+    //Different units
+    result.add(new Object []{DOUBLE, Unit.byteList, PropertyValue.ms(9.3D), 9.3D, MS, UnitNotAvailableForPropertyException.class});
+    result.add(new Object []{DOUBLE, Unit.timeList, PropertyValue.tb(9.3D), 9.3D, TB, UnitNotAvailableForPropertyException.class});
+    //Right units
+    //Double
+    result.add(new Object []{DOUBLE, Unit.timeList, PropertyValue.ms(9.3D), 9.3D, MS, null});
+    result.add(new Object []{DOUBLE, Unit.timeList, PropertyValue.sec(9.3D), 9.3D, S, null});
+    result.add(new Object []{DOUBLE, Unit.timeList, PropertyValue.min(9.3D), 9.3D, MIN, null});
+    result.add(new Object []{DOUBLE, Unit.timeList, PropertyValue.hh(9.3D), 9.3D, H, null});
+    result.add(new Object []{DOUBLE, Unit.timeList, PropertyValue.day(9.3D), 9.3D, D, null});
+    result.add(new Object []{DOUBLE, Unit.byteList, PropertyValue.tb(9.3D), 9.3D, TB, null});
+    result.add(new Object []{DOUBLE, Unit.byteList, PropertyValue.gb(9.3D), 9.3D, GB, null});
+    result.add(new Object []{DOUBLE, Unit.byteList, PropertyValue.mb(9.3D), 9.3D, MB, null});
+    result.add(new Object []{DOUBLE, Unit.byteList, PropertyValue.kb(9.3D), 9.3D, KB, null});
+    //Float
+    result.add(new Object []{DOUBLE, Unit.timeList, PropertyValue.ms(9.3F), 9.3D, MS, null});
+    result.add(new Object []{DOUBLE, Unit.timeList, PropertyValue.sec(9.3F), 9.3D, S, null});
+    result.add(new Object []{DOUBLE, Unit.timeList, PropertyValue.min(9.3F), 9.3D, MIN, null});
+    result.add(new Object []{DOUBLE, Unit.timeList, PropertyValue.hh(9.3F), 9.3D, H, null});
+    result.add(new Object []{DOUBLE, Unit.timeList, PropertyValue.day(9.3F), 9.3D, D, null});
+    result.add(new Object []{DOUBLE, Unit.byteList, PropertyValue.tb(9.3F), 9.3D, TB, null});
+    result.add(new Object []{DOUBLE, Unit.byteList, PropertyValue.gb(9.3F), 9.3D, GB, null});
+    result.add(new Object []{DOUBLE, Unit.byteList, PropertyValue.mb(9.3F), 9.3D, MB, null});
+    result.add(new Object []{DOUBLE, Unit.byteList, PropertyValue.kb(9.3F), 9.3D, KB, null});
+    //Integer
+    result.add(new Object []{INTEGER, Unit.timeList, PropertyValue.ms(9), 9L, MS, null});
+    result.add(new Object []{INTEGER, Unit.timeList, PropertyValue.sec(9), 9L, S, null});
+    result.add(new Object []{INTEGER, Unit.timeList, PropertyValue.min(9), 9L, MIN, null});
+    result.add(new Object []{INTEGER, Unit.timeList, PropertyValue.hh(9), 9L, H, null});
+    result.add(new Object []{INTEGER, Unit.timeList, PropertyValue.day(9), 9L, D, null});
+    result.add(new Object []{INTEGER, Unit.byteList, PropertyValue.tb(9), 9L, TB, null});
+    result.add(new Object []{INTEGER, Unit.byteList, PropertyValue.gb(9), 9L, GB, null});
+    result.add(new Object []{INTEGER, Unit.byteList, PropertyValue.mb(9), 9L, MB, null});
+    result.add(new Object []{INTEGER, Unit.byteList, PropertyValue.kb(9), 9L, KB, null});
+    //Long
+    result.add(new Object []{INTEGER, Unit.timeList, PropertyValue.ms(9L), 9L, MS, null});
+    result.add(new Object []{INTEGER, Unit.timeList, PropertyValue.sec(9L), 9L, S, null});
+    result.add(new Object []{INTEGER, Unit.timeList, PropertyValue.min(9L), 9L, MIN, null});
+    result.add(new Object []{INTEGER, Unit.timeList, PropertyValue.hh(9L), 9L, H, null});
+    result.add(new Object []{INTEGER, Unit.timeList, PropertyValue.day(9L), 9L, D, null});
+    result.add(new Object []{INTEGER, Unit.byteList, PropertyValue.tb(9L), 9L, TB, null});
+    result.add(new Object []{INTEGER, Unit.byteList, PropertyValue.gb(9L), 9L, GB, null});
+    result.add(new Object []{INTEGER, Unit.byteList, PropertyValue.mb(9L), 9L, MB, null});
+    result.add(new Object []{INTEGER, Unit.byteList, PropertyValue.kb(9L), 9L, KB, null});
 
     //Nulls
     result.add(new Object []{INTEGER, Unit.byteList, null, 9, TB, IllegalArgumentException.class});
@@ -162,11 +174,15 @@ public class PropertyTest {
       exception.expect(expectedException);
     }
 
-    PropertyValue propertyValue = parser.parse(
+    parser.validate(
         objectReceived,new Property("name", false, type, availableUnits));
 
-    assertEquals(objInResult, propertyValue.getValue());
-    assertEquals(unitInResult, propertyValue.getUnit());
+    if (objInResult instanceof Double) {
+      assertEquals((Double)objInResult, (Double)objectReceived.getValue(), 0.1);
+    } else {
+      assertEquals(objInResult, objectReceived.getValue());
+    }
+    assertEquals(unitInResult, objectReceived.getUnit());
   }
 
 }

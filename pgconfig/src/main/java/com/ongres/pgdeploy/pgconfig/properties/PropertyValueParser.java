@@ -54,13 +54,13 @@ public interface PropertyValueParser {
    *            </ul>
    * @return An instance of {@link PropertyValue} representing the received object
    * @throws WrongTypePropertyException When the type of the property is different from that of the
-   *     value. Example: trying to parse the value 1.3F with  a Property whose <tt>type</tt> is
+   *     value. Example: trying to validate the value 1.3F with  a Property whose <tt>type</tt> is
    *     <tt>INTEGER</tt>.
    * @throws UnitNotAvailableForPropertyException The object specifies a unit that is not contained
-   *     in the property's <tt>availableUnits</tt>. This includes trying to parse a value without
+   *     in the property's <tt>availableUnits</tt>. This includes trying to validate a value without
    *     a unit from a property whose <tt>availableUnits</tt> don't include
    *     {@link Unit}<tt>.NONE</tt>
    */
-  PropertyValue parse(Object obj, Property property)
+  void validate(PropertyValue value, Property property)
       throws WrongTypePropertyException, UnitNotAvailableForPropertyException;
 }

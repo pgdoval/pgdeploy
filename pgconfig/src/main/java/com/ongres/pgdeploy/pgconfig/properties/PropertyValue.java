@@ -70,4 +70,194 @@ public class PropertyValue<T> {
     result = 31 * result + unit.hashCode();
     return result;
   }
+
+  public static PropertyValue<Long> tb(int i) {
+    long l = (long) i;
+    return tb(l);
+  }
+
+  public static PropertyValue<Long> tb(long i) {
+    return new PropertyValue<>(i, Unit.TB);
+  }
+
+  public static PropertyValue<Double> tb(float i) {
+    double l = (double) i;
+    return tb(l);
+  }
+
+  public static PropertyValue<Double> tb(double i) {
+    return new PropertyValue<>(i, Unit.TB);
+  }
+
+  public static PropertyValue<Long> gb(int i) {
+    long l = (long) i;
+    return gb(l);
+  }
+
+  public static PropertyValue<Long> gb(long i) {
+    return new PropertyValue<>(i, Unit.GB);
+  }
+
+  public static PropertyValue<Double> gb(float i) {
+    double l = (double) i;
+    return gb(l);
+  }
+
+  public static PropertyValue<Double> gb(double i) {
+    return new PropertyValue<>(i, Unit.GB);
+  }
+
+  public static PropertyValue<Long> mb(int i) {
+    long l = (long) i;
+    return mb(l);
+  }
+
+  public static PropertyValue<Long> mb(long i) {
+    return new PropertyValue<>(i, Unit.MB);
+  }
+
+  public static PropertyValue<Double> mb(float i) {
+    double l = (double) i;
+    return mb(l);
+  }
+
+  public static PropertyValue<Double> mb(double i) {
+    return new PropertyValue<>(i, Unit.MB);
+  }
+
+  public static PropertyValue<Long> kb(int i) {
+    long l = (long) i;
+    return kb(l);
+  }
+
+  public static PropertyValue<Long> kb(long i) {
+    return new PropertyValue<>(i, Unit.KB);
+  }
+
+  public static PropertyValue<Double> kb(float i) {
+    double l = (double) i;
+    return kb(l);
+  }
+
+  public static PropertyValue<Double> kb(double i) {
+    return new PropertyValue<>(i, Unit.KB);
+  }
+
+  public static PropertyValue<Long> ms(int i) {
+    long l = (long) i;
+    return ms(l);
+  }
+
+  public static PropertyValue<Long> ms(long i) {
+    return new PropertyValue<>(i, Unit.MS);
+  }
+
+  public static PropertyValue<Double> ms(float i) {
+    double l = (double) i;
+    return ms(l);
+  }
+
+  public static PropertyValue<Double> ms(double i) {
+    return new PropertyValue<>(i, Unit.MS);
+  }
+
+  public static PropertyValue<Long> sec(int i) {
+    long l = (long) i;
+    return sec(l);
+  }
+
+  public static PropertyValue<Long> sec(long i) {
+    return new PropertyValue<>(i, Unit.S);
+  }
+
+  public static PropertyValue<Double> sec(float i) {
+    double l = (double) i;
+    return sec(l);
+  }
+
+  public static PropertyValue<Double> sec(double i) {
+    return new PropertyValue<>(i, Unit.S);
+  }
+
+  public static PropertyValue<Long> min(int i) {
+    long l = (long) i;
+    return min(l);
+  }
+
+  public static PropertyValue<Long> min(long i) {
+    return new PropertyValue<>(i, Unit.MIN);
+  }
+
+  public static PropertyValue<Double> min(float i) {
+    double l = (double) i;
+    return min(l);
+  }
+
+  public static PropertyValue<Double> min(double i) {
+    return new PropertyValue<>(i, Unit.MIN);
+  }
+
+  public static PropertyValue<Long> hh(int i) {
+    long l = (long) i;
+    return hh(l);
+  }
+
+  public static PropertyValue<Long> hh(long i) {
+    return new PropertyValue<>(i, Unit.H);
+  }
+
+  public static PropertyValue<Double> hh(float i) {
+    double l = (double) i;
+    return hh(l);
+  }
+
+  public static PropertyValue<Double> hh(double i) {
+    return new PropertyValue<>(i, Unit.H);
+  }
+
+  public static PropertyValue<Long> day(int i) {
+    long l = (long) i;
+    return day(l);
+  }
+
+  public static PropertyValue<Long> day(long i) {
+    return new PropertyValue<>(i, Unit.D);
+  }
+
+  public static PropertyValue<Double> day(float i) {
+    double l = (double) i;
+    return day(l);
+  }
+
+  public static PropertyValue<Double> day(double i) {
+    return new PropertyValue<>(i, Unit.D);
+  }
+
+  public static PropertyValue<Long> from(int i) {
+    long l = (long) i;
+    return from(l);
+  }
+
+  public static PropertyValue<Long> from(long i) {
+    return new PropertyValue<>(i, Unit.NONE);
+  }
+
+  public static PropertyValue<Double> from(float i) {
+    double l = (double) i;
+    return from(l);
+  }
+
+  public static PropertyValue<Double> from(double i) {
+    return new PropertyValue<>(i, Unit.NONE);
+  }
+
+  public static PropertyValue<String> from(String i) {
+    return new PropertyValue<>(i, Unit.NONE);
+  }
+
+  public static PropertyValue<Boolean> from(boolean i) {
+    return new PropertyValue<>(i, Unit.NONE);
+  }
+
+
 }
