@@ -89,7 +89,6 @@ public class BasicUpdateLinesStrategy implements UpdateLinesStrategy {
 
           String key = entry.getKey();
           String commentedKey = "#" + key;
-          String value = entry.getValue();
 
           //Get the last indexes of the key and the commented key
           for (int i = 0; i < adaptedProperties.size(); i++) {
@@ -101,45 +100,20 @@ public class BasicUpdateLinesStrategy implements UpdateLinesStrategy {
             }
           }
 
-          //If the property doesn't exist, we simply add it
+          //The property doesn't exist
           if (indexOfProperty == -1 && indexOfCommentedProperty == -1) {
             adaptedProperties.add(entry);
           }
 
-          //If the property is commented, we will add the new one just afterwards,
-          //unless the commented property has the same value, in which case we simply uncomment it
+          //The property exists but it's commented
           if (indexOfProperty == -1 && indexOfCommentedProperty > -1) {
-            String currentValue = adaptedProperties.get(indexOfCommentedProperty).getValue();
-            if (Objects.equals(currentValue, value)) {
-              adaptedProperties.set(indexOfCommentedProperty, entry);
-            } else {
-              adaptedProperties.add(indexOfCommentedProperty + 1, entry);
-            }
+            updateCommentedProperty(adaptedProperties, entry, indexOfCommentedProperty);
           }
 
-          //If the property exists, if it has the same value there's nothing to do, but if its
-          //value is different, we comment it and add the new one just afterwards.
-          //In that case, if there was also the commented version of the property, it is removed.
+          //The uncommented property exists
           if (indexOfProperty > -1) {
-
-            String currentValue = adaptedProperties.get(indexOfProperty).getValue();
-            if (!Objects.equals(currentValue, value)) {
-
-              adaptedProperties.set(indexOfProperty,
-                  new AbstractMap.SimpleEntry<>(commentedKey,currentValue));
-              adaptedProperties.add(indexOfProperty + 1, entry);
-
-              //Depending on the position of the commented vs the non commented, the position
-              //to remove is one or another
-              if (indexOfCommentedProperty > -1) {
-                if (indexOfProperty > indexOfCommentedProperty) {
-                  adaptedProperties.remove(indexOfCommentedProperty);
-                } else {
-                  adaptedProperties.remove(indexOfCommentedProperty + 1 );
-                }
-              }
-            }
-
+            updateUncommentedProperty(adaptedProperties, entry,
+                indexOfProperty, indexOfCommentedProperty);
           }
 
 
@@ -150,5 +124,50 @@ public class BasicUpdateLinesStrategy implements UpdateLinesStrategy {
             ? entry.getValue()
             : (entry.getKey() + equals + entry.getValue()))
         .collect(Collectors.toList());
+  }
+
+  /** If the property exists, if it has the same value there's nothing to do, but if its
+   * value is different, we comment it and add the new one just afterwards.
+   * In that case, if there was also the commented version of the property, it is removed.
+   **/
+  private void updateUncommentedProperty(List<Map.Entry<String, String>> adaptedProperties,
+      AbstractMap.SimpleEntry<String, String> entry, int indexOfProperty,
+      int indexOfCommentedProperty) {
+
+    String currentValue = adaptedProperties.get(indexOfProperty).getValue();
+
+    if (!Objects.equals(currentValue, entry.getValue())) {
+
+      String commentedKey = "#" + entry.getKey();
+
+      adaptedProperties.set(indexOfProperty,
+          new AbstractMap.SimpleEntry<>(commentedKey,currentValue));
+      adaptedProperties.add(indexOfProperty + 1, entry);
+
+      //Removing a former commented version , but being careful because the newly added
+      //property may have moved the commented one forward
+      if (indexOfCommentedProperty > -1) {
+        if (indexOfProperty > indexOfCommentedProperty) {
+          adaptedProperties.remove(indexOfCommentedProperty);
+        } else {
+          adaptedProperties.remove(indexOfCommentedProperty + 1 );
+        }
+      }
+    }
+  }
+
+  /** If the property is commented, we will add the new one just afterwards,
+   * unless the commented property has the same value, in which case we simply uncomment it.
+   */
+  private void updateCommentedProperty(List<Map.Entry<String, String>> adaptedProperties,
+      AbstractMap.SimpleEntry<String, String> entry, int indexOfCommentedProperty) {
+
+    String currentValue = adaptedProperties.get(indexOfCommentedProperty).getValue();
+
+    if (Objects.equals(currentValue, entry.getValue())) {
+      adaptedProperties.set(indexOfCommentedProperty, entry);
+    } else {
+      adaptedProperties.add(indexOfCommentedProperty + 1, entry);
+    }
   }
 }
