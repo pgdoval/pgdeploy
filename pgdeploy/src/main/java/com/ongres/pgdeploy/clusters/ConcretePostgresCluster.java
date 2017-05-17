@@ -112,7 +112,7 @@ public class ConcretePostgresCluster extends PostgresCluster {
   public Status status(@Nullable Path logFile)
       throws BadProcessExecutionException, IOException, InterruptedException {
 
-    return Status.valueOf(pgCtlWrapper.status(logFile).name());
+    return Status.fromPgCtlStatus(pgCtlWrapper.status(logFile));
   }
 
   @Override

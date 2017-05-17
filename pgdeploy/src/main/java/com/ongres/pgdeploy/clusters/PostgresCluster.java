@@ -39,6 +39,7 @@
 package com.ongres.pgdeploy.clusters;
 
 import com.ongres.pgdeploy.pgconfig.PostgresConfig;
+import com.ongres.pgdeploy.wrappers.PgCtlWrapper;
 import com.ongres.pgdeploy.wrappers.exceptions.BadProcessExecutionException;
 
 import java.io.File;
@@ -161,7 +162,11 @@ public abstract class PostgresCluster {
 
   public enum Status {
     ACTIVE,
-    STOPPED
+    STOPPED;
+
+    public static Status fromPgCtlStatus(PgCtlWrapper.Status pgCtlStatus) {
+      return valueOf(pgCtlStatus.name());
+    }
   }
 
 }
