@@ -5,6 +5,8 @@ import com.ongres.pgdeploy.core.Platform;
 import com.ongres.pgdeploy.core.PostgresInstallationSupplier;
 import com.ongres.pgdeploy.core.exceptions.BadInstallationException;
 import com.ongres.pgdeploy.core.exceptions.ExtraFoldersFoundException;
+import com.ongres.pgdeploy.core.exceptions.NonWritableDestinationException;
+import com.ongres.pgdeploy.core.exceptions.UnreachableBinariesException;
 import com.ongres.pgdeploy.core.pgversion.Post10PostgresMajorVersion;
 import com.ongres.pgdeploy.core.pgversion.PostgresMajorVersion;
 import com.ongres.pgdeploy.core.pgversion.Pre10PostgresMajorVersion;
@@ -12,6 +14,7 @@ import com.ongres.pgdeploy.installations.BadClusterException;
 import com.ongres.pgdeploy.installations.ClusterDirectoryNotEmptyException;
 import com.ongres.pgdeploy.installations.PostgresInstallation;
 import com.ongres.pgdeploy.pgconfig.properties.PropertyValue;
+import com.ongres.pgdeploy.pgconfig.properties.Unit;
 import com.ongres.pgdeploy.pgconfig.properties.exceptions.PropertyNotFoundException;
 import com.ongres.pgdeploy.pgconfig.properties.exceptions.UnitNotAvailableForPropertyException;
 import com.ongres.pgdeploy.pgconfig.properties.exceptions.WrongTypePropertyException;
@@ -35,7 +38,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
- 
+
 public class Main {
 
   private static Path installationPath = Paths.get("installation").toAbsolutePath();
@@ -117,12 +120,16 @@ public class Main {
         "Enter second number from major (0 for only first):");
 
     PostgresMajorVersion major = (second == 0)
-            ? new Post10PostgresMajorVersion(first)
-            : new Pre10PostgresMajorVersion(first, second);
+        ? new Post10PostgresMajorVersion(first)
+        : new Pre10PostgresMajorVersion(first, second);
 
     int minor = getIntegerInputForSentence("Enter minor:");
-    Platform platform = Platform.valueOf(
-        getStringInputForSentence("Enter platform (LINUX, WINDOWS or MACOS):").toUpperCase());
+
+    String os = getStringInputForSentence("Enter platform (LINUX, WINDOWS, MACOS):");
+
+    String arch = getStringInputForSentence("Enter arch (x64, x86):");
+
+    Platform platform = new Platform(os, arch);
 
     Optional<PostgresInstallationSupplier> supplierOptional =
         pgDeploy.findSupplier(major, minor, platform);
@@ -144,7 +151,8 @@ public class Main {
       installation = pgDeploy.install(supplier,
           PgDeploy.InstallOptions.binaries().withInclude().withShare(), installationPath);
       System.out.println("Installation complete!");
-    } catch (BadInstallationException | ExtraFoldersFoundException | IOException e) {
+    } catch (BadInstallationException | ExtraFoldersFoundException | IOException
+        | NonWritableDestinationException | UnreachableBinariesException e) {
       System.out.println(e.getMessage() + "\nNothing changed.");
     }
   }
@@ -206,6 +214,9 @@ public class Main {
   private static void customConfigCluster() {
     String key;
     String value;
+    String type;
+    String unitString;
+    PropertyValue propertyValue;
 
     Map<String, PropertyValue> map = new HashMap<>();
 
@@ -216,9 +227,32 @@ public class Main {
         break;
       }
       value = getStringInputForSentence("New value for the property:");
+      type = getStringInputForSentence(
+          "Type for the property: (i)nteger, (r)eal or string (default)");
+      unitString = getStringInputForSentence(
+          "Unit for the property: (n)one, TB, GB, MB, kB, ms, s, min, h, d").toUpperCase();
 
-      map.put(key, PropertyValue.from(value));
+      Unit unit;
+      if (Arrays.asList("TB", "GB", "MB", "KB", "MS", "S", "MIN", "H", "D").contains(unitString)) {
+        unit = Unit.valueOf(unitString);
+      } else {
+        unit = Unit.NONE;
+      }
+      switch (type) {
+        case "i":
+          propertyValue = new PropertyValue<Long>(Long.parseLong(value), unit);
+          break;
+        case "r":
+          propertyValue = new PropertyValue<Double>(Double.parseDouble(value), unit);
+          break;
+        default:
+          propertyValue = new PropertyValue<String>(value, unit);
+          break;
+      }
+      map.put(key, propertyValue);
     }
+
+
 
     try {
       cluster.config(cluster.createConfigBuilder().fromPropertyMap(map).build(), logFile);

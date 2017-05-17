@@ -32,7 +32,7 @@ public class PropertyValue<T> {
   private final T value;
   private final Unit unit;
 
-  private PropertyValue(T value, Unit unit) {
+  public PropertyValue(T value, Unit unit) {
     this.value = value;
     this.unit = unit;
   }
