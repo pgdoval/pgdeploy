@@ -91,7 +91,7 @@ public abstract class AbstractPostgresInstallationSupplier implements PostgresIn
 
   @Override
   public void unpackFolders(Path destination, List<PostgresInstallationFolder> folders)
-      throws IOException {
+      throws IOException, NonWritableDestinationException, UnreachableBinariesException {
 
     UnpackFoldersStrategy strategy = new UnzipFoldersStrategy();
     strategy.unpackFolders(destination, folders, routeToZippedCode);

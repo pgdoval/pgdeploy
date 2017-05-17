@@ -23,11 +23,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 package com.ongres.pgdeploy.core.exceptions;
-
-import java.io.IOException;
-
  
-public class NonWritableDestinationException extends IOException {
+public class NonWritableDestinationException extends Exception {
 
   public NonWritableDestinationException(String s) {
     super(s);

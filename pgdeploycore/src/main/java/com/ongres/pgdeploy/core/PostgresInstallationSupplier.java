@@ -26,6 +26,8 @@ package com.ongres.pgdeploy.core;
 
 import com.ongres.pgdeploy.core.exceptions.BadInstallationException;
 import com.ongres.pgdeploy.core.exceptions.ExtraFoldersFoundException;
+import com.ongres.pgdeploy.core.exceptions.NonWritableDestinationException;
+import com.ongres.pgdeploy.core.exceptions.UnreachableBinariesException;
 import com.ongres.pgdeploy.core.pgversion.PostgresMajorVersion;
 import com.ongres.pgdeploy.core.router.Router;
 import com.ongres.pgdeploy.pgconfig.PropertyParser;
@@ -45,11 +47,13 @@ public interface PostgresInstallationSupplier extends Router, PropertyParser {
    * binaries contained in the supplier.
    * @param destination The path where to unpack the packed binaries
    * @param folders The folders within the packed binaries to be unpacked
-   * @throws IOException In case the packed binaries are unreachable, or the
-   *     destination folder is not writable.
+   * @throws NonWritableDestinationException In case the destination folder is not writable.
+   * @throws UnreachableBinariesException In case the packed binaries are unreachable
+   * @throws IOException In case any of the files contained inside the packed binaries file is,
+   *     for any reason, unreachable
    */
   void unpackFolders(Path destination, List<PostgresInstallationFolder> folders)
-      throws IOException;
+      throws IOException, NonWritableDestinationException, UnreachableBinariesException;
 
   /** Checks that the installation has been performed correctly
    * @param destination The path where the installation is

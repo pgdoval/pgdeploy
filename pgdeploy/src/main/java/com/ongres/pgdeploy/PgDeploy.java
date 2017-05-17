@@ -47,6 +47,8 @@ import com.ongres.pgdeploy.core.PostgresInstallationSupplier;
 import com.ongres.pgdeploy.core.PostgresInstallationSupplierFeatures;
 import com.ongres.pgdeploy.core.exceptions.BadInstallationException;
 import com.ongres.pgdeploy.core.exceptions.ExtraFoldersFoundException;
+import com.ongres.pgdeploy.core.exceptions.NonWritableDestinationException;
+import com.ongres.pgdeploy.core.exceptions.UnreachableBinariesException;
 import com.ongres.pgdeploy.core.pgversion.PostgresMajorVersion;
 import com.ongres.pgdeploy.core.router.DefaultRouter;
 import com.ongres.pgdeploy.core.router.Router;
@@ -162,14 +164,17 @@ public class PgDeploy {
    * @throws ExtraFoldersFoundException When there are significant folders in the
    *     <tt>destination</tt> folder other than the ones desired. This may be a desirable behaviour
    *     in case there was a previous installation, so it is kept as a different exception.
-   * @throws IOException In case other I/O errors occur: the source folder in the supplier
-   *     doesn't exist, or the destination folder is not writable
+   * @throws NonWritableDestinationException In case the destination folder is not writable.
+   * @throws UnreachableBinariesException In case the packed binaries are unreachable
+   * @throws IOException In case any of the files contained inside the packed binaries file is,
+   *     for any reason, unreachable
    */
   public PostgresInstallation install(
       @Nonnull PostgresInstallationSupplier supplier,
       @Nonnull InstallOptions options,
       @Nonnull Path destination)
-      throws BadInstallationException, ExtraFoldersFoundException, IOException {
+      throws BadInstallationException, ExtraFoldersFoundException, IOException,
+      NonWritableDestinationException, UnreachableBinariesException {
 
     List<PostgresInstallationFolder> folders = options.toFolderList();
     supplier.unpackFolders(destination, folders);

@@ -23,11 +23,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 package com.ongres.pgdeploy.core.exceptions;
-
-import java.io.IOException;
-
  
-public class UnreachableBinariesException extends IOException {
+public class UnreachableBinariesException extends Exception {
 
   public UnreachableBinariesException(String s) {
     super(s);

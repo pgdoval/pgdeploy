@@ -25,6 +25,8 @@
 package com.ongres.pgdeploy.core.unpack;
 
 import com.ongres.pgdeploy.core.PostgresInstallationFolder;
+import com.ongres.pgdeploy.core.exceptions.NonWritableDestinationException;
+import com.ongres.pgdeploy.core.exceptions.UnreachableBinariesException;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -33,5 +35,5 @@ import java.util.List;
 public interface UnpackFoldersStrategy {
 
   void unpackFolders(Path destination, List<PostgresInstallationFolder> folders, Path fileToUnpack)
-      throws IOException;
+      throws IOException, NonWritableDestinationException, UnreachableBinariesException;
 }

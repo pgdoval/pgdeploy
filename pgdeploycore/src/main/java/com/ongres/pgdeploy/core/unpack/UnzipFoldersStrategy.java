@@ -52,7 +52,7 @@ public class UnzipFoldersStrategy implements UnpackFoldersStrategy {
       justification = "The value itself has no interest")
   public void unpackFolders(
       Path destination, List<PostgresInstallationFolder> folders, Path fileToUnpack)
-      throws IOException {
+      throws IOException, NonWritableDestinationException, UnreachableBinariesException {
 
     int buffer = 2048;
 
