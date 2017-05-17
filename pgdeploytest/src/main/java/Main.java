@@ -26,6 +26,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.AbstractMap;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -41,47 +42,54 @@ import java.util.stream.IntStream;
 
 public class Main {
 
-  private static Path installationPath = Paths.get("installation").toAbsolutePath();
-  private static Path clusterPath = Paths.get("cluster").toAbsolutePath();
-  private static Path logFile = null;
-
-  private static final PgDeploy pgDeploy = new PgDeploy();
-  private static PostgresInstallationSupplier supplier = null;
-
   private static Scanner scanner = new Scanner(System.in);
-
-  private static PostgresInstallation installation = null;
-  private static PostgresCluster cluster = null;
 
   private static boolean stop = false;
 
-  private static List<Options> options = Arrays.asList(
-      new Options("Find a supplier", o -> true, o -> getSupplier()),
-      new Options("Install a supplier", o -> (supplier != null), o -> install()),
-      new Options("Create a cluster", o -> (installation != null), o -> createCluster()),
-      new Options("Update the logfile", o -> (cluster != null), o -> setLogfile()),
-      new Options("Autoconfig a cluster for start",
-          o -> (cluster != null), o -> configClusterForStart()),
-      new Options("Start a cluster", o -> (cluster != null), o -> startCluster()),
-      new Options("Config a cluster as you wish",
-          o -> (cluster != null), o -> customConfigCluster()),
-      new Options("Stop", o -> true, o -> stop = true)
-  );
-
   public static void main(String[] args) throws Exception {
 
+    final PgDeploy pgDeploy = new PgDeploy();
+    PostgresCluster cluster = null;
+    PostgresInstallation installation = null;
+    PostgresInstallationSupplier supplier = null;
+    Path logFile = null;
 
     while (!stop) {
-      List<Options> optionsList = options.stream()
-          .filter(it -> it.condition.test(""))
-          .collect(Collectors.toList());
 
-      Map<Integer, Options> optionsWithIndex = IntStream.range(0, optionsList.size())
-          .mapToObj(i -> new AbstractMap.SimpleEntry<Integer, Options>(i + 1, optionsList.get(i)))
+      List<Options> options = new ArrayList<>();
+
+      options.add(new Options("Find a supplier", "find"));
+
+      if (supplier != null) {
+        options.add(new Options("Install a supplier", "install"));
+      }
+      if (installation != null) {
+        options.add(new Options("Create a cluster", "cluster"));
+      }
+      if (cluster != null) {
+        options.add(new Options("Update the logfile", "logFile"));
+      }
+      if (cluster != null) {
+        options.add(new Options("Autoconfig a cluster for start", "autoconfig"));
+      }
+      if (cluster != null) {
+        options.add(new Options("Start a cluster", "pgctl"));
+      }
+      if (cluster != null) {
+        options.add(new Options("Config a cluster as you wish", "config"));
+      }
+
+      options.add(new Options("Stop", "stop"));
+
+
+      Map<Integer, Options> optionsWithIndex = IntStream.range(0, options.size())
+          .mapToObj(i -> new AbstractMap.SimpleEntry<Integer, Options>(i + 1, options.get(i)))
           .collect(Collectors.toMap(
               AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue));
 
-      System.out.println("What do you want to do?");
+
+      String prompt = "\n\n\nWhat do you want to do?";
+      System.out.println(prompt);
       optionsWithIndex.forEach( (key, value) -> System.out.println(key + " - " + value.text));
 
       int selectedInt = scanner.nextInt();
@@ -91,15 +99,39 @@ public class Main {
       if (selectedOption == null) {
         System.out.println( "Invalid option " + selectedInt);
       } else {
-        selectedOption.action.accept(null);
+        switch (selectedOption.name) {
+          case "find":
+            Optional<PostgresInstallationSupplier> supplierOptional = getSupplier(pgDeploy);
+            if (supplierOptional.isPresent()) {
+              supplier = supplierOptional.get();
+            }
+            break;
+          case "install":
+            installation = install(pgDeploy, supplier).orElse(installation);
+            break;
+          case "cluster":
+            cluster = createCluster(installation).orElse(cluster);
+            break;
+          case "logFile":
+            logFile = setLogfile();
+            break;
+          case "autoconfig":
+            configClusterForStart(cluster, logFile);
+            break;
+          case "pgctl":
+            startCluster(cluster, logFile);
+            break;
+          case "config":
+            customConfigCluster(cluster, logFile);
+            break;
+          case "stop":
+            stop = true;
+            break;
+          default:
+            break;
+        }
       }
-
-
     }
-
-
-
-
   }
 
   private static int getIntegerInputForSentence(String statement) {
@@ -112,7 +144,7 @@ public class Main {
     return scanner.next();
   }
 
-  private static void getSupplier() {
+  private static Optional<PostgresInstallationSupplier> getSupplier(PgDeploy pgDeploy) {
     System.out.println("Find a supplier");
 
     int first = getIntegerInputForSentence("Enter first number from major:");
@@ -131,61 +163,56 @@ public class Main {
 
     Platform platform = new Platform(os, arch);
 
-    Optional<PostgresInstallationSupplier> supplierOptional =
-        pgDeploy.findSupplier(major, minor, platform);
+    return pgDeploy.findSupplier(major, minor, platform);
 
-    if (supplierOptional.isPresent()) {
-      supplier = supplierOptional.get();
-      System.out.println("Supplier found!");
-    } else {
-      System.out.println("Supplier not found. Nothing changed.");
-    }
   }
 
-  private static void install() {
+  private static Optional<PostgresInstallation> install(
+      PgDeploy pgDeploy, PostgresInstallationSupplier supplier) {
+
     String home = System.getProperty("user.home");
-    installationPath = Paths.get(home).resolve(
+    Path installationPath = Paths.get(home).resolve(
         getStringInputForSentence("Path for installation (from " + home + "):"));
 
     try {
-      installation = pgDeploy.install(supplier,
-          PgDeploy.InstallOptions.binaries().withInclude().withShare(), installationPath);
-      System.out.println("Installation complete!");
+      return Optional.of(pgDeploy.install(supplier,
+          PgDeploy.InstallOptions.binaries().withInclude().withShare(), installationPath));
+
     } catch (BadInstallationException | ExtraFoldersFoundException | IOException
         | NonWritableDestinationException | UnreachableBinariesException e) {
       System.out.println(e.getMessage() + "\nNothing changed.");
     }
+    return Optional.empty();
   }
 
 
-  private static void setLogfile() {
+  private static Path setLogfile() {
     String home = System.getProperty("user.home");
-    logFile = Paths.get(home).resolve(
+    return Paths.get(home).resolve(
         getStringInputForSentence("Path for logfile (from " + home + "):"));
-    System.out.println("Logfile updated!");
   }
 
 
-  private static void createCluster() {
+  private static Optional<PostgresCluster> createCluster(PostgresInstallation installation) {
     String home = System.getProperty("user.home");
-    clusterPath = Paths.get(home).resolve(
+    Path clusterPath = Paths.get(home).resolve(
         getStringInputForSentence("Path for cluster (from " + home + "):"));
     try {
-      cluster = installation.createCluster(clusterPath,
+      return Optional.of(installation.createCluster(clusterPath,
           PostgresClusterCreationOptions.fromDefault()
               .defaultEncoding()
               .defaultLocale()
               .withSuperUser("postgres")
               .withoutDataChecksums()
-      );
-      System.out.println("Cluster created!");
+      ));
     } catch (BadClusterException | IOException | InterruptedException
         | ClusterDirectoryNotEmptyException | BadProcessExecutionException e) {
       System.out.println(e.getMessage() + "\nNothing changed.");
     }
+    return Optional.empty();
   }
 
-  private static void configClusterForStart() {
+  private static void configClusterForStart(PostgresCluster cluster, Path logFile) {
     try {
       cluster.config(
           cluster.createConfigBuilder()
@@ -200,7 +227,7 @@ public class Main {
     }
   }
 
-  private static void startCluster() {
+  private static void startCluster(PostgresCluster cluster, Path logFile) {
 
     try {
       cluster.start(logFile);
@@ -211,7 +238,7 @@ public class Main {
     }
   }
 
-  private static void customConfigCluster() {
+  private static void customConfigCluster(PostgresCluster cluster, Path logFile) {
     String key;
     String value;
     String type;
@@ -287,13 +314,11 @@ public class Main {
 
   private static class Options {
     private String text;
-    private Predicate<String> condition;
-    private Consumer<Void> action;
+    private String name;
 
-    public Options(String text, Predicate condition, Consumer action) {
+    public Options(String text, String name) {
       this.text = text;
-      this.condition = condition;
-      this.action = action;
+      this.name = name;
     }
 
   }
