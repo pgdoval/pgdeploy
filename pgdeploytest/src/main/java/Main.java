@@ -88,8 +88,19 @@ public class Main {
               AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue));
 
 
-      String prompt = "\n\n\nWhat do you want to do?";
-      System.out.println(prompt);
+      StringBuilder prompt = new StringBuilder();
+      prompt.append("\n\n\n");
+      prompt.append((supplier == null)? "Supplier is null." : "Got a supplier");
+      prompt.append("\n");
+      prompt.append((installation == null)? "Installation is null." : "Got an installation");
+      prompt.append("\n");
+      prompt.append((cluster == null)? "Cluster is null." : "Got a cluster");
+      prompt.append("\n");
+      prompt.append((logFile == null)? "LogFile is null." : "Got a logFile");
+      prompt.append("\n\n");
+      prompt.append("What do you want to do?");
+
+      System.out.println(prompt.toString());
       optionsWithIndex.forEach( (key, value) -> System.out.println(key + " - " + value.text));
 
       int selectedInt = scanner.nextInt();
