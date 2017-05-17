@@ -109,7 +109,7 @@ public class AbstractPostgresInstallationSupplierUnzipFoldersTest {
 
     path = writablePath;
 
-    supplier.unzipFolders(path, allFolders);
+    supplier.unpackFolders(path, allFolders);
     supplier.checkInstallation(path, allFolders);
 
   }
@@ -120,7 +120,7 @@ public class AbstractPostgresInstallationSupplierUnzipFoldersTest {
 
     path = writablePath;
 
-    supplier.unzipFolders(path, allFolders);
+    supplier.unpackFolders(path, allFolders);
 
   }
 
@@ -137,7 +137,7 @@ public class AbstractPostgresInstallationSupplierUnzipFoldersTest {
         PosixFilePermissions.asFileAttribute(perms);
     Files.createDirectory(path, attr);
 
-    supplier.unzipFolders(path, allFolders);
+    supplier.unpackFolders(path, allFolders);
 
   }
 
@@ -147,7 +147,7 @@ public class AbstractPostgresInstallationSupplierUnzipFoldersTest {
 
     path = writablePath;
 
-    supplier.unzipFolders(path, someFolders);
+    supplier.unpackFolders(path, someFolders);
     supplier.checkInstallation(path, someFolders);
 
   }

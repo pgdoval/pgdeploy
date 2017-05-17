@@ -39,15 +39,12 @@
 package com.ongres.pgdeploy;
 
 import com.ongres.pgdeploy.core.AbstractPostgresInstallationSupplier;
-import com.ongres.pgdeploy.core.exceptions.BadInstallationException;
 import com.ongres.pgdeploy.core.PostgresInstallationSupplier;
-import com.ongres.pgdeploy.core.exceptions.ExtraFoldersFoundException;
 import com.ongres.pgdeploy.installations.PostgresInstallation;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -73,7 +70,7 @@ public class PgDeployInstallTest {
     spy = spy(mockedSupplier);
 
     doNothing().when(spy)
-        .unzipFolders(any(Path.class), anyList());
+        .unpackFolders(any(Path.class), anyList());
 
 
     suppliers.add(mockedSupplier);
@@ -105,7 +102,7 @@ public class PgDeployInstallTest {
     assertEquals(path, installation.getPath());
     assertEquals(mockedSupplier, installation.getRouter());
 
-    verify(mockedSupplier, times(1)).unzipFolders(path,options.toFolderList());
+    verify(mockedSupplier, times(1)).unpackFolders(path,options.toFolderList());
     verify(mockedSupplier, times(1)).checkInstallation(path,options.toFolderList());
 
   }

@@ -30,6 +30,8 @@ import com.ongres.pgdeploy.core.exceptions.NonWritableDestinationException;
 import com.ongres.pgdeploy.core.exceptions.UnreachableBinariesException;
 import com.ongres.pgdeploy.core.pgversion.PostgresMajorVersion;
 import com.ongres.pgdeploy.core.router.DefaultRouter;
+import com.ongres.pgdeploy.core.unpack.UnpackFoldersStrategy;
+import com.ongres.pgdeploy.core.unpack.UnzipFoldersStrategy;
 import com.ongres.pgdeploy.pgconfig.DefaultPropertyParser;
 import com.ongres.pgdeploy.pgconfig.properties.Property;
 
@@ -88,72 +90,11 @@ public abstract class AbstractPostgresInstallationSupplier implements PostgresIn
   }
 
   @Override
-  @edu.umd.cs.findbugs.annotations.SuppressFBWarnings(
-      value = "RV_RETURN_VALUE_IGNORED_BAD_PRACTICE",
-      justification = "The value itself has no interest")
-  public void unzipFolders(Path destination, List<PostgresInstallationFolder> folders)
+  public void unpackFolders(Path destination, List<PostgresInstallationFolder> folders)
       throws IOException {
 
-    int buffer = 2048;
-
-    File file = routeToZippedCode.toFile();
-
-    Set<PosixFilePermission> perms =
-        PosixFilePermissions.fromString("rwxr-xr-x");
-
-    try (ZipFile zip = new ZipFile(file)) {
-      String newPath = destination.toAbsolutePath().toString();
-
-      if (!new File(newPath).mkdir()) {
-        throw new NonWritableDestinationException("Unable to create or open file: " + newPath);
-      }
-
-      Enumeration zipFileEntries = zip.entries();
-
-      while (zipFileEntries.hasMoreElements()) {
-
-        ZipEntry entry = (ZipEntry) zipFileEntries.nextElement();
-        String currentEntry = entry.getName();
-
-        if (!folders.stream().anyMatch(
-            folder -> currentEntry.startsWith(folder.getStringId() + "/"))) {
-          continue;
-        }
-
-        File destFile = new File(newPath, currentEntry);
-
-        File destinationParent = destFile.getParentFile();
-
-        // create the parent directory structure if needed
-        destinationParent.mkdirs();
-
-        if (!entry.isDirectory()) {
-          try (BufferedInputStream is = new BufferedInputStream(
-              zip.getInputStream(entry))) {
-
-            int currentByte;
-            // establish buffer for writing file
-            byte[] data = new byte[buffer];
-
-            // write the current file to disk
-
-            FileOutputStream fos = new FileOutputStream(destFile);
-
-            try (BufferedOutputStream dest = new BufferedOutputStream(fos, buffer)) {
-
-              // read and write until last byte is encountered
-              while ((currentByte = is.read(data, 0, buffer)) != -1) {
-                dest.write(data, 0, currentByte);
-              }
-              Files.setPosixFilePermissions(destFile.toPath(), perms);
-            }
-          }
-        }
-      }
-    } catch (FileNotFoundException e) {
-      throw new UnreachableBinariesException(e.getMessage());
-    }
-
+    UnpackFoldersStrategy strategy = new UnzipFoldersStrategy();
+    strategy.unpackFolders(destination, folders, routeToZippedCode);
   }
 
   @Override

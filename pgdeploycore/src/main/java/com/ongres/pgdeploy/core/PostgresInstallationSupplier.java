@@ -41,14 +41,14 @@ public interface PostgresInstallationSupplier extends Router, PropertyParser {
    */
   boolean accepts(PostgresInstallationSupplierFeatures features);
 
-  /** Unzips in the desired <tt>destination</tt> the zipped installation
+  /** Unpacks in the desired <tt>destination</tt> the packed installation
    * binaries contained in the supplier.
-   * @param destination The path where to unzip the zipped binaries
-   * @param folders The folders within the zipped binaries to be unzipped
-   * @throws IOException In case the zipped binaries are unreachable, or the
+   * @param destination The path where to unpack the packed binaries
+   * @param folders The folders within the packed binaries to be unpacked
+   * @throws IOException In case the packed binaries are unreachable, or the
    *     destination folder is not writable.
    */
-  void unzipFolders(Path destination, List<PostgresInstallationFolder> folders)
+  void unpackFolders(Path destination, List<PostgresInstallationFolder> folders)
       throws IOException;
 
   /** Checks that the installation has been performed correctly

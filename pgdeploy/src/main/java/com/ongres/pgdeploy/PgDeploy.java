@@ -63,7 +63,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.ServiceLoader;
 
@@ -173,7 +172,7 @@ public class PgDeploy {
       throws BadInstallationException, ExtraFoldersFoundException, IOException {
 
     List<PostgresInstallationFolder> folders = options.toFolderList();
-    supplier.unzipFolders(destination, folders);
+    supplier.unpackFolders(destination, folders);
     supplier.checkInstallation(destination, folders);
 
     return new ConcretePostgresInstallation(supplier, destination);
