@@ -141,8 +141,8 @@ public class PgDeployFindSupplierTest {
             pgDeploy.findSupplier(new Pre10PostgresMajorVersion(9, 5), 0, linuxPlatform);
 
 
-    assertTrue("Existing supplier not found", supplier.isPresent());
-    assertEquals("Existing supplier not mocked", mockedSupplier, supplier.get());
+    assertFalse("Unexpected supplier found", supplier.isPresent());
+
   }
 
   @Test

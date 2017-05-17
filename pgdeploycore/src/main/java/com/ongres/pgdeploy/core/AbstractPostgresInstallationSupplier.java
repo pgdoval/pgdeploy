@@ -56,45 +56,35 @@ import java.util.zip.ZipFile;
 
 public abstract class AbstractPostgresInstallationSupplier implements PostgresInstallationSupplier {
 
-  protected final PostgresMajorVersion majorVersion;
-  protected final int minorVersion;
-  protected final Platform platform;
-  protected final String extraVersion;
+  protected final PostgresInstallationSupplierFeatures features;
 
   protected final Path routeToZippedCode;
 
   protected AbstractPostgresInstallationSupplier( PostgresMajorVersion majorVersion,
       int minorVersion, Platform platform, Path routeToZippedCode) {
-    this(majorVersion, minorVersion, platform, null, routeToZippedCode);
+
+    this( new PostgresInstallationSupplierFeatures(majorVersion, minorVersion, platform),
+        routeToZippedCode);
   }
 
-  protected AbstractPostgresInstallationSupplier(PostgresMajorVersion majorVersion,
+  protected AbstractPostgresInstallationSupplier( PostgresMajorVersion majorVersion,
       int minorVersion, Platform platform, String extraVersion, Path routeToZippedCode) {
-    this.majorVersion = majorVersion;
-    this.minorVersion = minorVersion;
-    this.platform = platform;
-    this.extraVersion = extraVersion;
+
+    this( new PostgresInstallationSupplierFeatures(
+        majorVersion, minorVersion, platform, extraVersion), routeToZippedCode);
+  }
+
+  protected AbstractPostgresInstallationSupplier(
+      PostgresInstallationSupplierFeatures features, Path routeToZippedCode) {
+    this.features = features;
     this.routeToZippedCode = routeToZippedCode;
   }
 
+  /** Simply compares the features required to the ones that the supplier offers.
+   */
   @Override
-  public PostgresMajorVersion getMajorVersion() {
-    return majorVersion;
-  }
-
-  @Override
-  public int getMinorVersion() {
-    return minorVersion;
-  }
-
-  @Override
-  public Platform getPlatform() {
-    return platform;
-  }
-
-  @Override
-  public String getExtraVersion() {
-    return extraVersion;
+  public boolean accepts(PostgresInstallationSupplierFeatures features) {
+    return this.features.equals(features);
   }
 
   @Override

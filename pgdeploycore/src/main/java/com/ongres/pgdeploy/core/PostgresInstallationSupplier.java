@@ -36,13 +36,10 @@ import java.util.List;
 
 public interface PostgresInstallationSupplier extends Router, PropertyParser {
 
-  PostgresMajorVersion getMajorVersion();
-
-  int getMinorVersion();
-
-  Platform getPlatform();
-
-  String getExtraVersion();
+  /** Tells whether the supplier is or not compliant to the constraints (postgres version, OS,
+   * architecture...) defined in the incoming parameter.
+   */
+  boolean accepts(PostgresInstallationSupplierFeatures features);
 
   /** Unzips in the desired <tt>destination</tt> the zipped installation
    * binaries contained in the supplier.
@@ -52,7 +49,7 @@ public interface PostgresInstallationSupplier extends Router, PropertyParser {
    *     destination folder is not writable.
    */
   void unzipFolders(Path destination, List<PostgresInstallationFolder> folders)
-          throws IOException;
+      throws IOException;
 
   /** Checks that the installation has been performed correctly
    * @param destination The path where the installation is

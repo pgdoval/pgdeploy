@@ -44,6 +44,7 @@ import com.ongres.pgdeploy.core.InstallationChecker;
 import com.ongres.pgdeploy.core.Platform;
 import com.ongres.pgdeploy.core.PostgresInstallationFolder;
 import com.ongres.pgdeploy.core.PostgresInstallationSupplier;
+import com.ongres.pgdeploy.core.PostgresInstallationSupplierFeatures;
 import com.ongres.pgdeploy.core.exceptions.BadInstallationException;
 import com.ongres.pgdeploy.core.exceptions.ExtraFoldersFoundException;
 import com.ongres.pgdeploy.core.pgversion.PostgresMajorVersion;
@@ -90,22 +91,22 @@ public class PgDeploy {
 
   /** Searches the classpath seeking for an implementation of <tt>PostgresInstallationSupplier</tt>
   * that complies to the requirements specified by the parameters
-   * @param major Postgres major version (9 for 9.3.2)
-   * @param minor Postgres minor version (3 for 9.3.2)
+   * @param major Postgres major version (9.3 for 9.3.2)
+   * @param minor Postgres minor version (2 for 9.3.2)
    * @param platform The OS platform, represented by the enum {@link Platform Platform}
    * @return An optional value containing the supplier found, or <tt>Optional.empty()</tt> if
    *     no complying supplier has been found.
    */
   public Optional<PostgresInstallationSupplier> findSupplier(
       PostgresMajorVersion major, int minor, @Nonnull Platform platform) {
-    return findSupplier(major, minor, platform, null);
+    return findSupplier( new PostgresInstallationSupplierFeatures(major, minor, platform));
   }
 
 
   /** Searches the classpath seeking for an implementation of <tt>PostgresInstallationSupplier</tt>
-   * that complies to the requirements specified by the parameters
-   * @param major Postgres major version (9 for 9.3.2)
-   * @param minor Postgres minor version (3 for 9.3.2)
+   * that complies to the requirements specified by the parameters.
+   * @param major Postgres major version (9.3 for 9.3.2)
+   * @param minor Postgres minor version (2 for 9.3.2)
    * @param platform The OS platform, represented by the enum {@link Platform Platform}
    * @param extraVersion This field provides a way for the user to tag his versions and find
    *                     them with the specific tag.
@@ -115,13 +116,29 @@ public class PgDeploy {
   public Optional<PostgresInstallationSupplier> findSupplier(
       PostgresMajorVersion major, int minor, @Nonnull Platform platform, String extraVersion) {
 
+    return findSupplier(
+        new PostgresInstallationSupplierFeatures(major, minor, platform, extraVersion));
+  }
+
+
+
+  /** Searches the classpath seeking for an implementation of <tt>PostgresInstallationSupplier</tt>
+   * that complies to the requirements specified by the parameter. The method called for this matter
+   * is {@link PostgresInstallationSupplier#accepts(PostgresInstallationSupplierFeatures)}
+   * @param features Contains the features required for the desired supplier.
+   * @return An optional value containing the supplier found, or <tt>Optional.empty()</tt> if
+   *     no complying supplier has been found.
+   */
+  public Optional<PostgresInstallationSupplier> findSupplier(
+      PostgresInstallationSupplierFeatures features) {
+
     final Iterator<PostgresInstallationSupplier> iterator = supplierCandidates.iterator();
 
     PostgresInstallationSupplier supplierCandidate;
 
     while (iterator.hasNext()) {
       supplierCandidate = iterator.next();
-      if (isSupplierSuitable(supplierCandidate, major, minor, platform, extraVersion)) {
+      if (supplierCandidate.accepts(features)) {
         return Optional.of(supplierCandidate);
       }
     }
@@ -130,22 +147,6 @@ public class PgDeploy {
 
   }
 
-
-
-  private boolean isSupplierSuitable(
-      PostgresInstallationSupplier supplier, PostgresMajorVersion major, int minor,
-      Platform platform, String extraVersion) {
-
-    boolean result = supplier.getMajorVersion().equals(major)
-        && supplier.getMinorVersion() == minor
-        && supplier.getPlatform() == platform;
-
-    if (extraVersion != null) {
-      result &= (Objects.equals(supplier.getExtraVersion(), extraVersion));
-    }
-
-    return result;
-  }
 
 
   /** Installs a specific postgres version in a folder

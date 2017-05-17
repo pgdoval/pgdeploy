@@ -22,18 +22,33 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.ongres.pgdeploy.core.pgversion;
+package com.ongres.pgdeploy.core;
+
+import com.ongres.pgdeploy.core.pgversion.PostgresMajorVersion;
 
 import net.jcip.annotations.Immutable;
 
 @Immutable
-public abstract class PostgresMajorVersion {
-  protected final int first;
-  protected final int second;
+public class PostgresInstallationSupplierFeatures {
+  private final PostgresMajorVersion major;
+  private final int minor;
+  private final Platform platform;
+  private final String extraVersion;
 
-  PostgresMajorVersion(int first, int second) {
-    this.first = first;
-    this.second = second;
+  public PostgresInstallationSupplierFeatures(
+      PostgresMajorVersion major, int minor, Platform platform, String extraVersion) {
+    this.major = major;
+    this.minor = minor;
+    this.platform = platform;
+    this.extraVersion = extraVersion;
+  }
+
+  public PostgresInstallationSupplierFeatures(
+      PostgresMajorVersion major, int minor, Platform platform) {
+    this.major = major;
+    this.minor = minor;
+    this.platform = platform;
+    this.extraVersion = null;
   }
 
   @Override
@@ -45,18 +60,27 @@ public abstract class PostgresMajorVersion {
       return false;
     }
 
-    PostgresMajorVersion that = (PostgresMajorVersion) o;
+    PostgresInstallationSupplierFeatures that = (PostgresInstallationSupplierFeatures) o;
 
-    if (first != that.first) {
+    if (minor != that.minor) {
       return false;
     }
-    return second == that.second;
+    if (major != null ? !major.equals(that.major) : that.major != null) {
+      return false;
+    }
+    if (platform != null ? !platform.equals(that.platform) : that.platform != null) {
+      return false;
+    }
+    return extraVersion != null
+        ? extraVersion.equals(that.extraVersion) : that.extraVersion == null;
   }
 
   @Override
   public int hashCode() {
-    int result = first;
-    result = 31 * result + second;
+    int result = major != null ? major.hashCode() : 0;
+    result = 31 * result + minor;
+    result = 31 * result + (platform != null ? platform.hashCode() : 0);
+    result = 31 * result + (extraVersion != null ? extraVersion.hashCode() : 0);
     return result;
   }
 }
