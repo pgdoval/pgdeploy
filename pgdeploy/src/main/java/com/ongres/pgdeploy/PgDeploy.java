@@ -201,7 +201,8 @@ public class PgDeploy {
       @Nonnull PostgresInstallationSupplier supplier,
       @Nonnull Path destination)
       throws BadInstallationException, IOException {
-    return retrieveInstallationWithRouter(supplier, destination);
+    return retrieveInstallationWithRouter(
+        supplier.getRouter(), supplier.getParser(), destination);
   }
 
 
@@ -221,11 +222,13 @@ public class PgDeploy {
   public PostgresInstallation retrieveInstallation(
       @Nonnull Path destination)
       throws BadInstallationException, IOException {
-    return retrieveInstallationWithRouter(DefaultRouter.getInstance(), destination);
+    return retrieveInstallationWithRouter(
+        DefaultRouter.getInstance(), DefaultPropertyParser.getInstance(), destination);
   }
 
   private PostgresInstallation retrieveInstallationWithRouter(
       @Nonnull Router router,
+      @Nonnull PropertyParser parser,
       @Nonnull Path destination)
       throws BadInstallationException, IOException {
 
@@ -237,7 +240,7 @@ public class PgDeploy {
     InstallationChecker.checkInstallationIsComplete(
         destination, InstallOptions.binaries().toFolderList());
 
-    return new ConcretePostgresInstallation(router, destination);
+    return new ConcretePostgresInstallation(router, parser, destination);
   }
 
 
@@ -274,7 +277,8 @@ public class PgDeploy {
       Path clusterPath, Path installationPath, PostgresInstallationSupplier supplier)
       throws BadInstallationException, IOException, BadClusterException {
 
-    return retrieveCluster(clusterPath, installationPath, supplier, supplier);
+    return retrieveCluster(
+        clusterPath, installationPath, supplier.getParser(), supplier.getRouter());
   }
 
   private PostgresCluster retrieveCluster(
@@ -286,7 +290,7 @@ public class PgDeploy {
       throw new IOException("Cluster folder " + directory.toString() + "not found");
     }
     PostgresInstallation installation =
-        retrieveInstallationWithRouter(router, installationDirectory);
+        retrieveInstallationWithRouter(router, parser, installationDirectory);
 
     installation.checkCluster(directory);
 

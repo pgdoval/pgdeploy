@@ -28,7 +28,6 @@ import com.ongres.pgdeploy.core.exceptions.BadInstallationException;
 import com.ongres.pgdeploy.core.exceptions.ExtraFoldersFoundException;
 import com.ongres.pgdeploy.core.exceptions.NonWritableDestinationException;
 import com.ongres.pgdeploy.core.exceptions.UnreachableBinariesException;
-import com.ongres.pgdeploy.core.pgversion.PostgresMajorVersion;
 import com.ongres.pgdeploy.core.router.Router;
 import com.ongres.pgdeploy.pgconfig.PropertyParser;
 
@@ -36,7 +35,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 
-public interface PostgresInstallationSupplier extends Router, PropertyParser {
+public interface PostgresInstallationSupplier {
 
   /** Tells whether the supplier is or not compliant to the constraints (postgres version, OS,
    * architecture...) defined in the incoming parameter.
@@ -66,4 +65,13 @@ public interface PostgresInstallationSupplier extends Router, PropertyParser {
   void checkInstallation(Path destination, List<PostgresInstallationFolder> folders)
       throws BadInstallationException, ExtraFoldersFoundException;
 
+  /**
+   * @return The most suitable router for the supplier
+   */
+  Router getRouter();
+
+  /**
+   * @return The most suitable property parser for the supplier
+   */
+  PropertyParser getParser();
 }

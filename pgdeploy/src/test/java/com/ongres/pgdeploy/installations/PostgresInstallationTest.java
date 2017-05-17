@@ -43,6 +43,8 @@ import com.ongres.pgdeploy.clusters.PostgresClusterCreationOptions;
 import com.ongres.pgdeploy.core.RelativeRoute;
 import com.ongres.pgdeploy.core.router.DefaultRouter;
 import com.ongres.pgdeploy.core.router.Router;
+import com.ongres.pgdeploy.pgconfig.DefaultPropertyParser;
+import com.ongres.pgdeploy.pgconfig.PropertyParser;
 import com.ongres.pgdeploy.wrappers.exceptions.BadProcessExecutionException;
 import org.junit.After;
 import org.junit.Before;
@@ -70,8 +72,9 @@ public class PostgresInstallationTest {
   @Before
   public void setup() {
     Router router = DefaultRouter.getInstance();
+    PropertyParser parser = DefaultPropertyParser.getInstance();
 
-    installation = new ConcretePostgresInstallation(router,
+    installation = new ConcretePostgresInstallation(router, parser,
         new RelativeRoute(Arrays.asList("src", "test", "resources", "installation")).asRelativePath());
 
     path = new RelativeRoute(Arrays.asList("clusters")).asRelativePath();

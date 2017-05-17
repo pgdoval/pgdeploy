@@ -55,14 +55,20 @@ import java.nio.file.Path;
 
 import javax.annotation.Nonnull;
 
- 
+
 public class ConcretePostgresInstallation extends PostgresInstallation {
 
   private final Router router;
+  private final PropertyParser parser;
   private final Path path;
 
-  public ConcretePostgresInstallation(Router router, Path path) {
+  public ConcretePostgresInstallation(PostgresInstallationSupplier supplier, Path path) {
+    this( supplier.getRouter(), supplier.getParser(), path);
+  }
+
+  public ConcretePostgresInstallation(Router router, PropertyParser parser, Path path) {
     this.router = router;
+    this.parser = parser;
     this.path = path;
   }
 
@@ -102,9 +108,6 @@ public class ConcretePostgresInstallation extends PostgresInstallation {
     InitDbWrapper.run(router.routeToInitDb(path),destination, options.toArgumentList());
 
     checkCluster(destination);
-
-    PropertyParser parser = (router instanceof PostgresInstallationSupplier)
-        ? (PostgresInstallationSupplier) router : DefaultPropertyParser.getInstance();
 
     return new ConcretePostgresCluster(destination,this, parser);
 

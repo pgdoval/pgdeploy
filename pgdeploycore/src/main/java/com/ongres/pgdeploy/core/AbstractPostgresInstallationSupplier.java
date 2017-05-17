@@ -30,9 +30,11 @@ import com.ongres.pgdeploy.core.exceptions.NonWritableDestinationException;
 import com.ongres.pgdeploy.core.exceptions.UnreachableBinariesException;
 import com.ongres.pgdeploy.core.pgversion.PostgresMajorVersion;
 import com.ongres.pgdeploy.core.router.DefaultRouter;
+import com.ongres.pgdeploy.core.router.Router;
 import com.ongres.pgdeploy.core.unpack.UnpackFoldersStrategy;
 import com.ongres.pgdeploy.core.unpack.UnzipFoldersStrategy;
 import com.ongres.pgdeploy.pgconfig.DefaultPropertyParser;
+import com.ongres.pgdeploy.pgconfig.PropertyParser;
 import com.ongres.pgdeploy.pgconfig.properties.Property;
 
 import java.io.BufferedInputStream;
@@ -107,28 +109,12 @@ public abstract class AbstractPostgresInstallationSupplier implements PostgresIn
   }
 
   @Override
-  public Path routeToPostgresqlConf(Path basePath) {
-    return DefaultRouter.getInstance().routeToPostgresqlConf(basePath);
+  public Router getRouter() {
+    return DefaultRouter.getInstance();
   }
 
   @Override
-  public Path routeToPgHbaConf(Path basePath) {
-    return DefaultRouter.getInstance().routeToPgHbaConf(basePath);
-  }
-
-
-  @Override
-  public Path routeToInitDb(Path basePath) {
-    return DefaultRouter.getInstance().routeToInitDb(basePath);
-  }
-
-  @Override
-  public Path routeToPgCtl(Path basePath) {
-    return DefaultRouter.getInstance().routeToPgCtl(basePath);
-  }
-
-  @Override
-  public Optional<Property> parse(String property) {
-    return DefaultPropertyParser.getInstance().parse(property);
+  public PropertyParser getParser() {
+    return DefaultPropertyParser.getInstance();
   }
 }

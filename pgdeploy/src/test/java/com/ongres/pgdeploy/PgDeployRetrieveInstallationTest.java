@@ -78,7 +78,6 @@ public class PgDeployRetrieveInstallationTest {
         new Pre10PostgresMajorVersion(9, 5), 0, linuxPlatform, null);
 
     PostgresInstallation installation = pgDeploy.retrieveInstallation(supplier, realInstallationPath);
-    assertEquals(supplier, installation.getRouter());
     assertEquals(realInstallationPath, installation.getPath());
   }
 

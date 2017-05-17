@@ -44,6 +44,7 @@ import com.ongres.pgdeploy.installations.PostgresInstallation;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -72,7 +73,6 @@ public class PgDeployInstallTest {
     doNothing().when(spy)
         .unpackFolders(any(Path.class), anyList());
 
-
     suppliers.add(mockedSupplier);
 
     pgDeploy = new PgDeploy(suppliers);
@@ -100,7 +100,6 @@ public class PgDeployInstallTest {
     //path contains the desired folders and fail otherwise
     assertNotNull(installation);
     assertEquals(path, installation.getPath());
-    assertEquals(mockedSupplier, installation.getRouter());
 
     verify(mockedSupplier, times(1)).unpackFolders(path,options.toFolderList());
     verify(mockedSupplier, times(1)).checkInstallation(path,options.toFolderList());
