@@ -290,12 +290,19 @@ public class PgDeploy {
     return new ConcretePostgresCluster(directory, installationDirectory, parser, router);
   }
 
+  @Immutable
   public static class InstallOptions {
 
-    private boolean share = false;
-    private boolean include = false;
+    private final boolean share;
+    private final boolean include;
 
     private InstallOptions() {
+      this(false, false);
+    }
+
+    private InstallOptions(boolean share, boolean include) {
+      this.share = share;
+      this.include = include;
     }
 
     /**
@@ -306,20 +313,18 @@ public class PgDeploy {
       return new InstallOptions();
     }
 
-    /** Add the <tt>share</tt> folder and return itself
+    /** Returns a copy of itself with <tt>share</tt> set to true
      * @return Itself
      */
     public InstallOptions withShare() {
-      share = true;
-      return this;
+      return new InstallOptions(true, include);
     }
 
-    /** Add the <tt>include</tt> folder and return itself
+    /** Returns a copy of itself with <tt>include</tt> set to true
      * @return Itself
      */
     public InstallOptions withInclude() {
-      include = true;
-      return this;
+      return new InstallOptions(share, true);
     }
 
     List<PostgresInstallationFolder> toFolderList() {
