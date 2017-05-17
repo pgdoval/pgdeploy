@@ -28,6 +28,7 @@ import com.ongres.pgdeploy.pgconfig.DefaultPropertyParser;
 import com.ongres.pgdeploy.pgconfig.PostgresConfig;
 import com.ongres.pgdeploy.pgconfig.properties.DataType;
 import com.ongres.pgdeploy.pgconfig.properties.Property;
+import com.ongres.pgdeploy.pgconfig.properties.PropertyValue;
 import com.ongres.pgdeploy.pgconfig.properties.Unit;
 import com.ongres.pgdeploy.wrappers.postgresqlconf.BasicUpdateLinesStrategy;
 import com.ongres.pgdeploy.wrappers.postgresqlconf.PostgreSqlConfWrapper;
@@ -53,7 +54,7 @@ import static org.mockito.Mockito.spy;
  * Created by pablo on 4/05/17.
  */
 @RunWith(Parameterized.class)
-public class PostgreSqlConfWrapperTest {
+public class PostgreSqlConfWrapperCurrentPropertiesTest {
 
   private PostgresConfig config;
 
@@ -117,7 +118,9 @@ public class PostgreSqlConfWrapperTest {
         .parse(anyString());
 
 
-    config = new PostgresConfig.Builder(spy).withProperty("a", "value").build();
+    config = new PostgresConfig.Builder(spy)
+        .withProperty("a", "value")
+        .build();
 
   }
 

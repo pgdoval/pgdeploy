@@ -45,6 +45,10 @@ public class PropertyValue<T> {
     return unit;
   }
 
+  public String toWritableString() {
+    return value.toString() + unit.getUnitName();
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {

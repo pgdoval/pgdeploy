@@ -81,7 +81,7 @@ public class BasicUpdateLinesStrategy implements UpdateLinesStrategy {
 
     newProperties
         .map(entry -> new AbstractMap.SimpleEntry<>(
-            entry.getKey().getName(), entry.getValue().getValue().toString()))
+            entry.getKey().getName(), entry.getValue().toWritableString()))
         .forEachOrdered(entry -> {
 
           int indexOfProperty = -1;
