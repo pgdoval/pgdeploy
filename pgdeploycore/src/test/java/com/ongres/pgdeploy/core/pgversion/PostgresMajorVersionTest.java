@@ -34,10 +34,10 @@ public class PostgresMajorVersionTest {
   @Test
   public void test() {
     PostgresMajorVersion ten = new Post10PostgresMajorVersion(10);
-    PostgresMajorVersion ten2 = new Post10PostgresMajorVersion(10);
+    PostgresMajorVersion ten2 = PostgresMajorVersion.fromString("10").get();
     PostgresMajorVersion eleven = new Post10PostgresMajorVersion(11);
     PostgresMajorVersion ninefive = new Pre10PostgresMajorVersion(9,5);
-    PostgresMajorVersion ninefive2 = new Pre10PostgresMajorVersion(9,5);
+    PostgresMajorVersion ninefive2 = PostgresMajorVersion.fromString("9.5").get();
     PostgresMajorVersion ninethree = new Pre10PostgresMajorVersion(9,3);
     PostgresMajorVersion eightfive = new Pre10PostgresMajorVersion(8,5);
     PostgresMajorVersion tenzero = new Pre10PostgresMajorVersion(10,0);
@@ -49,6 +49,11 @@ public class PostgresMajorVersionTest {
     assertNotEquals(ninefive, eightfive);
     assertNotEquals(ten, eleven);
     assertNotEquals(ten, tenzero);
+
+    assertFalse(PostgresMajorVersion.fromString("9.5.2").isPresent());
+    assertFalse(PostgresMajorVersion.fromString("").isPresent());
+    assertFalse(PostgresMajorVersion.fromString("a").isPresent());
+    assertFalse(PostgresMajorVersion.fromString("5.t").isPresent());
 
   }
 }

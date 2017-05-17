@@ -26,6 +26,8 @@ package com.ongres.pgdeploy.core.pgversion;
 
 import net.jcip.annotations.Immutable;
 
+import java.util.Optional;
+
 @Immutable
 public abstract class PostgresMajorVersion {
   protected final int first;
@@ -34,6 +36,33 @@ public abstract class PostgresMajorVersion {
   PostgresMajorVersion(int first, int second) {
     this.first = first;
     this.second = second;
+  }
+
+  /** Returns an instance of the class following a received String
+   * @param s The string received. It should comply to one of these two patterns:
+   *          <ul>
+   *          <li>"number": A Post10PostgresMajorVersion with that version number is returned</li>
+   *          <li>"n1.n2": A Pre10PostgresMajorVersion with those version numbers is returned</li>
+   *          </ul>
+   *          For any other type of String, the result will be Optional.empty()
+   * @return
+   */
+  public static Optional<PostgresMajorVersion> fromString(String s) {
+    String [] star = s.split("\\.");
+
+    try {
+      if (star.length == 1) {
+        return Optional.of(new Post10PostgresMajorVersion(Integer.parseInt(star[0])));
+      }
+      if (star.length == 2) {
+        return Optional.of(
+            new Pre10PostgresMajorVersion(Integer.parseInt(star[0]), Integer.parseInt(star[1])));
+      }
+    } catch (NumberFormatException e) {
+      return Optional.empty();
+    }
+
+    return Optional.empty();
   }
 
   @Override
