@@ -13,7 +13,7 @@ import java.util.Arrays;
 public class ConcretePostgresInstallationSupplier extends AbstractPostgresInstallationSupplier {
 
   public ConcretePostgresInstallationSupplier() throws URISyntaxException {
-    super(new Pre10PostgresMajorVersion(9, 6), 2, Platform.LINUX,
+    super(new Pre10PostgresMajorVersion(9, 6), 2, new Platform("Linux", "x64"),
         Paths.get(ConcretePostgresInstallationSupplier
             .class.getProtectionDomain().getCodeSource().getLocation().getPath())
             .resolve("code.zip"));

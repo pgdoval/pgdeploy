@@ -52,6 +52,7 @@ public class PgDeployRetrieveInstallationTest {
   private Path realInstallationPath = new RelativeRoute(Arrays.asList("src", "test", "resources", "installation")).asRelativePath();
 
   private PgDeploy pgDeploy = new PgDeploy(new ArrayList<>());
+  private Platform linuxPlatform = new Platform("Linux", "x64");
 
   @Test (expected = IOException.class)
   public void retrieveNonExistentInstallation() throws Exception {
@@ -74,7 +75,7 @@ public class PgDeployRetrieveInstallationTest {
   public void retrieveValidInstallationWithSupplier() throws Exception {
 
     PostgresInstallationSupplier supplier = new MockedPostgresInstallationSupplier(
-        new Pre10PostgresMajorVersion(9, 5), 0, Platform.LINUX, null);
+        new Pre10PostgresMajorVersion(9, 5), 0, linuxPlatform, null);
 
     PostgresInstallation installation = pgDeploy.retrieveInstallation(supplier, realInstallationPath);
     assertEquals(supplier, installation.getRouter());
@@ -111,7 +112,7 @@ public class PgDeployRetrieveInstallationTest {
   @Test
   public void retrieveValidClusterWithSupplier() throws Exception {
     PostgresInstallationSupplier supplier = new MockedPostgresInstallationSupplier(
-        new Pre10PostgresMajorVersion(9, 5), 0, Platform.LINUX, null);
+        new Pre10PostgresMajorVersion(9, 5), 0, linuxPlatform, null);
 
     PostgresCluster cluster = pgDeploy.retrieveCluster(realClusterPath, realInstallationPath, supplier);
     assertNotNull(cluster);

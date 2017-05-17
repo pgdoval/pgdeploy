@@ -76,7 +76,7 @@ public class AbstractPostgresInstallationSupplierUnzipFoldersTest {
     RelativeRoute route = new RelativeRoute(folders);
 
     return new MockedPostgresInstallationSupplier(
-        null, 0, Platform.LINUX, null, route);
+        null, 0, new Platform("Linux", "x64"), null, route);
 
   }
 

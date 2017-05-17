@@ -24,8 +24,46 @@
  */
 package com.ongres.pgdeploy.core;
 
-public enum Platform {
-  LINUX,
-  WINDOWS,
-  MACOS
+import net.jcip.annotations.Immutable;
+
+import java.util.Locale;
+
+@Immutable
+public class Platform {
+  private final String os;
+  private final String architecture;
+
+
+  /** Both params are transformed to uppercase (using English locale), just in case a user enters
+   * linux and Linux in two different moments. They have to be case-independent
+   */
+  public Platform(String os, String architecture) {
+    this.os = os.toUpperCase(Locale.ENGLISH);
+    this.architecture = architecture.toUpperCase(Locale.ENGLISH);
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+
+    Platform platform1 = (Platform) o;
+
+    if (this.os != null ? !this.os.equals(platform1.os) : platform1.os != null) {
+      return false;
+    }
+    return architecture != null
+        ? architecture.equals(platform1.architecture) : platform1.architecture == null;
+  }
+
+  @Override
+  public int hashCode() {
+    int result = os != null ? os.hashCode() : 0;
+    result = 31 * result + (architecture != null ? architecture.hashCode() : 0);
+    return result;
+  }
 }
