@@ -38,7 +38,6 @@ public class MockedParser implements PropertyParser{
 
   @Override
   public Optional<Property> parse(String property) {
-    System.out.println(Unit.byteList);
     if (Objects.equals(property, "prop1")) {
       return Optional.of(new Property("prop1", false, DataType.INTEGER, Unit.byteList));
     }

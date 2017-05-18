@@ -119,7 +119,7 @@ public class Property {
 
     if (!availableUnits.contains(value.getUnit())) {
       throw UnitNotAvailableForPropertyException.fromValues(
-          availableUnits, name, value.getValue().toString());
+          availableUnits, name, value.toWritableString());
     }
 
     if (!(value.getValue().getClass().isAssignableFrom(type.getClazz()))) {

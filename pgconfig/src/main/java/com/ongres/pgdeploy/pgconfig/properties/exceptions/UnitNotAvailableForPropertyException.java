@@ -29,7 +29,7 @@ import com.ongres.pgdeploy.pgconfig.properties.Unit;
 import java.util.List;
 import java.util.stream.Collectors;
 
- 
+
 public class UnitNotAvailableForPropertyException extends Exception {
 
   public UnitNotAvailableForPropertyException(String s) {
@@ -39,18 +39,29 @@ public class UnitNotAvailableForPropertyException extends Exception {
   public static UnitNotAvailableForPropertyException fromValues(
       List<Unit> availableUnits, String propertyName, String propertyValue) {
 
-    String collected = availableUnits.stream()
-        .map(Enum::name)
-        .collect(Collectors.joining(", "));
-
     StringBuilder sb = new StringBuilder();
 
-    sb.append("Expected that the unit of the value ");
-    sb.append(propertyValue);
-    sb.append(" for property ");
-    sb.append(propertyName);
-    sb.append(" would be one of these: ");
-    sb.append(collected);
+    if ((availableUnits.contains(Unit.NONE) && availableUnits.size() == 1)
+            || availableUnits.isEmpty()) {
+
+      sb.append("Expected no unit for value ");
+      sb.append(propertyValue);
+      sb.append(" for property ");
+      sb.append(propertyName);
+
+    } else {
+
+      String collected = availableUnits.stream()
+          .map(Enum::name)
+          .collect(Collectors.joining(", "));
+
+      sb.append("Expected that the unit of the value ");
+      sb.append(propertyValue);
+      sb.append(" for property ");
+      sb.append(propertyName);
+      sb.append(" would be one of these: ");
+      sb.append(collected);
+    }
 
     return new UnitNotAvailableForPropertyException(sb.toString());
   }
