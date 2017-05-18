@@ -24,6 +24,7 @@
  */
 package com.ongres.pgdeploy.core;
 
+import com.google.common.base.Preconditions;
 import com.ongres.pgdeploy.core.pgversion.PostgresMajorVersion;
 
 import net.jcip.annotations.Immutable;
@@ -37,17 +38,17 @@ public class PostgresInstallationSupplierFeatures {
 
   public PostgresInstallationSupplierFeatures(
       PostgresMajorVersion major, int minor, Platform platform, String extraVersion) {
-    this.major = major;
+    this.major = Preconditions.checkNotNull(major);
     this.minor = minor;
-    this.platform = platform;
+    this.platform = Preconditions.checkNotNull(platform);
     this.extraVersion = extraVersion;
   }
 
   public PostgresInstallationSupplierFeatures(
       PostgresMajorVersion major, int minor, Platform platform) {
-    this.major = major;
+    this.major = Preconditions.checkNotNull(major);
     this.minor = minor;
-    this.platform = platform;
+    this.platform = Preconditions.checkNotNull(platform);
     this.extraVersion = null;
   }
 

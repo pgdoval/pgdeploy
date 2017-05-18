@@ -73,7 +73,10 @@ public class PgDeployInstallTest {
     doNothing().when(spy)
         .unpackFolders(any(Path.class), anyList());
 
-    suppliers.add(mockedSupplier);
+    when(spy.getRouter()).thenCallRealMethod();
+    when(spy.getParser()).thenCallRealMethod();
+
+    suppliers.add(spy);
 
     pgDeploy = new PgDeploy(suppliers);
   }
@@ -93,7 +96,7 @@ public class PgDeployInstallTest {
     //when
     PostgresInstallation installation = null;
 
-    installation = pgDeploy.install(mockedSupplier, options, path);
+    installation = pgDeploy.install(spy, options, path);
 
     //then
     //the installation process must check itself that the destination
@@ -101,8 +104,8 @@ public class PgDeployInstallTest {
     assertNotNull(installation);
     assertEquals(path, installation.getPath());
 
-    verify(mockedSupplier, times(1)).unpackFolders(path,options.toFolderList());
-    verify(mockedSupplier, times(1)).checkInstallation(path,options.toFolderList());
+    verify(spy, times(1)).unpackFolders(path,options.toFolderList());
+    verify(spy, times(1)).checkInstallation(path,options.toFolderList());
 
   }
 

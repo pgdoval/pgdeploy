@@ -82,25 +82,24 @@ public class Main {
       options.add(new Options("Stop", "stop"));
 
 
+      StringBuilder prompt = new StringBuilder();
+      prompt.append("\n\n\n");
+      prompt.append((supplier == null) ? "Supplier is null." : "Got a supplier");
+      prompt.append("\n");
+      prompt.append((installation == null) ? "Installation is null." : "Got an installation");
+      prompt.append("\n");
+      prompt.append((cluster == null) ? "Cluster is null." : "Got a cluster");
+      prompt.append("\n");
+      prompt.append((logFile == null) ? "LogFile is null." : "Got a logFile");
+      prompt.append("\n\n");
+      prompt.append("What do you want to do?");
+      System.out.println(prompt.toString());
+
       Map<Integer, Options> optionsWithIndex = IntStream.range(0, options.size())
           .mapToObj(i -> new AbstractMap.SimpleEntry<Integer, Options>(i + 1, options.get(i)))
           .collect(Collectors.toMap(
               AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue));
 
-
-      StringBuilder prompt = new StringBuilder();
-      prompt.append("\n\n\n");
-      prompt.append((supplier == null)? "Supplier is null." : "Got a supplier");
-      prompt.append("\n");
-      prompt.append((installation == null)? "Installation is null." : "Got an installation");
-      prompt.append("\n");
-      prompt.append((cluster == null)? "Cluster is null." : "Got a cluster");
-      prompt.append("\n");
-      prompt.append((logFile == null)? "LogFile is null." : "Got a logFile");
-      prompt.append("\n\n");
-      prompt.append("What do you want to do?");
-
-      System.out.println(prompt.toString());
       optionsWithIndex.forEach( (key, value) -> System.out.println(key + " - " + value.text));
 
       int selectedInt = scanner.nextInt();
@@ -156,7 +155,6 @@ public class Main {
   }
 
   private static Optional<PostgresInstallationSupplier> getSupplier(PgDeploy pgDeploy) {
-    System.out.println("Find a supplier");
 
     int first = getIntegerInputForSentence("Enter first number from major:");
     int second = getIntegerInputForSentence(
@@ -191,7 +189,7 @@ public class Main {
 
     } catch (BadInstallationException | ExtraFoldersFoundException | IOException
         | NonWritableDestinationException | UnreachableBinariesException e) {
-      System.out.println(e.getMessage() + "\nNothing changed.");
+      System.out.println(e.getMessage());
     }
     return Optional.empty();
   }
@@ -218,7 +216,7 @@ public class Main {
       ));
     } catch (BadClusterException | IOException | InterruptedException
         | ClusterDirectoryNotEmptyException | BadProcessExecutionException e) {
-      System.out.println(e.getMessage() + "\nNothing changed.");
+      System.out.println(e.getMessage());
     }
     return Optional.empty();
   }
@@ -234,7 +232,7 @@ public class Main {
     } catch (IOException | BadProcessExecutionException
         | PropertyNotFoundException | InterruptedException
         | WrongTypePropertyException | UnitNotAvailableForPropertyException e) {
-      System.out.println(e.getMessage() + "\nNothing changed.");
+      System.out.println(e.getMessage());
     }
   }
 
@@ -245,7 +243,7 @@ public class Main {
       System.out.println("Cluster started!");
     } catch (BadProcessExecutionException | IOException
         | InterruptedException e) {
-      System.out.println(e.getMessage() + "\nNothing changed.");
+      System.out.println(e.getMessage());
     }
   }
 
@@ -298,7 +296,7 @@ public class Main {
     } catch (IOException | BadProcessExecutionException
         | PropertyNotFoundException | InterruptedException
         | WrongTypePropertyException | UnitNotAvailableForPropertyException e) {
-      System.out.println(e.getMessage() + "\nNothing changed.");
+      System.out.println(e.getMessage());
     }
   }
 

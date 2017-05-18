@@ -38,6 +38,7 @@
  */
 package com.ongres.pgdeploy.installations;
 
+import com.google.common.base.Preconditions;
 import com.ongres.pgdeploy.clusters.ConcretePostgresCluster;
 import com.ongres.pgdeploy.clusters.PostgresCluster;
 import com.ongres.pgdeploy.clusters.PostgresClusterCreationOptions;
@@ -67,9 +68,9 @@ public class ConcretePostgresInstallation extends PostgresInstallation {
   }
 
   public ConcretePostgresInstallation(Router router, PropertyParser parser, Path path) {
-    this.router = router;
-    this.parser = parser;
-    this.path = path;
+    this.router = Preconditions.checkNotNull(router);
+    this.parser = Preconditions.checkNotNull(parser);
+    this.path = Preconditions.checkNotNull(path);
   }
 
   public Router getRouter() {
@@ -91,6 +92,8 @@ public class ConcretePostgresInstallation extends PostgresInstallation {
       @Nonnull Path destination, PostgresClusterCreationOptions options)
       throws BadClusterException, IOException,
       InterruptedException, ClusterDirectoryNotEmptyException, BadProcessExecutionException {
+
+    Preconditions.checkNotNull(destination);
 
     if (Files.exists(destination)) {
 
@@ -115,11 +118,14 @@ public class ConcretePostgresInstallation extends PostgresInstallation {
 
   @Override
   public void checkCluster(@Nonnull Path destination) throws BadClusterException {
+    Preconditions.checkNotNull(destination);
+
     throwIfNotExists(router.routeToPgHbaConf(destination));
     throwIfNotExists(router.routeToPostgresqlConf(destination));
   }
 
   private void throwIfNotExists(@Nonnull Path toCheck) throws BadClusterException {
+    Preconditions.checkNotNull(toCheck);
     if (!Files.exists(toCheck)) {
       throw BadClusterException.fromPath(toCheck);
     }

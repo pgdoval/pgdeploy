@@ -38,6 +38,7 @@
  */
 package com.ongres.pgdeploy.clusters;
 
+import com.google.common.base.Preconditions;
 import com.ongres.pgdeploy.core.router.DefaultRouter;
 import com.ongres.pgdeploy.core.router.Router;
 import com.ongres.pgdeploy.installations.PostgresInstallation;
@@ -56,6 +57,7 @@ import java.nio.file.Path;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
  
@@ -116,8 +118,10 @@ public class ConcretePostgresCluster extends PostgresCluster {
   }
 
   @Override
-  public void config(PostgresConfig config, @Nullable Path logFile)
+  public void config(@Nonnull PostgresConfig config, @Nullable Path logFile)
       throws IOException, BadProcessExecutionException, InterruptedException {
+
+    Preconditions.checkNotNull(config);
 
     Status status = status(null);
     PostgreSqlConfWrapper.updateConfFile(router.routeToPostgresqlConf(directory), config);
@@ -139,8 +143,10 @@ public class ConcretePostgresCluster extends PostgresCluster {
   }
 
   @Override
-  public void setPgHbaConf(String content, @Nullable Path logFile)
+  public void setPgHbaConf(@Nonnull String content, @Nullable Path logFile)
       throws IOException, BadProcessExecutionException, InterruptedException {
+
+    Preconditions.checkNotNull(content);
 
     PgHbaConfWrapper.overwriteConf(router.routeToPgHbaConf(directory),content);
     pgCtlWrapper.restart(logFile);
@@ -148,8 +154,11 @@ public class ConcretePostgresCluster extends PostgresCluster {
   }
 
   @Override
-  public void setPgHbaConf(Path originalFile, @Nullable Path logFile)
+  public void setPgHbaConf(@Nonnull Path originalFile, @Nullable Path logFile)
       throws IOException, BadProcessExecutionException, InterruptedException {
+
+    Preconditions.checkNotNull(originalFile);
+
     setPgHbaConf(Files.lines(originalFile).collect(Collectors.joining("\n")), logFile);
   }
 }

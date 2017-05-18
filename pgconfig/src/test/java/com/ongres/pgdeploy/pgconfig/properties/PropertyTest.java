@@ -157,7 +157,7 @@ public class PropertyTest {
     result.add(new Object []{INTEGER, Unit.byteList, PropertyValue.kb(9L), 9L, KB, null});
 
     //Nulls
-    result.add(new Object []{INTEGER, Unit.byteList, null, 9, TB, IllegalArgumentException.class});
+    result.add(new Object []{INTEGER, Unit.byteList, null, 9, TB, NullPointerException.class});
 
 
     return result;

@@ -46,6 +46,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
  
@@ -138,25 +139,25 @@ public abstract class PostgresCluster {
    *     it in an empty folder, a non-existing folder, etc.
    * @throws InterruptedException If the execution of the pg_ctl process is interrupted
    */
-  public abstract void config(PostgresConfig config, @Nullable Path logFile)
+  public abstract void config(@Nonnull PostgresConfig config, @Nullable Path logFile)
       throws IOException, BadProcessExecutionException, InterruptedException;
 
   public abstract PostgresConfig.Builder createConfigBuilder();
 
-  public void setPgHbaConf(String content)
+  public void setPgHbaConf(@Nonnull String content)
       throws IOException, BadProcessExecutionException, InterruptedException {
     setPgHbaConf(content, null);
   }
 
-  public abstract void setPgHbaConf(String content, @Nullable Path logFile)
+  public abstract void setPgHbaConf(@Nonnull String content, @Nullable Path logFile)
       throws IOException, BadProcessExecutionException, InterruptedException;
 
-  public void setPgHbaConf(Path originalFile)
+  public void setPgHbaConf(@Nonnull Path originalFile)
       throws IOException, BadProcessExecutionException, InterruptedException {
     setPgHbaConf(originalFile, null);
   }
 
-  public abstract void setPgHbaConf(Path originalFile, @Nullable Path logFile)
+  public abstract void setPgHbaConf(@Nonnull Path originalFile, @Nullable Path logFile)
       throws IOException, BadProcessExecutionException, InterruptedException;
 
 

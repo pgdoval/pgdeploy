@@ -24,23 +24,13 @@
  */
 package com.ongres.pgdeploy.pgconfig.properties;
 
+import com.google.common.base.Preconditions;
 import com.ongres.pgdeploy.pgconfig.properties.exceptions.UnitNotAvailableForPropertyException;
 import com.ongres.pgdeploy.pgconfig.properties.exceptions.WrongTypePropertyException;
 import net.jcip.annotations.Immutable;
 
-import java.util.AbstractMap;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-import javax.annotation.Nonnull;
-
- 
 @Immutable
 public class Property {
 
@@ -120,11 +110,10 @@ public class Property {
    *     a unit from a property whose <tt>availableUnits</tt> don't include
    *     {@link Unit}<tt>.NONE</tt>
    */
-  public void validate(PropertyValue value) 
+  public void validate(PropertyValue value)
       throws WrongTypePropertyException, UnitNotAvailableForPropertyException {
-    if (value == null) {
-      throw new IllegalArgumentException("Illegal null argument for PropertyValue.validate");
-    }
+
+    Preconditions.checkNotNull(value);
 
     if (!availableUnits.contains(value.getUnit())) {
       throw UnitNotAvailableForPropertyException.fromValues(

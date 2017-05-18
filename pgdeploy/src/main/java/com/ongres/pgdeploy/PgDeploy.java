@@ -38,6 +38,7 @@
  */
 package com.ongres.pgdeploy;
 
+import com.google.common.base.Preconditions;
 import com.ongres.pgdeploy.clusters.ConcretePostgresCluster;
 import com.ongres.pgdeploy.clusters.PostgresCluster;
 import com.ongres.pgdeploy.core.InstallationChecker;
@@ -99,7 +100,7 @@ public class PgDeploy {
    *     no complying supplier has been found.
    */
   public Optional<PostgresInstallationSupplier> findSupplier(
-      PostgresMajorVersion major, int minor, @Nonnull Platform platform) {
+      @Nonnull PostgresMajorVersion major, int minor, @Nonnull Platform platform) {
     return findSupplier( new PostgresInstallationSupplierFeatures(major, minor, platform));
   }
 
@@ -115,7 +116,8 @@ public class PgDeploy {
    *     no complying supplier has been found.
    */
   public Optional<PostgresInstallationSupplier> findSupplier(
-      PostgresMajorVersion major, int minor, @Nonnull Platform platform, String extraVersion) {
+      @Nonnull PostgresMajorVersion major, int minor,
+      @Nonnull Platform platform, String extraVersion) {
 
     return findSupplier(
         new PostgresInstallationSupplierFeatures(major, minor, platform, extraVersion));
@@ -176,6 +178,10 @@ public class PgDeploy {
       throws BadInstallationException, ExtraFoldersFoundException, IOException,
       NonWritableDestinationException, UnreachableBinariesException {
 
+    Preconditions.checkNotNull(supplier);
+    Preconditions.checkNotNull(options);
+    Preconditions.checkNotNull(destination);
+
     List<PostgresInstallationFolder> folders = options.toFolderList();
     supplier.unpackFolders(destination, folders);
     supplier.checkInstallation(destination, folders);
@@ -231,6 +237,10 @@ public class PgDeploy {
       @Nonnull PropertyParser parser,
       @Nonnull Path destination)
       throws BadInstallationException, IOException {
+
+    Preconditions.checkNotNull(router);
+    Preconditions.checkNotNull(parser);
+    Preconditions.checkNotNull(destination);
 
     if (!Files.exists(destination)) {
       throw new IOException("Installation folder " + destination.toString() + "not found");

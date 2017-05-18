@@ -45,6 +45,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -90,11 +91,10 @@ public class PostgreSqlConfWrapperNewPropertiesTest {
   public void test() throws Exception {
 
     String lines = "";
-    String expectedResult = "\nprop=value\nunitProp=5.3MB";
+    List<String> expectedResult = Arrays.asList("","prop=value","unitProp=5.3MB");
     List<String> result = strategy.updateLines(Arrays.asList(lines.split("\n")), config.asStream());
 
-    assertEquals(expectedResult,
-        result.stream().collect(Collectors.joining("\n")));
+    assertTrue(expectedResult.containsAll(result) && result.containsAll(expectedResult));
 
   }
 

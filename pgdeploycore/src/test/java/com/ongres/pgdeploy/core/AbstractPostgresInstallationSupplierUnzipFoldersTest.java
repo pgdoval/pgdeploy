@@ -26,6 +26,7 @@ package com.ongres.pgdeploy.core;
 
 import com.ongres.pgdeploy.core.exceptions.NonWritableDestinationException;
 import com.ongres.pgdeploy.core.exceptions.UnreachableBinariesException;
+import com.ongres.pgdeploy.core.pgversion.PostgresMajorVersion;
 import org.junit.After;
 import org.junit.Test;
 
@@ -76,7 +77,7 @@ public class AbstractPostgresInstallationSupplierUnzipFoldersTest {
     RelativeRoute route = new RelativeRoute(folders);
 
     return new MockedPostgresInstallationSupplier(
-        null, 0, new Platform("Linux", "x64"), null, route);
+        PostgresMajorVersion.fromString("10").get(), 0, new Platform("Linux", "x64"), null, route);
 
   }
 
