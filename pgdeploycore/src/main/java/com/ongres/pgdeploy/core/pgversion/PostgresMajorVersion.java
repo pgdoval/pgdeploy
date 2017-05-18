@@ -24,9 +24,12 @@
  */
 package com.ongres.pgdeploy.core.pgversion;
 
+import com.google.common.base.Preconditions;
 import net.jcip.annotations.Immutable;
 
 import java.util.Optional;
+
+import javax.annotation.Nonnull;
 
 @Immutable
 public abstract class PostgresMajorVersion {
@@ -47,8 +50,9 @@ public abstract class PostgresMajorVersion {
    *          For any other type of String, the result will be Optional.empty()
    * @return
    */
-  public static Optional<PostgresMajorVersion> fromString(String s) {
-    String [] star = s.split("\\.");
+  public static Optional<PostgresMajorVersion> fromString(@Nonnull String s) {
+
+    String [] star = Preconditions.checkNotNull(s).split("\\.");
 
     try {
       if (star.length == 1) {

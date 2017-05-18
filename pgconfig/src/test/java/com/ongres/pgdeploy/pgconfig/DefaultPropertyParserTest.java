@@ -24,6 +24,7 @@
  */
 package com.ongres.pgdeploy.pgconfig;
 
+import com.google.common.collect.ImmutableList;
 import com.ongres.pgdeploy.pgconfig.properties.DataType;
 import com.ongres.pgdeploy.pgconfig.properties.Property;
 import com.ongres.pgdeploy.pgconfig.properties.Unit;
@@ -54,7 +55,7 @@ public class DefaultPropertyParserTest {
   public boolean needToRestart;
 
   @Parameterized.Parameter(2)
-  public List<Unit> availableUnits;
+  public ImmutableList<Unit> availableUnits;
 
   @Parameterized.Parameter(3)
   public DataType type;

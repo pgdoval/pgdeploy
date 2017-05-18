@@ -24,6 +24,7 @@
  */
 package com.ongres.pgdeploy.pgconfig.properties;
 
+import com.google.common.collect.ImmutableList;
 import com.ongres.pgdeploy.pgconfig.properties.exceptions.UnitNotAvailableForPropertyException;
 import com.ongres.pgdeploy.pgconfig.properties.exceptions.WrongTypePropertyException;
 import org.junit.Rule;
@@ -49,7 +50,7 @@ public class PropertyTest {
   public DataType type;
 
   @Parameterized.Parameter(1)
-  public List<Unit> availableUnits;
+  public ImmutableList<Unit> availableUnits;
 
   @Parameterized.Parameter(2)
   public PropertyValue<?> objectReceived;

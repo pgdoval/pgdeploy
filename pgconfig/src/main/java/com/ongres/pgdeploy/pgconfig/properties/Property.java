@@ -25,6 +25,7 @@
 package com.ongres.pgdeploy.pgconfig.properties;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
 import com.ongres.pgdeploy.pgconfig.properties.exceptions.UnitNotAvailableForPropertyException;
 import com.ongres.pgdeploy.pgconfig.properties.exceptions.WrongTypePropertyException;
 import net.jcip.annotations.Immutable;
@@ -37,7 +38,7 @@ public class Property {
   private final String name;
   private final boolean needToRestart;
   private final DataType type;
-  private final List<Unit> availableUnits;
+  private final ImmutableList<Unit> availableUnits;
 
 
   public String getName() {
@@ -52,11 +53,12 @@ public class Property {
     return type;
   }
 
-  public List<Unit> getAvailableUnits() {
+  public ImmutableList<Unit> getAvailableUnits() {
     return availableUnits;
   }
 
-  public Property(String name, boolean needToRestart, DataType type, List<Unit> availableUnits) {
+  public Property(
+      String name, boolean needToRestart, DataType type, ImmutableList<Unit> availableUnits) {
     this.name = name;
     this.needToRestart = needToRestart;
     this.type = type;

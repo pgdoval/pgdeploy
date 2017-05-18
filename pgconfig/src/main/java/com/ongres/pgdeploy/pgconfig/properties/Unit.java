@@ -53,15 +53,19 @@ public enum Unit {
     this.unitName = unitName;
   }
 
-  public static final List<Unit> noneList = Collections.singletonList(NONE);
+  public static final ImmutableList<Unit> noneList =
+      ImmutableList.copyOf(Collections.singletonList(NONE));
 
-  public static final List<Unit> byteList = ImmutableList.copyOf(Arrays.asList(KB, MB, GB, TB));
+  public static final ImmutableList<Unit> byteList =
+      ImmutableList.copyOf(Arrays.asList(KB, MB, GB, TB));
 
-  public static final List<Unit> timeList = ImmutableList.copyOf(Arrays.asList(MS, S, MIN, H, D));
+  public static final ImmutableList<Unit> timeList =
+      ImmutableList.copyOf(Arrays.asList(MS, S, MIN, H, D));
 
-  public static final List<Unit> allList = ImmutableList.copyOf(Arrays.asList(values()));
+  public static final ImmutableList<Unit> allList =
+      ImmutableList.copyOf(Arrays.asList(values()));
 
-  public static List<Unit> getListFromUnit(Unit unit) {
+  public static ImmutableList<Unit> getListFromUnit(Unit unit) {
     if (byteList.contains(unit)) {
       return byteList;
     } else if (timeList.contains(unit)) {

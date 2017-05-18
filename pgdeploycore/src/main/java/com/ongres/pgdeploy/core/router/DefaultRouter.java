@@ -25,20 +25,21 @@
 package com.ongres.pgdeploy.core.router;
 
 import com.ongres.pgdeploy.core.RelativeRoute;
+import net.jcip.annotations.Immutable;
 
 import java.nio.file.Path;
 import java.util.Arrays;
 
- 
+@Immutable
 public class DefaultRouter implements Router {
 
-  protected RelativeRoute postgresqlConfRoute =
+  protected final RelativeRoute postgresqlConfRoute =
       new RelativeRoute(Arrays.asList("postgresql.conf"));
-  protected RelativeRoute pgHbaConfRoute = new RelativeRoute(Arrays.asList("pg_hba.conf"));
-  protected RelativeRoute initDbRoute = new RelativeRoute(Arrays.asList("bin", "initdb"));
-  protected RelativeRoute pgCtlRoute = new RelativeRoute(Arrays.asList("bin", "pg_ctl"));
+  protected final RelativeRoute pgHbaConfRoute = new RelativeRoute(Arrays.asList("pg_hba.conf"));
+  protected final RelativeRoute initDbRoute = new RelativeRoute(Arrays.asList("bin", "initdb"));
+  protected final RelativeRoute pgCtlRoute = new RelativeRoute(Arrays.asList("bin", "pg_ctl"));
 
-  private DefaultRouter() {
+  protected DefaultRouter() {
   }
 
   public static DefaultRouter getInstance() {

@@ -48,6 +48,7 @@ import com.ongres.pgdeploy.pgconfig.DefaultPropertyParser;
 import com.ongres.pgdeploy.pgconfig.PropertyParser;
 import com.ongres.pgdeploy.wrappers.InitDbWrapper;
 import com.ongres.pgdeploy.wrappers.exceptions.BadProcessExecutionException;
+import net.jcip.annotations.Immutable;
 
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
@@ -56,7 +57,7 @@ import java.nio.file.Path;
 
 import javax.annotation.Nonnull;
 
-
+@Immutable
 public class ConcretePostgresInstallation extends PostgresInstallation {
 
   private final Router router;

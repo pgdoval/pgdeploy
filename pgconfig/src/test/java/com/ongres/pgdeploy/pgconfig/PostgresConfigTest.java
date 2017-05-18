@@ -52,7 +52,7 @@ public class PostgresConfigTest {
 
   @Test
   public void testWithProperty() throws Exception {
-    PostgresConfig config = builder.withProperty("prop1",PropertyValue.tb(5)).build();
+    PostgresConfig config = builder.withProperty("prop1", PropertyValue.tb(5)).build();
     Map.Entry<Property, PropertyValue> prop = config.asStream().findFirst().get();
 
     assertEquals(new Property("prop1", false, DataType.INTEGER, Unit.byteList), prop.getKey());

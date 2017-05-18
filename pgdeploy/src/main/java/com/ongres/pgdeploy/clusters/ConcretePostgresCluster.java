@@ -49,6 +49,7 @@ import com.ongres.pgdeploy.wrappers.PgCtlWrapper;
 import com.ongres.pgdeploy.wrappers.PgHbaConfWrapper;
 import com.ongres.pgdeploy.wrappers.exceptions.BadProcessExecutionException;
 import com.ongres.pgdeploy.wrappers.postgresqlconf.PostgreSqlConfWrapper;
+import net.jcip.annotations.Immutable;
 
 import java.io.File;
 import java.io.IOException;
@@ -61,7 +62,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
  
-
+@Immutable
 @edu.umd.cs.findbugs.annotations.SuppressFBWarnings(
     value = "URF_UNREAD_FIELD",
     justification = "They will be used, but not yet")

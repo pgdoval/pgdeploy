@@ -24,12 +24,15 @@
  */
 package com.ongres.pgdeploy.clusters;
 
+import net.jcip.annotations.Immutable;
+
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by pablo on 8/05/17.
  */
+@Immutable
 public class PostgresClusterCreationOptions {
 
   private static final String encodingFlag = "-E";
@@ -37,10 +40,10 @@ public class PostgresClusterCreationOptions {
   private static final String superUserFlag = "-U";
   private static final String dataChecksumsFlag = "-k";
 
-  private String encoding;
-  private String locale;
-  private String superUser;
-  private boolean dataChecksums;
+  private final String encoding;
+  private final String locale;
+  private final String superUser;
+  private final boolean dataChecksums;
 
   private PostgresClusterCreationOptions(
       String encoding, String locale, String superUser, boolean dataChecksums) {

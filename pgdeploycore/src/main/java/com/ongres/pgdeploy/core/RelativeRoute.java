@@ -24,15 +24,18 @@
  */
 package com.ongres.pgdeploy.core;
 
+import net.jcip.annotations.Immutable;
+
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Stream;
 
+@Immutable
 public class RelativeRoute {
 
-  private List<String> relativeRoute;
+  private final List<String> relativeRoute;
 
   public RelativeRoute(List<String> relativeRoute) {
     this.relativeRoute = relativeRoute;

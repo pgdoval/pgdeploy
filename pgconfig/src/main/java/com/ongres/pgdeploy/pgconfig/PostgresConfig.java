@@ -29,6 +29,7 @@ import com.ongres.pgdeploy.pgconfig.properties.PropertyValue;
 import com.ongres.pgdeploy.pgconfig.properties.exceptions.PropertyNotFoundException;
 import com.ongres.pgdeploy.pgconfig.properties.exceptions.UnitNotAvailableForPropertyException;
 import com.ongres.pgdeploy.pgconfig.properties.exceptions.WrongTypePropertyException;
+import net.jcip.annotations.Immutable;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -36,7 +37,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 
- 
+@Immutable
 public class PostgresConfig {
 
   private final Map<Property, PropertyValue> innerMap;
@@ -49,6 +50,9 @@ public class PostgresConfig {
     return innerMap.entrySet().stream();
   }
 
+  /**
+   * Reusable builder. After calling build(), it erases its internal state.
+   */
   public static class Builder {
 
     private PropertyParser parser;

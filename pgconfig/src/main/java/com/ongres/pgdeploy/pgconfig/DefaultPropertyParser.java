@@ -44,7 +44,7 @@ public class DefaultPropertyParser implements PropertyParser {
 
   private static String delimiter = "|";
 
-  private static Path file = Paths.get(
+  protected static final Path file = Paths.get(
       DefaultPropertyParser.class.getProtectionDomain().getCodeSource().getLocation().getPath())
       .resolve("pgprops.csv");
 
@@ -98,7 +98,7 @@ public class DefaultPropertyParser implements PropertyParser {
     return chosenUnitOptional.orElse(Unit.NONE);
   }
 
-  private DefaultPropertyParser() {
+  protected DefaultPropertyParser() {
   }
 
   public static DefaultPropertyParser getInstance() {
