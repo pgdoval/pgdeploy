@@ -43,6 +43,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.FileAttribute;
@@ -52,6 +53,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Optional;
+import java.util.Properties;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -82,6 +84,35 @@ public abstract class AbstractPostgresInstallationSupplier implements PostgresIn
       PostgresInstallationSupplierFeatures features, Path routeToZippedCode) {
     this.features = features;
     this.routeToZippedCode = routeToZippedCode;
+  }
+
+  protected AbstractPostgresInstallationSupplier(Path propertiesFile, Path routeToZippedCode) {
+    this(fromProperties(propertiesFile), routeToZippedCode);
+  }
+
+  private static PostgresInstallationSupplierFeatures fromProperties(Path propPath) {
+    try {
+      Properties properties = new Properties();
+      properties.load(Files.newInputStream(propPath));
+      PostgresMajorVersion major = PostgresMajorVersion
+          .fromString(properties.getProperty("major"))
+          .orElseThrow(IllegalArgumentException::new);
+
+      int minor = Integer.parseInt(properties.getProperty("minor"));
+
+      String os = properties.getProperty("os");
+      String arch = properties.getProperty("arch");
+
+      Platform platform = new Platform(os, arch);
+
+      String extra = properties.getProperty("arch", null);
+
+      return new PostgresInstallationSupplierFeatures(major, minor, platform, extra);
+
+    } catch (IOException e) {
+      return null;
+    }
+
   }
 
   /** Simply compares the features required to the ones that the supplier offers.

@@ -1,0 +1,1 @@
+com.ongres.pgdeploy.core.${package.name}.ConcretePostgresInstallationSupplier
