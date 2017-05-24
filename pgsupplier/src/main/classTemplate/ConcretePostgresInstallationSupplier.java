@@ -14,7 +14,6 @@ public class ConcretePostgresInstallationSupplier extends AbstractPostgresInstal
     super(PostgresMajorVersion.fromString("${postgres.major}").orElse(null),
         ${postgres.minor}, new Platform("${postgres.os}", "${postgres.arch}"),
         Paths.get(ConcretePostgresInstallationSupplier
-            .class.getProtectionDomain().getCodeSource().getLocation().getPath())
-            .resolve("code.zip"));
+            .class.getProtectionDomain().getCodeSource().getLocation().getPath()), true);
   }
 }

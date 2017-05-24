@@ -32,6 +32,7 @@ import com.ongres.pgdeploy.core.pgversion.PostgresMajorVersion;
 import com.ongres.pgdeploy.core.router.DefaultRouter;
 import com.ongres.pgdeploy.core.router.Router;
 import com.ongres.pgdeploy.core.unpack.UnpackFoldersStrategy;
+import com.ongres.pgdeploy.core.unpack.UnzipFoldersFromJarStrategy;
 import com.ongres.pgdeploy.core.unpack.UnzipFoldersStrategy;
 import com.ongres.pgdeploy.pgconfig.DefaultPropertyParser;
 import com.ongres.pgdeploy.pgconfig.PropertyParser;
@@ -66,53 +67,29 @@ public abstract class AbstractPostgresInstallationSupplier implements PostgresIn
 
   protected final Path routeToZippedCode;
 
+  protected final boolean fromJar;
+
   protected AbstractPostgresInstallationSupplier( PostgresMajorVersion majorVersion,
-      int minorVersion, Platform platform, Path routeToZippedCode) {
+      int minorVersion, Platform platform, Path path, boolean fromJar) {
 
     this( new PostgresInstallationSupplierFeatures(majorVersion, minorVersion, platform),
-        routeToZippedCode);
+        path, fromJar);
   }
 
   protected AbstractPostgresInstallationSupplier( PostgresMajorVersion majorVersion,
-      int minorVersion, Platform platform, String extraVersion, Path routeToZippedCode) {
+      int minorVersion, Platform platform, String extraVersion, Path path,
+      boolean fromJar) {
 
     this( new PostgresInstallationSupplierFeatures(
-        majorVersion, minorVersion, platform, extraVersion), routeToZippedCode);
+        majorVersion, minorVersion, platform, extraVersion), path, fromJar);
   }
 
   protected AbstractPostgresInstallationSupplier(
-      PostgresInstallationSupplierFeatures features, Path routeToZippedCode) {
+      PostgresInstallationSupplierFeatures features, Path path,
+      boolean fromJar) {
     this.features = features;
-    this.routeToZippedCode = routeToZippedCode;
-  }
-
-  protected AbstractPostgresInstallationSupplier(Path propertiesFile, Path routeToZippedCode) {
-    this(fromProperties(propertiesFile), routeToZippedCode);
-  }
-
-  private static PostgresInstallationSupplierFeatures fromProperties(Path propPath) {
-    try {
-      Properties properties = new Properties();
-      properties.load(Files.newInputStream(propPath));
-      PostgresMajorVersion major = PostgresMajorVersion
-          .fromString(properties.getProperty("major"))
-          .orElseThrow(IllegalArgumentException::new);
-
-      int minor = Integer.parseInt(properties.getProperty("minor"));
-
-      String os = properties.getProperty("os");
-      String arch = properties.getProperty("arch");
-
-      Platform platform = new Platform(os, arch);
-
-      String extra = properties.getProperty("arch", null);
-
-      return new PostgresInstallationSupplierFeatures(major, minor, platform, extra);
-
-    } catch (IOException e) {
-      return null;
-    }
-
+    this.routeToZippedCode = fromJar ? path.resolve(features.zipFileName()) : path;
+    this.fromJar = fromJar;
   }
 
   /** Simply compares the features required to the ones that the supplier offers.
@@ -126,8 +103,11 @@ public abstract class AbstractPostgresInstallationSupplier implements PostgresIn
   public void unpackFolders(Path destination, List<PostgresInstallationFolder> folders)
       throws IOException, NonWritableDestinationException, UnreachableBinariesException {
 
-    UnpackFoldersStrategy strategy = new UnzipFoldersStrategy();
-    strategy.unpackFolders(destination, folders, routeToZippedCode);
+    UnpackFoldersStrategy strategy = fromJar
+        ? new UnzipFoldersFromJarStrategy(features)
+        : new UnzipFoldersStrategy(routeToZippedCode);
+
+    strategy.unpackFolders(destination, folders);
   }
 
   @Override

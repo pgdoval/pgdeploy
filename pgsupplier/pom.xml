@@ -2,12 +2,8 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <parent>
-        <artifactId>pgdeploy-parent</artifactId>
-        <groupId>com.ongres</groupId>
-        <version>1.0-SNAPSHOT</version>
-    </parent>
 
+    <groupId>com.ongres</groupId>
 
     <modelVersion>4.0.0</modelVersion>
 
@@ -56,35 +52,13 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <version>1.8</version>
-                <executions>
-                    <execution>
-                        <phase>validate</phase>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                        <configuration>
-                            <target>
-                                <echo>Displaying value of properties</echo>
-                                <echo>[dist.path] ${dist.path}</echo>
-                                <echo>[postgres.arch] ${postgres.arch}</echo>
-                                <echo>[postgres.minor] ${postgres.minor}</echo>
-                                <echo>[postgres.url] ${postgres.url}</echo>
-                            </target>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
                 <groupId>com.googlecode.maven-download-plugin</groupId>
                 <artifactId>download-maven-plugin</artifactId>
                 <version>1.3.0</version>
                 <executions>
                     <execution>
                         <id>install-jbpm</id>
-                        <phase>package</phase>
+                        <phase>generate-resources</phase>
                         <goals>
                             <goal>wget</goal>
                         </goals>
@@ -104,7 +78,7 @@
                     <execution>
                         <id>copy-relevant-binaries</id>
                         <!-- here the phase you need -->
-                        <phase>package</phase>
+                        <phase>generate-resources</phase>
                         <goals>
                             <goal>copy-resources</goal>
                         </goals>
@@ -143,14 +117,14 @@
                         </configuration>
                     </execution>
                     <execution>
-                        <id>fill-metainf-template</id>
+                        <id>fill-meta-template</id>
                         <!-- here the phase you need -->
-                        <phase>package</phase>
+                        <phase>generate-resources</phase>
                         <goals>
                             <goal>copy-resources</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${basedir}/target/classes/com/META-INF/services</outputDirectory>
+                            <outputDirectory>${basedir}/target/generated-resources/META-INF/services/</outputDirectory>
                             <encoding>UTF-8</encoding>
                             <resources>
                                 <resource>
@@ -168,14 +142,14 @@
                 <version>1.2</version>
                 <executions>
                     <execution>
-                        <id>remove-a-file</id>
+                        <id>create-zip</id>
                         <goals>
                             <goal>cp</goal>
                         </goals>
-                        <phase>package</phase>
+                        <phase>generate-resources</phase>
                         <configuration>
                             <from>${tmp.code}</from>
-                            <to>${basedir}/target/classes/code.zip</to>
+                            <to>${basedir}/target/generated-resources/postgres_${postgres.major}.${postgres.minor}.${postgres.os}_${postgres.arch}.zip</to>
                         </configuration>
                     </execution>
                 </executions>
@@ -197,13 +171,69 @@
                             </sources>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>add-resource</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>add-resource</goal>
+                        </goals>
+                        <configuration>
+                            <resources>
+                                <resource>
+                                    <directory>${basedir}/target/generated-resources/</directory>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <version>2.2-beta-5</version>
-            </plugin>
+            <!--<plugin>-->
+                <!--<groupId>org.apache.maven.plugins</groupId>-->
+                <!--<artifactId>maven-assembly-plugin</artifactId>-->
+                <!--<executions>-->
+                    <!--<execution>-->
+                        <!--<id>assembler</id>-->
+                        <!--<phase>package</phase>-->
+                        <!--<goals>-->
+                            <!--<goal>single</goal>-->
+                        <!--</goals>-->
+                        <!--<configuration>-->
+                            <!--<descriptors>-->
+                                <!--<descriptor>src/main/assembly.xml</descriptor>-->
+                            <!--</descriptors>-->
+                            <!--<finalName>pgsupplier-${project.version}.jar</finalName>-->
+                            <!--<outputDirectory>${project.build.directory}</outputDirectory>-->
+                            <!--<tarLongFileMode>gnu</tarLongFileMode>-->
+                            <!--<archive>-->
+                                <!--&lt;!&ndash;<manifestFile>${basedir}/target/classes/com/META-INF/services/com.ongres.pgdeploy.core.PostgresInstallationSupplier</manifestFile>&ndash;&gt;-->
+                                <!--<manifest>-->
+                                    <!--<addClasspath>true</addClasspath>-->
+                                <!--</manifest>-->
+                            <!--</archive>-->
+                        <!--</configuration>-->
+                    <!--</execution>-->
+                <!--</executions>-->
+            <!--</plugin>-->
+            <!--<plugin>-->
+            <!--<groupId>org.apache.maven.plugins</groupId>-->
+            <!--<artifactId>maven-jar-plugin</artifactId>-->
+            <!--<executions>-->
+            <!--<execution>-->
+            <!--<id>assembler</id>-->
+            <!--<phase>package</phase>-->
+            <!--<goals>-->
+            <!--<goal>jar</goal>-->
+            <!--</goals>-->
+            <!--<configuration>-->
+            <!--<archive>-->
+            <!--<manifest>-->
+            <!--<addClasspath>true</addClasspath>-->
+            <!--</manifest>-->
+            <!--</archive>-->
+            <!--</configuration>-->
+            <!--</execution>-->
+            <!--</executions>-->
+            <!--</plugin>-->
         </plugins>
     </build>
 

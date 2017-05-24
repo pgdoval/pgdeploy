@@ -31,6 +31,9 @@ import net.jcip.annotations.Immutable;
 
 @Immutable
 public class PostgresInstallationSupplierFeatures {
+  private static final String zipFilePrefix = "postgres_";
+  private static final String separator = ".";
+
   private final PostgresMajorVersion major;
   private final int minor;
   private final Platform platform;
@@ -50,6 +53,21 @@ public class PostgresInstallationSupplierFeatures {
     this.minor = minor;
     this.platform = Preconditions.checkNotNull(platform);
     this.extraVersion = null;
+  }
+
+  public String zipFileName() {
+    String result = zipFilePrefix
+        + major.toFileString()
+        + separator + minor
+        + separator + platform.toFileString();
+
+    if (extraVersion != null) {
+      result += separator + extraVersion;
+    }
+
+    result += ".zip";
+
+    return result;
   }
 
   @Override

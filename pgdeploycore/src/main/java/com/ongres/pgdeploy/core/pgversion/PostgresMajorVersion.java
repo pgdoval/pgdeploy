@@ -69,6 +69,8 @@ public abstract class PostgresMajorVersion {
     return Optional.empty();
   }
 
+  public abstract String toFileString();
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {

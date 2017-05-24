@@ -20,8 +20,11 @@ import com.ongres.pgdeploy.pgconfig.properties.exceptions.UnitNotAvailableForPro
 import com.ongres.pgdeploy.pgconfig.properties.exceptions.WrongTypePropertyException;
 import com.ongres.pgdeploy.wrappers.exceptions.BadProcessExecutionException;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -177,7 +180,8 @@ public class Main {
   }
 
   private static Optional<PostgresInstallation> install(
-      PgDeploy pgDeploy, PostgresInstallationSupplier supplier) {
+      PgDeploy pgDeploy, PostgresInstallationSupplier supplier)
+      throws UnreachableBinariesException, ExtraFoldersFoundException, BadInstallationException, NonWritableDestinationException, IOException {
 
     String home = System.getProperty("user.home");
     Path installationPath = Paths.get(home).resolve(
@@ -190,8 +194,9 @@ public class Main {
     } catch (BadInstallationException | ExtraFoldersFoundException | IOException
         | NonWritableDestinationException | UnreachableBinariesException e) {
       System.out.println(e.getMessage());
+      throw e;
     }
-    return Optional.empty();
+    //return Optional.empty();
   }
 
 

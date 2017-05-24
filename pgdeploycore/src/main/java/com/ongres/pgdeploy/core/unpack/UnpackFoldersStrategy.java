@@ -34,6 +34,6 @@ import java.util.List;
 
 public interface UnpackFoldersStrategy {
 
-  void unpackFolders(Path destination, List<PostgresInstallationFolder> folders, Path fileToUnpack)
+  void unpackFolders(Path destination, List<PostgresInstallationFolder> folders)
       throws IOException, NonWritableDestinationException, UnreachableBinariesException;
 }

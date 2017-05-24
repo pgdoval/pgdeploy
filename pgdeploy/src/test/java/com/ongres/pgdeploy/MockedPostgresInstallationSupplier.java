@@ -46,11 +46,11 @@ import com.ongres.pgdeploy.core.pgversion.PostgresMajorVersion;
 class MockedPostgresInstallationSupplier extends AbstractPostgresInstallationSupplier {
 
   public MockedPostgresInstallationSupplier(PostgresMajorVersion majorVersion, int minorVersion, Platform platform, String extraVersion) {
-    super (majorVersion, minorVersion, platform, extraVersion, null);
+    super (majorVersion, minorVersion, platform, extraVersion, null, false);
   }
 
   public MockedPostgresInstallationSupplier(PostgresMajorVersion majorVersion, int minorVersion, Platform platform, String extraVersion, RelativeRoute route) {
-    super (majorVersion, minorVersion, platform, extraVersion, route.asRelativePath());
+    super (majorVersion, minorVersion, platform, extraVersion, route.asRelativePath(), false);
   }
 
 }
