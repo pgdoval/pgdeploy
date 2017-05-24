@@ -28,4 +28,9 @@ public class Post10PostgresMajorVersion extends PostgresMajorVersion {
   public Post10PostgresMajorVersion(int version) {
     super(version, 0);
   }
+
+  @Override
+  public String toFileString() {
+    return Integer.toString(first);
+  }
 }

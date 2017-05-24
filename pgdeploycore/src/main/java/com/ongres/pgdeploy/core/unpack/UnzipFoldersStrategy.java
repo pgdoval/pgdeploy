@@ -30,10 +30,13 @@ import com.ongres.pgdeploy.core.exceptions.UnreachableBinariesException;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.PosixFilePermission;
@@ -46,73 +49,26 @@ import java.util.zip.ZipFile;
 
 public class UnzipFoldersStrategy implements UnpackFoldersStrategy {
 
+  private Path fileToUnpack;
+
+  public UnzipFoldersStrategy(Path fileToUnpack) {
+    this.fileToUnpack = fileToUnpack;
+  }
+
   @Override
-  @edu.umd.cs.findbugs.annotations.SuppressFBWarnings(
-      value = "RV_RETURN_VALUE_IGNORED_BAD_PRACTICE",
-      justification = "The value itself has no interest")
   public void unpackFolders(
-      Path destination, List<PostgresInstallationFolder> folders, Path fileToUnpack)
+      Path destination, List<PostgresInstallationFolder> folders)
       throws IOException, NonWritableDestinationException, UnreachableBinariesException {
 
-    int buffer = 2048;
+    FileInputStream fis = null;
 
-    File file = fileToUnpack.toFile();
-
-    Set<PosixFilePermission> perms =
-        PosixFilePermissions.fromString("rwxr-xr-x");
-
-    try (ZipFile zip = new ZipFile(file)) {
-      String newPath = destination.toAbsolutePath().toString();
-
-      if (!new File(newPath).mkdir()) {
-        throw new NonWritableDestinationException("Unable to create or open file: " + newPath);
-      }
-
-      Enumeration zipFileEntries = zip.entries();
-
-      while (zipFileEntries.hasMoreElements()) {
-
-        ZipEntry entry = (ZipEntry) zipFileEntries.nextElement();
-        String currentEntry = entry.getName();
-
-        if (!folders.stream().anyMatch(
-            folder -> currentEntry.startsWith(folder.getStringId() + "/"))) {
-          continue;
-        }
-
-        File destFile = new File(newPath, currentEntry);
-
-        File destinationParent = destFile.getParentFile();
-
-        // create the parent directory structure if needed
-        destinationParent.mkdirs();
-
-        if (!entry.isDirectory()) {
-          try (BufferedInputStream is = new BufferedInputStream(
-              zip.getInputStream(entry))) {
-
-            int currentByte;
-            // establish buffer for writing file
-            byte[] data = new byte[buffer];
-
-            // write the current file to disk
-
-            FileOutputStream fos = new FileOutputStream(destFile);
-
-            try (BufferedOutputStream dest = new BufferedOutputStream(fos, buffer)) {
-
-              // read and write until last byte is encountered
-              while ((currentByte = is.read(data, 0, buffer)) != -1) {
-                dest.write(data, 0, currentByte);
-              }
-              Files.setPosixFilePermissions(destFile.toPath(), perms);
-            }
-          }
-        }
-      }
+    try {
+      fis = new FileInputStream(fileToUnpack.toFile());
     } catch (FileNotFoundException e) {
       throw new UnreachableBinariesException(e.getMessage());
     }
 
+    UnzipInputStream.unpackFolders(destination, folders, fis);
   }
+
 }

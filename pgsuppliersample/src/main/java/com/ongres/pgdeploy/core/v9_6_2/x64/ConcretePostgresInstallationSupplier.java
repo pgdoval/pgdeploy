@@ -16,6 +16,6 @@ public class ConcretePostgresInstallationSupplier extends AbstractPostgresInstal
     super(new Pre10PostgresMajorVersion(9, 6), 2, new Platform("Linux", "x64"),
         Paths.get(ConcretePostgresInstallationSupplier
             .class.getProtectionDomain().getCodeSource().getLocation().getPath())
-            .resolve("code.zip"));
+            .resolve("code.zip"), false);
   }
 }

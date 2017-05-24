@@ -38,8 +38,12 @@ public class Platform {
    * linux and Linux in two different moments. They have to be case-independent
    */
   public Platform(String os, String architecture) {
-    this.os = os.toUpperCase(Locale.ENGLISH);
-    this.architecture = architecture.toUpperCase(Locale.ENGLISH);
+    this.os = os.toLowerCase(Locale.ENGLISH);
+    this.architecture = architecture.toLowerCase(Locale.ENGLISH);
+  }
+
+  public String toFileString() {
+    return os + "_" + architecture;
   }
 
   @Override

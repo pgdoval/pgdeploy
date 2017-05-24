@@ -28,4 +28,9 @@ public class Pre10PostgresMajorVersion extends PostgresMajorVersion {
   public Pre10PostgresMajorVersion(int first, int second) {
     super(first, second);
   }
+
+  @Override
+  public String toFileString() {
+    return first + "." + second;
+  }
 }
