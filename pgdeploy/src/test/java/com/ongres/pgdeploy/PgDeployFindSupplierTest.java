@@ -38,9 +38,11 @@
  */
 package com.ongres.pgdeploy;
 
+import com.ongres.pgdeploy.core.MockedPostgresInstallationSupplier;
 import com.ongres.pgdeploy.core.Platform;
 import com.ongres.pgdeploy.core.PostgresInstallationSupplier;
 import com.ongres.pgdeploy.core.pgversion.Pre10PostgresMajorVersion;
+import com.ongres.pgdeploy.core.unpack.PackageMode;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -63,7 +65,7 @@ public class PgDeployFindSupplierTest {
   public void checkExistingSupplierWithoutExtraVersionButNotRequired()
   {
     List<PostgresInstallationSupplier> suppliers = new ArrayList<>();
-    PostgresInstallationSupplier mockedSupplier = new MockedPostgresInstallationSupplier(
+    PostgresInstallationSupplier mockedSupplier = new com.ongres.pgdeploy.core.MockedPostgresInstallationSupplier(
         new Pre10PostgresMajorVersion(9, 5), 0, linuxPlatform, null);
     suppliers.add(mockedSupplier);
 

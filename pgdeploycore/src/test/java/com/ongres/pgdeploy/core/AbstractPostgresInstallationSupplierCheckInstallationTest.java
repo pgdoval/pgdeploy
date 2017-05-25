@@ -61,7 +61,7 @@ public class AbstractPostgresInstallationSupplierCheckInstallationTest {
 
   private PostgresInstallationSupplier createSupplier() {
     List<String> folders =
-        Arrays.asList("src", "test", "resources", "binaries", "bin.zip");
+        Arrays.asList("src", "test", "resources", "binaries", "bin.packageMode");
     RelativeRoute route = new RelativeRoute(folders);
 
     return new MockedPostgresInstallationSupplier(

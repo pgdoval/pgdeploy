@@ -27,6 +27,7 @@ package com.ongres.pgdeploy.core;
 import com.google.common.base.Preconditions;
 import com.ongres.pgdeploy.core.pgversion.PostgresMajorVersion;
 
+import com.ongres.pgdeploy.core.unpack.PackageMode;
 import net.jcip.annotations.Immutable;
 
 @Immutable
@@ -55,7 +56,7 @@ public class PostgresInstallationSupplierFeatures {
     this.extraVersion = null;
   }
 
-  public String zipFileName() {
+  public String getPackedFileResourceName(PackageMode packageMode) {
     String result = zipFilePrefix
         + major.toFileString()
         + separator + minor
@@ -65,7 +66,7 @@ public class PostgresInstallationSupplierFeatures {
       result += separator + extraVersion;
     }
 
-    result += ".zip";
+    result += packageMode.getStringId();
 
     return result;
   }

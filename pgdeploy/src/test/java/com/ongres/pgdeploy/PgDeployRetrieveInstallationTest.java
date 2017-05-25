@@ -25,6 +25,7 @@
 package com.ongres.pgdeploy;
 
 import com.ongres.pgdeploy.clusters.PostgresCluster;
+import com.ongres.pgdeploy.core.MockedPostgresInstallationSupplier;
 import com.ongres.pgdeploy.core.Platform;
 import com.ongres.pgdeploy.core.PostgresInstallationSupplier;
 import com.ongres.pgdeploy.core.RelativeRoute;

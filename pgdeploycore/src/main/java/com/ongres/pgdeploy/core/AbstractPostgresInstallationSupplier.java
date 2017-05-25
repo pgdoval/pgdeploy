@@ -31,65 +31,52 @@ import com.ongres.pgdeploy.core.exceptions.UnreachableBinariesException;
 import com.ongres.pgdeploy.core.pgversion.PostgresMajorVersion;
 import com.ongres.pgdeploy.core.router.DefaultRouter;
 import com.ongres.pgdeploy.core.router.Router;
+import com.ongres.pgdeploy.core.unpack.ObtainResourceStrategy;
+import com.ongres.pgdeploy.core.unpack.ObtainResourceStrategyFactory;
+import com.ongres.pgdeploy.core.unpack.PackageMode;
 import com.ongres.pgdeploy.core.unpack.UnpackFoldersStrategy;
-import com.ongres.pgdeploy.core.unpack.UnzipFoldersFromJarStrategy;
-import com.ongres.pgdeploy.core.unpack.UnzipFoldersStrategy;
+import com.ongres.pgdeploy.core.unpack.UnpackFoldersStrategyFactory;
 import com.ongres.pgdeploy.pgconfig.DefaultPropertyParser;
 import com.ongres.pgdeploy.pgconfig.PropertyParser;
-import com.ongres.pgdeploy.pgconfig.properties.Property;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.nio.file.Files;
+import java.io.InputStream;
 import java.nio.file.Path;
-import java.nio.file.attribute.FileAttribute;
-import java.nio.file.attribute.PosixFilePermission;
-import java.nio.file.attribute.PosixFilePermissions;
-import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.List;
-import java.util.Optional;
-import java.util.Properties;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 
 public abstract class AbstractPostgresInstallationSupplier implements PostgresInstallationSupplier {
 
   protected final PostgresInstallationSupplierFeatures features;
 
-  protected final Path routeToZippedCode;
+  protected final Path routeToPackedCode;
 
   protected final boolean fromJar;
 
+  protected final PackageMode packageMode;
+
   protected AbstractPostgresInstallationSupplier( PostgresMajorVersion majorVersion,
-      int minorVersion, Platform platform, Path path, boolean fromJar) {
+      int minorVersion, Platform platform, Path path, boolean fromJar, PackageMode packageMode) {
 
     this( new PostgresInstallationSupplierFeatures(majorVersion, minorVersion, platform),
-        path, fromJar);
+        path, fromJar, packageMode);
   }
 
   protected AbstractPostgresInstallationSupplier( PostgresMajorVersion majorVersion,
       int minorVersion, Platform platform, String extraVersion, Path path,
-      boolean fromJar) {
+      boolean fromJar, PackageMode packageMode) {
 
     this( new PostgresInstallationSupplierFeatures(
-        majorVersion, minorVersion, platform, extraVersion), path, fromJar);
+        majorVersion, minorVersion, platform, extraVersion), path, fromJar, packageMode);
   }
 
   protected AbstractPostgresInstallationSupplier(
       PostgresInstallationSupplierFeatures features, Path path,
-      boolean fromJar) {
+      boolean fromJar, PackageMode packageMode) {
     this.features = features;
-    this.routeToZippedCode = fromJar ? path.resolve(features.zipFileName()) : path;
+    this.routeToPackedCode =
+        fromJar ? path.resolve(features.getPackedFileResourceName(packageMode)) : path;
     this.fromJar = fromJar;
+    this.packageMode = packageMode;
   }
 
   /** Simply compares the features required to the ones that the supplier offers.
@@ -103,11 +90,16 @@ public abstract class AbstractPostgresInstallationSupplier implements PostgresIn
   public void unpackFolders(Path destination, List<PostgresInstallationFolder> folders)
       throws IOException, NonWritableDestinationException, UnreachableBinariesException {
 
-    UnpackFoldersStrategy strategy = fromJar
-        ? new UnzipFoldersFromJarStrategy(features)
-        : new UnzipFoldersStrategy(routeToZippedCode);
+    ObtainResourceStrategy obtainResourceStrategy =
+        ObtainResourceStrategyFactory.getUnpackFoldersStrategy(
+            fromJar, routeToPackedCode);
 
-    strategy.unpackFolders(destination, folders);
+    UnpackFoldersStrategy unpackFoldersStrategy =
+        UnpackFoldersStrategyFactory.getUnpackFoldersStrategy(packageMode);
+
+    InputStream stream = obtainResourceStrategy.obtainResource();
+
+    unpackFoldersStrategy.unpackFolders(destination, folders, stream);
   }
 
   @Override
