@@ -32,9 +32,11 @@
   ```
 
  
- The project contains a maven repository pointing at its own folder libs. In order for the user to
+ Another way for getting new versions comes by the fact that the project contains a maven 
+ repository pointing at its own folder libs. In order for the user to
  include new suppliers, the needed steps are:
- * To obtain the new supplier, probably some pgsupplier-version.jar
+ * To obtain the new supplier, probably some pgsupplier-version.jar obtained via 
+ the [pgsupplier](../pgsupplier) project
  * To create 'version' folder under libs/grid/pgsupplier, and paste the jar file there
  * To add the dependency in pom.xml:
  
