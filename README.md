@@ -102,3 +102,8 @@ cluster.config(config); //this method calls restart. Future versions will be abl
  //or alternatively
  cluster.setPgHba(originalFile)
   ```
+  
+  ## More info on usage
+  
+  This repository contains the [pgdeploytest](pgdeploytest) project, which tests the library in
+  the way the user do.
