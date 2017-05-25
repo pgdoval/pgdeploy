@@ -18,7 +18,6 @@
     </properties>
 
     <repositories>
-        <!– In Project repository –>
         <repository>
             <id>in-project</id>
             <name>In Project Repo</name>
@@ -39,8 +38,8 @@
         </dependency>
         <dependency>
             <groupId>grid</groupId>
-            <artifactId>aid</artifactId>
-            <version>v</version>
+            <artifactId>pgsupplier</artifactId>
+            <version>1.0.0-v9.5-2-linux-x64-SNAPSHOT</version>
         </dependency>
     </dependencies>
 

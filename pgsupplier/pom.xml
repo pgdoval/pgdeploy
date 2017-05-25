@@ -28,8 +28,8 @@
         <tmp.code>${project.build.directory}/binaries/target/</tmp.code>
     </properties>
 
-    <!--<version>1.0.0-${major}-${minor}-${os}-${arch}-SNAPSHOT</version>-->
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.0-v${postgres.major}-${postgres.minor}-${postgres.os}-${postgres.arch}-SNAPSHOT</version>
+    <!--<version>1.0.0-SNAPSHOT</version>-->
 
     <build>
         <plugins>
@@ -187,53 +187,6 @@
                     </execution>
                 </executions>
             </plugin>
-            <!--<plugin>-->
-                <!--<groupId>org.apache.maven.plugins</groupId>-->
-                <!--<artifactId>maven-assembly-plugin</artifactId>-->
-                <!--<executions>-->
-                    <!--<execution>-->
-                        <!--<id>assembler</id>-->
-                        <!--<phase>package</phase>-->
-                        <!--<goals>-->
-                            <!--<goal>single</goal>-->
-                        <!--</goals>-->
-                        <!--<configuration>-->
-                            <!--<descriptors>-->
-                                <!--<descriptor>src/main/assembly.xml</descriptor>-->
-                            <!--</descriptors>-->
-                            <!--<finalName>pgsupplier-${project.version}.jar</finalName>-->
-                            <!--<outputDirectory>${project.build.directory}</outputDirectory>-->
-                            <!--<tarLongFileMode>gnu</tarLongFileMode>-->
-                            <!--<archive>-->
-                                <!--&lt;!&ndash;<manifestFile>${basedir}/target/classes/com/META-INF/services/com.ongres.pgdeploy.core.PostgresInstallationSupplier</manifestFile>&ndash;&gt;-->
-                                <!--<manifest>-->
-                                    <!--<addClasspath>true</addClasspath>-->
-                                <!--</manifest>-->
-                            <!--</archive>-->
-                        <!--</configuration>-->
-                    <!--</execution>-->
-                <!--</executions>-->
-            <!--</plugin>-->
-            <!--<plugin>-->
-            <!--<groupId>org.apache.maven.plugins</groupId>-->
-            <!--<artifactId>maven-jar-plugin</artifactId>-->
-            <!--<executions>-->
-            <!--<execution>-->
-            <!--<id>assembler</id>-->
-            <!--<phase>package</phase>-->
-            <!--<goals>-->
-            <!--<goal>jar</goal>-->
-            <!--</goals>-->
-            <!--<configuration>-->
-            <!--<archive>-->
-            <!--<manifest>-->
-            <!--<addClasspath>true</addClasspath>-->
-            <!--</manifest>-->
-            <!--</archive>-->
-            <!--</configuration>-->
-            <!--</execution>-->
-            <!--</executions>-->
-            <!--</plugin>-->
         </plugins>
     </build>
 
