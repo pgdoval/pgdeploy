@@ -132,6 +132,72 @@ public class PostgresConfig {
       return withProperty(key, PropertyValue.from(value));
     }
 
+    /** Adds the specified property/value pair to the map of properties. The behaviour in case the
+     * property doesn't exist is determined by the safe parameter. If set to true, the method
+     * {@link PostgresConfig.Builder#withProperty(String, PropertyValue)} will be called. If set to
+     * false {@link PostgresConfig.Builder#withPropertyUnsafe(String, PropertyValue)} will be
+     * called instead.
+     */
+    public Builder withProperty(String key, PropertyValue value, boolean safe)
+        throws WrongTypePropertyException, UnitNotAvailableForPropertyException,
+        PropertyNotFoundException {
+      return safe ? withProperty(key, value) : withPropertyUnsafe(key, value);
+    }
+
+    /** Calls {@link PostgresConfig.Builder#withProperty(String, PropertyValue, boolean)}
+     *  with value {@link PropertyValue#from(int)}.
+     */
+    public Builder withProperty(String key, int value, boolean safe)
+        throws WrongTypePropertyException, UnitNotAvailableForPropertyException,
+        PropertyNotFoundException {
+      return withProperty(key, PropertyValue.from(value), safe);
+    }
+
+    /** Calls {@link PostgresConfig.Builder#withProperty(String, PropertyValue, boolean)}
+     *  with value {@link PropertyValue#from(long)}.
+     */
+    public Builder withProperty(String key, long value, boolean safe)
+        throws WrongTypePropertyException, UnitNotAvailableForPropertyException,
+        PropertyNotFoundException {
+      return withProperty(key, PropertyValue.from(value), safe);
+    }
+
+    /** Calls {@link PostgresConfig.Builder#withProperty(String, PropertyValue, boolean)}
+     *  with value {@link PropertyValue#from(float)}.
+     */
+    public Builder withProperty(String key, float value, boolean safe)
+        throws WrongTypePropertyException, UnitNotAvailableForPropertyException,
+        PropertyNotFoundException {
+      return withProperty(key, PropertyValue.from(value), safe);
+    }
+
+    /** Calls {@link PostgresConfig.Builder#withProperty(String, PropertyValue, boolean)}
+     *  with value {@link PropertyValue#from(double)}.
+     */
+    public Builder withProperty(String key, double value, boolean safe)
+        throws WrongTypePropertyException, UnitNotAvailableForPropertyException,
+        PropertyNotFoundException {
+      return withProperty(key, PropertyValue.from(value), safe);
+    }
+
+    /** Calls {@link PostgresConfig.Builder#withProperty(String, PropertyValue, boolean)}
+     *  with value {@link PropertyValue#from(String)}.
+     */
+    public Builder withProperty(String key, String value, boolean safe)
+        throws WrongTypePropertyException, UnitNotAvailableForPropertyException,
+        PropertyNotFoundException {
+      return withProperty(key, PropertyValue.from(value), safe);
+    }
+
+    /** Calls {@link PostgresConfig.Builder#withProperty(String, PropertyValue, boolean)}
+     *  with value {@link PropertyValue#from(boolean)}.
+     */
+    public Builder withProperty(String key, boolean value, boolean safe)
+        throws WrongTypePropertyException, UnitNotAvailableForPropertyException,
+        PropertyNotFoundException {
+      return withProperty(key, PropertyValue.from(value), safe);
+    }
+
     /** Adds the specified property/value pair to the map of properties. If the property doesn't
      * exist, it is created. There is also no validation of the value.
      */
